@@ -1,6 +1,7 @@
 # filter_plugins/generate_paths.py
 import grp
 
+
 def get_grpname(gid):
     """
     Get the name of the group with the supplied gid.  If a string is provided, it searches for the group
@@ -16,6 +17,7 @@ def get_grpname(gid):
     else:
         grpname = grp.getgrnam(gid).gr_name
     return grpname
+
 
 class FilterModule(object):
     def filters(self):

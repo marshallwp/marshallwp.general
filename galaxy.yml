@@ -8,7 +8,7 @@ name: "general"
 version: 1.0.0
 readme: README.md
 authors:
-  - William P. Marshall <62070150+marshallwp@users.noreply.github.com>
+  - William P. Marshall
 
 description: Generic general tooling that is broadly useful and have little to no dependencies or platform restrictions.
 license_file: LICENSE
