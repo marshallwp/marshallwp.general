@@ -15,11 +15,12 @@ import pytest
 # if the convert_to_supported function given the test_input,
 # returns what we expect.
 @pytest.mark.parametrize('gid, expected', [
-    (0,'root'),
-    ('root','root')
+    (0, 'root'),
+    ('root', 'root')
 ])
 def test_outputs_grpname(gid, expected):
     assert get_grpname(gid) == expected
+
 
 def test_throws_KeyError():
     with pytest.raises(KeyError):
