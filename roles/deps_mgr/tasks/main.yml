@@ -1,0 +1,18 @@
+---
+- name: Install Required Repositories
+  vars:
+    os_repo_setup: "{{ deps_mgr_list[ansible_facts['os_family']] }}"
+    dist_repo_setup: "{{ os_repo_setup[ansible_facts['distribution']] }}"
+    maj_ver_repo_setup: "{{ dist_repo_setup[ansible_facts['distribution_major_version']] }}"
+  loop: "{{ maj_ver_repo_setup['repositories'] |
+            default(dist_repo_setup['repositories']) |
+            default(os_repo_setup['repositories']) |
+            default([]) }}"
+  loop_control:
+    loop_var: step
+  ansible.builtin.include_tasks:
+    file: repositories.yml
+
+- name: Manage Packages
+  ansible.builtin.include_tasks:
+    file: packages.yml

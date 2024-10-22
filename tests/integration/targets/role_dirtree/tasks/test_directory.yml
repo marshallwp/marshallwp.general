@@ -1,0 +1,8 @@
+- name: Get Path Info
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: dir_test
+- name: Directory Exists
+  ansible.builtin.assert:
+    that:
+      - dir_test['stat']['isdir']

@@ -1,0 +1,28 @@
+---
+- name: Test the dirtree role
+  vars:
+    dirtree_root: /tmp
+    dirtree_tree:
+      dir1:
+        dir1_1:
+          dir1_1_1:
+      dir2:
+        dir2_1:
+        dir2_2:
+  ansible.builtin.include_role:
+    name: marshallwp.general.dirtree
+
+- name: Assert that the filter worked
+  loop:
+    - /tmp/dir1/dir1_1/dir1_1_1
+    - /tmp/dir2/dir2_1
+    - /tmp/dir2/dir2_2
+  ansible.builtin.include_tasks: test_directory.yml
+
+- name: Cleanup Test Dirs
+  loop:
+    - "/tmp/dir1"
+    - "/tmp/dir2"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent

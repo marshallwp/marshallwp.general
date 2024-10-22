@@ -1,0 +1,36 @@
+{
+  "name": "ansible-dev-container-podman",
+  "build": {
+    "dockerfile": "../Containerfile"
+  },
+  "containerUser": "root",
+  "containerEnv": {
+    "ANSIBLE_CONFIG": "${containerWorkspaceFolder}/ansible.cfg"
+  },
+  "runArgs": [
+    "--cap-add=SYS_ADMIN",
+    "--cap-add=SYS_RESOURCE",
+    "--device", "/dev/fuse",
+    "--security-opt", "seccomp=unconfined",
+    "--security-opt", "label=disable",
+    "--security-opt", "apparmor=unconfined",
+    "--userns=host",
+    "--hostname=ansible-dev-container"
+    // "--network=host", // Needed to connect to sibling containers on the host
+  ],
+  "updateRemoteUserUID": true,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.ansible",
+        "redhat.vscode-redhat-account",
+        "edwinhuish.better-comments-next"
+      ]
+    }
+  },
+  "postStartCommand": {
+    "ansible deps": "ansible-galaxy install -r requirements.yml"
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/ansible_collections/marshallwp/general,type=bind",
+  "workspaceFolder": "/ansible_collections/marshallwp/general"
+}

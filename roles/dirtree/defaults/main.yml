@@ -1,0 +1,19 @@
+---
+# Starting point for the dirtree. If blank, output is a relative path.
+dirtree_root: /
+# Ownership and permissions of lvllast directories in the dirtree.
+# NOTE: Since Ansible 1.7 missing intermediate directories will be created with the supplied permissions too.
+dirtree_owner:
+dirtree_group:
+dirtree_mode:
+# Directory tree to create under dirtree_root
+# dirtree_tree:
+#   dir1:
+#     subdir_lvl1:
+#       subdir_lvl2:
+#         - subdir_lvllast
+#   dir2:
+#     subdir1_lvl1:
+#     subdir2_lvl2:
+#       subdir_lvllast:
+#   dir3_lvllast:

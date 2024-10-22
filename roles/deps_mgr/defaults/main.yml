@@ -1,0 +1,46 @@
+---
+deps_mgr_list: "{{ dependencies }}"
+# Example for Installing Postgres 16 with packages required for configuration via community.general.postgres.
+# deps_mgr_list:
+#   Alpine:
+#     repositories:
+#     packages:
+#       - py3-psycopg
+#       - "postgresql{{ postgresql_version | default(16) }}"
+#   Debian:
+#     repositories:
+#       - repo_type: deb822
+#         name: pgdg
+#         uris: https://apt.postgresql.org/pub/repos/apt
+#         suites:
+#           - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}-pgdg"
+#           - 'main'
+#         signed_by: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+#     packages:
+#       - python3-psycopg2
+#       - "postgresql-{{ postgresql_version | default(16) }}"
+#   RedHat:
+#     AlmaLinux:
+#       repositories:
+#         - repo_type: dnf-config
+#           name: appstream
+#     OracleLinux:
+#       repositories:
+#         - repo_type: dnf-config
+#           name: "ol{{ ansible_facts['distribution_major_version'] }}_appstream"
+#     RedHat:
+#       repositories:
+#         - repo_type: dnf-config
+#           name: "rhel-{{ ansible_facts['distribution_major_version'] }}-for-{{ ansible_architecture }}-appstream-rpms"
+#     Rocky:
+#       repositories:
+#         - repo_type: dnf-config
+#           name: appstream
+#     packages:
+#       - python-psycopg2
+#       - "@postgresql:{{ postgresql_version | default(16) }}/server"
+#   Suse:
+#     repositories:
+#     packages:
+#       - python3-psycopg2
+#       - "postgresql{{ postgresql_version | default(16) }}-server"

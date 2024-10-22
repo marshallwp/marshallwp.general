@@ -1,0 +1,4 @@
+FROM ghcr.io/ansible/community-ansible-dev-tools:latest
+USER root
+RUN microdnf install -y podman-compose unzip && \
+	microdnf clean all
