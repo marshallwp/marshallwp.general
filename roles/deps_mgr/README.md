@@ -3,15 +3,30 @@ marshallwp.general deps_mgr Role
 
 Manages OS packages and repositories at the os_family, distribution, and/or distribution_major_version level.  Repository management occurs first to ensure package management succeeds.  While package management commands are performed using the generic `ansible.builtin.package` module, repository management is performed by the command associated with the `method` specified for each repository entry.  As such, repository management is unfortunately platform-specific.
 
+All package management programs supported by `ansible.builtin.package` can be used for package management.  See the definition for the `PKG_MGRS` variable on [pkg_mgr.py](https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/pkg_mgr.py).
+
+Repository management is currently only supported by the following:
+
+| repo_type | Implementing Module |
+| --------- | ------------------- |
+| deb822 | [`ansible.builtin.deb822_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/deb822_repository_module.html) |
+| dnf-config | [`community.general.dnf_config_manager`](https://docs.ansible.com/ansible/latest/collections/community/general/dnf_config_manager_module.html) |
+| homebrew | [`community.general.homebrew_tap`](https://docs.ansible.com/ansible/latest/collections/community/general/homebrew_tap_module.html) |
+| pkg5 | [`community.general.pkg5_publisher`](https://docs.ansible.com/ansible/latest/collections/community/general/pkg5_publisher_module.html) |
+| yum | [`ansible.builtin.yum_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_repository_module.html) |
+| zypper | [`community.general.zypper_repository`](https://docs.ansible.com/ansible/latest/collections/community/general/zypper_repository_module.html) |
+
 Requirements
 ------------
 
-Requires the `community.general` collection for DNF Config, Homebrew, Pkg5, and Zypper repository management.
+Requires the `community.general` collection for DNF Config, Homebrew, Pkg5, and Zypper repository management.  `community.general.lists_mergeby` is also used by the package manager, where it merges lists by precedence.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+| Name | Alias | Description |
+| ---- | ----- | ----------- |
+| deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |
 
 Dependencies
 ------------
@@ -33,7 +48,6 @@ Including an example of how to use your role (for instance, with variables passe
     - role: marshallwp.general.deps_mgr
       dependencies:
         Alpine:
-          repositories:
           packages:
             - py3-psycopg
             - "postgresql{{ postgresql_version | default(16) }}"
@@ -70,7 +84,6 @@ Including an example of how to use your role (for instance, with variables passe
             - python-psycopg2
             - "@postgresql:{{ postgresql_version | default(16) }}/server"
         Suse:
-          repositories:
           packages:
             - python3-psycopg2
             - "postgresql{{ postgresql_version | default(16) }}-server"
@@ -89,7 +102,6 @@ Another way to consume this role would be:
       vars:
         deps_mgr_list:
           Alpine:
-            repositories:
             packages:
               - py3-psycopg
               - "postgresql{{ postgresql_version | default(16) }}"

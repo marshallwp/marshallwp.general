@@ -3,7 +3,6 @@ deps_mgr_list: "{{ dependencies }}"
 # Example for Installing Postgres 16 with packages required for configuration via community.general.postgres.
 # deps_mgr_list:
 #   Alpine:
-#     repositories:
 #     packages:
 #       - py3-psycopg
 #       - "postgresql{{ postgresql_version | default(16) }}"
@@ -40,7 +39,6 @@ deps_mgr_list: "{{ dependencies }}"
 #       - python-psycopg2
 #       - "@postgresql:{{ postgresql_version | default(16) }}/server"
 #   Suse:
-#     repositories:
 #     packages:
 #       - python3-psycopg2
 #       - "postgresql{{ postgresql_version | default(16) }}-server"
