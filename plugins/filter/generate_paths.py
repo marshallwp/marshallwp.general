@@ -25,6 +25,7 @@ RETURN = r'''
 import os.path
 from ansible.module_utils.common.text.converters import to_text
 
+
 def generate_paths(tree, parent=""):
     """
     flattens a nested directory tree of directory names into a list of paths.
