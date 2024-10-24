@@ -1,0 +1,3 @@
+release_summary: Fix package installation issues with custom state values.
+bugfixes:
+  - deps_mgr - Quoted and bracketed the "state" variable.  This prevents unexpected failures due to custom states.
