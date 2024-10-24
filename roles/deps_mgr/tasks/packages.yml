@@ -30,7 +30,7 @@
       }}"
   ansible.builtin.package:
     name: "{{ package_list | selectattr('state', 'equalto', state) | map(attribute='name') }}"
-    state: state
+    state: "{{ state }}"
   loop: "{{ package_list | map(attribute='state') | ansible.builtin.unique }}"
   loop_control:
     loop_var: state
