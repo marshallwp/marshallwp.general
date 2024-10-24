@@ -5,13 +5,20 @@ Creates a directory tree from a dictionary of dictionaries. Lets you declare suc
 
 Requirements
 ------------
-
 <!-- Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required. -->
+
+None. All needed ansible modules are in `ansible.builtin`, all python plugins are included in this module, and those plugins depend entirely on builtin python libraries.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+| Name | Description | Default |
+| ---- | ----------- | ------- |
+| dirtree_root | The root directory the dirtree will be created in | `/` |
+| dirtree_owner | The owner of created directories.  Passed directly to `ansible.builtin.file` | `ansible_user_id` |
+| dirtree_group | The group of created directories.  Passed directly to `ansible.builtin.file` | `ansible_user_gid` |
+| dirtree_mode | The permissions the resulting directories should have. Can be set as ocals or in symbolic mode. | |
+| dirtree_tree | The nested dictionary defining the directory tree. | |
 
 Dependencies
 ------------
