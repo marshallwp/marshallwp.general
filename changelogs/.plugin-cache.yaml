@@ -6,7 +6,16 @@ plugins:
   callback: {}
   cliconf: {}
   connection: {}
-  filter: {}
+  filter:
+    generate_paths:
+      description: flattens a nested directory tree of directory names into a list
+        of paths.
+      name: generate_paths
+      version_added: 1.0.0
+    get_grpname:
+      description: Match the input name or GID to a real group and return its name.
+      name: get_grpname
+      version_added: 1.0.0
   httpapi: {}
   inventory: {}
   lookup: {}
@@ -16,4 +25,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.0.0
+version: 1.0.1

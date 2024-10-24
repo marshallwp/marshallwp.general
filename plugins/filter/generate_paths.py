@@ -1,5 +1,32 @@
 # filter_plugins/generate_paths.py
+
+DOCUMENTATION = r'''
+    name: generate_paths
+    short_description: Flattens a nested directory tree of directory names into a list of paths.
+    description:
+        - Flattens a nested dictionary tree of directories into a list of paths.
+        - Then uses those paths with `ansible.builtin.file` to ensure that the entire tree exists.
+    version_added: 1.0.0
+    author: William P. Marshall
+    options:
+        tree:
+            description: Nested dictionary containing the tree to flatten.
+            type: dictionary
+            required: true
+        parent:
+            description: The parent directory of the directory tree.
+            type: string
+'''
+
+RETURN = r'''
+    _value:
+        description: a list of directory paths
+        type: list
+        elements: string
+'''
+
 import os.path
+from ansible.module_utils.common.text.converters import to_text
 
 
 def generate_paths(tree, parent=""):
@@ -15,14 +42,14 @@ def generate_paths(tree, parent=""):
         if isinstance(value, list):
             for item in value:
                 if isinstance(item, str):
-                    paths.append(os.path.join(current_path, item))
+                    paths.append(to_text(os.path.join(current_path, item)))
                 elif isinstance(item, dict):
                     for subkey, subvalue in item.items():
                         paths.extend(generate_paths({subkey: subvalue}, current_path))
         elif isinstance(value, dict):
             paths.extend(generate_paths(value, current_path))
         else:
-            paths.append(current_path)
+            paths.append(to_text(current_path))
     return paths
 
 
