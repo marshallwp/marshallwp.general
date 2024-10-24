@@ -2,7 +2,10 @@
 
 DOCUMENTATION = r'''
     name: generate_paths
-    short_description: flattens a nested directory tree of directory names into a list of paths.
+    short_description: Flattens a nested directory tree of directory names into a list of paths.
+    description:
+        - Flattens a nested dictionary tree of directories into a list of paths.
+        - Then uses those paths with `ansible.builtin.file` to ensure that the entire tree exists.
     version_added: 1.0.0
     author: William P. Marshall
     options:

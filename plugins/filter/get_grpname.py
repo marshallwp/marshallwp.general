@@ -6,8 +6,8 @@ DOCUMENTATION = r'''
     version_added: 1.0.0
     author: William P. Marshall
     description:
-        - Get the name of the group with the supplied gid or name. If a string is provided, it searches for the group entry by name and returns its name. If
-          the gid or name does not match a group, an error is thrown.
+        - Get the name of the group with the supplied gid or name. If a string is provided, it searches for the group entry by name and returns its name.
+        - If the gid or name does not match a group, an error is thrown.
     options:
         _input:
             description: A group name or GID to search for.
