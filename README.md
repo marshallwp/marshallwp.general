@@ -7,7 +7,7 @@ This repository contains the `marshallwp.general` Ansible Collection.  Everythin
 
 ## External requirements
 
-Some modules and plugins require external libraries. Please check the requirements for each plugin or module you use in the documentation to find out which requirements are needed.
+`community.general`
 
 ## Included content
 
@@ -43,7 +43,7 @@ See [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_gui
 
 ## Release notes
 
-See the [changelog](https://github.com/ansible-collections/REPONAMEHERE/tree/main/CHANGELOG.rst).
+See the [changelog](https://github.com/marshallwp/marshallwp.general/tree/main/CHANGELOG.rst).
 
 ## Roadmap
 
@@ -65,4 +65,4 @@ See the [changelog](https://github.com/ansible-collections/REPONAMEHERE/tree/mai
 
 GNU General Public License v3.0 or later.
 
-See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
+See [LICENSE](https://github.com/marshallwp/marshallwp.general/blob/main/LICENSE) to see the full text.
