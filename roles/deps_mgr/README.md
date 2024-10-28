@@ -36,7 +36,7 @@ If you have packages or repositories specified at multiple levels of the `deps_m
 | Method | Description |
 | ------ | ----------- |
 | lowest_only | The simplest method, it gets items from the most precise matching list and ignores all the others. |
-| precision | Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
+| precedence | Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
 
 
 Dependencies
