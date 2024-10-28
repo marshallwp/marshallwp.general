@@ -4,13 +4,13 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
-v1.0.2
+v1.0.3
 ======
 
 Release Summary
 ---------------
 
-Fix package installation issues with custom state values and add allow the user to specify how different levels of the deps_mgr_list are merged.
+Allow the user to specify how different levels of the deps_mgr_list are merged.
 
 Minor Changes
 -------------
@@ -20,8 +20,20 @@ Minor Changes
 Bugfixes
 --------
 
-- deps_mgr - Quoted and bracketed the "state" variable.  This prevents unexpected failures due to custom states.
 - deps_mgr - Quoted the name of the 'Make Packages' task in packages.yml.
+
+v1.0.2
+======
+
+Release Summary
+---------------
+
+Fix package installation issues with custom state values.
+
+Bugfixes
+--------
+
+- deps_mgr - Quoted and bracketed the "state" variable.  This prevents unexpected failures due to custom states.
 
 v1.0.1
 ======
