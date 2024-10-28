@@ -1,13 +1,22 @@
 ---
 - name: Install Required Repositories
   vars:
+    # Get Repositories at different levels
     os_repo_setup: "{{ deps_mgr_list[ansible_facts['os_family']] }}"
     dist_repo_setup: "{{ os_repo_setup[ansible_facts['distribution']] }}"
     maj_ver_repo_setup: "{{ dist_repo_setup[ansible_facts['distribution_major_version']] }}"
-  loop: "{{ maj_ver_repo_setup['repositories'] |
-            default(dist_repo_setup['repositories']) |
-            default(os_repo_setup['repositories']) |
-            default([]) }}"
+    # *Merge through various methods
+    # Only get repositories from the lowest-level that lists them.
+    lowest_only_merge: "{{ maj_ver_repo_setup['repositories'] |
+                          default(dist_repo_setup['repositories']) |
+                          default(os_repo_setup['repositories']) |
+                          default([]) }}"
+    # Combine lists with precidence ordered from most precise to least.
+    precedence_merge: "{{ [os_repo_setup['repositories'] | default([]),
+                          dist_repo_setup['repositories'] | default([]),
+                          maj_ver_repo_setup['repositories'] | default([])]
+                          | community.general.lists_mergeby('name') }}"
+  loop: "{{ lookup('ansible.builtin.vars', deps_mgr_repo_merge_method ~ '_merge') }}"
   loop_control:
     loop_var: step
   ansible.builtin.include_tasks:

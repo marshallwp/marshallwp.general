@@ -1,4 +1,10 @@
 ---
+# List merge method can be either
+# precedence - Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones.
+# lowest_only - The simplest method, it gets items from the most precise matching list and ignores all the others.
+deps_mgr_package_merge_method: precedence
+deps_mgr_repo_merge_method: lowest_only
+
 deps_mgr_list: "{{ dependencies }}"
 # Example for Installing Postgres 16 with packages required for configuration via community.general.postgres.
 # deps_mgr_list:

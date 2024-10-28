@@ -8,7 +8,7 @@ plugins:
   connection: {}
   filter:
     generate_paths:
-      description: flattens a nested directory tree of directory names into a list
+      description: Flattens a nested directory tree of directory names into a list
         of paths.
       name: generate_paths
       version_added: 1.0.0
@@ -25,4 +25,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.0.1
+version: 1.0.2
