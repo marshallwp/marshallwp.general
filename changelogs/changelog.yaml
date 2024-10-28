@@ -24,15 +24,20 @@ releases:
       bugfixes:
       - deps_mgr - Quoted and bracketed the "state" variable.  This prevents unexpected
         failures due to custom states.
+      release_summary: Fix package installation issues with custom state values.
+    fragments:
+    - 3-quote-state-variable.yml
+    release_date: '2024-10-24'
+  1.0.3:
+    changes:
+      bugfixes:
       - deps_mgr - Quoted the name of the 'Make Packages' task in packages.yml so the state variable value is included.
       minor_changes:
       - deps_mgr - You can now specify whether to use the `lowest_only` or `precision`
         merge methods for packages and repositories.
-      release_summary: Fix package installation issues with custom state values and
-        add allow the user to specify how different levels of the deps_mgr_list are
+      release_summary: Allow the user to specify how different levels of the deps_mgr_list are
         merged.
     fragments:
-    - 3-quote-state-variable.yml
     - 4-quote-make-packages-name.yml
     - 6-merge-method.yml
     release_date: '2024-10-28'
