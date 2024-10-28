@@ -24,16 +24,27 @@ Requires the `community.general` collection for DNF Config, Homebrew, Pkg5, and 
 Role Variables
 --------------
 
-| Name | Alias | Description |
-| ---- | ----- | ----------- |
+| Name | Alias | Description | Default |
+| ---- | ----- | ----------- | ------- |
+| deps_mgr_package_merge_method | | Merge method to use when choosing what packages to manage and how. | precedence |
+| deps_mgr_repo_merge_method | | Merge method to use when choosing what repositories to manage and how. | lowest_only |
 | deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |
+
+### Merge Methods
+If you have packages or repositories specified at multiple levels of the `deps_mgr_list`, the merge method determines how ansible chooses entries to use.  It is set for packages and repositories via the `deps_mgr_package_merge_method` and `deps_mgr_repo_merge_method` variables respectively. Currently we support the following methods:
+
+| Method | Description |
+| ------ | ----------- |
+| lowest_only | The simplest method, it gets items from the most precise matching list and ignores all the others. |
+| precision | Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
+
 
 Dependencies
 ------------
 
 <!-- A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles. -->
 
-community.general
+`community.general`
 
 Example Playbook
 ----------------

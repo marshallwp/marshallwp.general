@@ -23,14 +23,22 @@
       | ansible.builtin.dict2items(key_name='name', value_name='state')
       | ansible.builtin.union(_maj_ver_packages | selectattr('name', 'defined') | list)
       }}"
+    # *Merge lists through various methods
+    # Only get repositories from the lowest-level that lists them.
+    lowest_only_merge: "{{ maj_ver_packages |
+                          default(dist_packages) |
+                          default(os_packages) |
+                          default([]) }}"
     # Combine lists with precidence ordered from most precise to least.
-    package_list: "{{
+    precedence_merge: "{{
         [os_packages | default([]), dist_packages | default([]), maj_ver_packages | default([])]
         | community.general.lists_mergeby('name')
       }}"
   ansible.builtin.package:
-    name: "{{ package_list | selectattr('state', 'equalto', state) | map(attribute='name') }}"
+    name: "{{ lookup('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge')
+              | selectattr('state', 'equalto', state) | map(attribute='name') }}"
     state: "{{ state }}"
-  loop: "{{ package_list | map(attribute='state') | ansible.builtin.unique }}"
+  loop: "{{ lookup('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge')
+            | map(attribute='state') | ansible.builtin.unique }}"
   loop_control:
     loop_var: state
