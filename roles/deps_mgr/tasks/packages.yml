@@ -1,5 +1,5 @@
 ---
-- name: Make Packages - {{ state }}
+- name: "Make Packages - {{ state }}"
   vars:
     # Get Raw Package Lists
     _os_packages: "{{ deps_mgr_list[ansible_facts['os_family']]['packages'] }}"
