@@ -1,0 +1,3 @@
+release_summary: Allow the user to specify how different levels of the deps_mgr_list are merged.
+minor_changes:
+  - deps_mgr - You can now specify whether to use the `lowest_only` or `precision` merge methods for packages and repositories.
