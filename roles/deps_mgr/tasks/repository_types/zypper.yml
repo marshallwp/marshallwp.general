@@ -1,0 +1,15 @@
+---
+- name: Manage Zypper Repository
+  when: step['repo_type'] | lower == 'zypper'
+  community.general.zypper_repository:
+    auto_import_keys: "{{ step['auto_import_keys'] | default('') }}"
+    autorefresh: "{{ step['autorefresh'] | default('') }}"
+    description: "{{ step['description'] | default('') }}"
+    disable_gpg_check: "{{ step['disable_gpg_check'] | default('') }}"
+    enabled: "{{ step['enabled'] | default('') }}"
+    name: "{{ step['name'] }}"
+    overwrite_multiple: "{{ step['overwrite_multiple'] | default('') }}"
+    priority: "{{ step['priority'] | default('') }}"
+    repo: "{{ step['repo'] | default('') }}"
+    runrefresh: "{{ step['runrefresh'] | default('') }}"
+    state: "{{ step['state'] | default('') }}"

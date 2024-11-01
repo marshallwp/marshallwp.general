@@ -9,17 +9,21 @@ Repository management is currently only supported by the following:
 
 | repo_type | Implementing Module |
 | --------- | ------------------- |
+| apt-repo | [`community.general.apt_repo`](https://docs.ansible.com/ansible/latest/collections/community/general/apt_repo_module.html) |
+| apt | [`ansible.builtin.apt_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html) |
+| copr | [`community.general.copr`](https://docs.ansible.com/ansible/latest/collections/community/general/copr_module.html) |
 | deb822 | [`ansible.builtin.deb822_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/deb822_repository_module.html) |
 | dnf-config | [`community.general.dnf_config_manager`](https://docs.ansible.com/ansible/latest/collections/community/general/dnf_config_manager_module.html) |
 | homebrew | [`community.general.homebrew_tap`](https://docs.ansible.com/ansible/latest/collections/community/general/homebrew_tap_module.html) |
 | pkg5 | [`community.general.pkg5_publisher`](https://docs.ansible.com/ansible/latest/collections/community/general/pkg5_publisher_module.html) |
+| sorcery | [`community.general.sorcery`](https://docs.ansible.com/ansible/latest/collections/community/general/sorcery_module.html) |
 | yum | [`ansible.builtin.yum_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_repository_module.html) |
 | zypper | [`community.general.zypper_repository`](https://docs.ansible.com/ansible/latest/collections/community/general/zypper_repository_module.html) |
 
 Requirements
 ------------
 
-Requires the `community.general` collection for DNF Config, Homebrew, Pkg5, and Zypper repository management.  `community.general.lists_mergeby` is also used by the package manager, where it merges lists by precedence.
+Requires the `community.general` collection for Apt-repo, Copr, DNF Config, Homebrew, Pkg5, Sorcery, and Zypper repository management.  `community.general.lists_mergeby` is also used by the package manager, where it merges lists by precedence.
 
 Role Variables
 --------------
@@ -30,6 +34,24 @@ Role Variables
 | deps_mgr_repo_merge_method | | Merge method to use when choosing what repositories to manage and how. | lowest_only |
 | deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |
 
+### deps_mgr_list syntax
+
+```yaml
+deps_mgr_list:  # alias: dependencies
+  # packages and repositories can be provided at any and/or all of three selection levels.
+  <os_family>: [<distribution>: [<distribution_major_version>:]]
+    packages:
+      - <package_name>  # state is assumed to be "present"
+      - name: <package_name>
+        state: <package_state>
+    repositories:
+      - repo_type: <repository_type>
+        name: <repository_name>
+        state: <repository_state>
+        <repository_module_specific_args>:  # see documentation of the implementing module for a list.
+        …
+```
+
 ### Merge Methods
 If you have packages or repositories specified at multiple levels of the `deps_mgr_list`, the merge method determines how ansible chooses entries to use.  It is set for packages and repositories via the `deps_mgr_package_merge_method` and `deps_mgr_repo_merge_method` variables respectively. Currently we support the following methods:
 
@@ -38,6 +60,14 @@ If you have packages or repositories specified at multiple levels of the `deps_m
 | lowest_only | The simplest method, it gets items from the most precise matching list and ignores all the others. |
 | precedence | Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
 
+### Common Repository Parameters
+To help make things more generic (and to simplify merging things together), I've adoped a few common parameters for repository management.
+
+| Term | Definition |
+| ---- | ---------- |
+| repo_type | The type of repository being managed. Essentially, it routes the command to a particular module |
+| name | The name of the repository. This maps to the `name` or equivalent parameter on a module.  Ex. when using `apt-repo` it maps to `repo` parameter. **Required** |
+| state | Indicates the desired repository state. |
 
 Dependencies
 ------------

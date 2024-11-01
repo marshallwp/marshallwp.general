@@ -1,0 +1,27 @@
+---
+- name: Manage Debian 822 Repository
+  when: step['repo_type'] | lower == 'deb822'
+  ansible.builtin.deb822_repository:
+    name: "{{ step['name'] }}"
+    state: "{{ step['state'] | default('') }}"
+    # Module-specific Parameters
+    allow_downgrade_to_insecure: "{{ step['allow_downgrade_to_insecure'] | default('') }}"
+    allow_insecure: "{{ step['allow_insecure'] | default('') }}"
+    allow_weak: "{{ step['allow_weak'] | default('') }}"
+    architectures: "{{ step['architectures'] | default('') }}"
+    by_hash: "{{ step['by_hash'] | default('') }}"
+    check_date: "{{ step['check_date'] | default('') }}"
+    check_valid_until: "{{ step['check_valid_until'] | default('') }}"
+    components: "{{ step['components'] | default('') }}"
+    date_max_future: "{{ step['date_max_future'] | default('') }}"
+    enabled: "{{ step['enabled'] | default('') }}"
+    inrelease_path: "{{ step['inrelease_path'] | default('') }}"
+    languages: "{{ step['languages'] | default('') }}"
+    mode: "{{ step['mode'] | default('') }}"
+    pdiffs: "{{ step['pdiffs'] | default('') }}"
+    signed_by: "{{ step['signed_by'] | default('') }}"
+    suites: "{{ step['suites'] | default('') }}"
+    targets: "{{ step['targets'] | default('') }}"
+    trusted: "{{ step['trusted'] | default('') }}"
+    types: "{{ step['types'] | default('') }}"
+    uris: "{{ step['uris'] | default('') }}"

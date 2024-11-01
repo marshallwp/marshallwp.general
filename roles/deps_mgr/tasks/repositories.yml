@@ -2,129 +2,25 @@
 # Only manages repositories for package managers that ansible.builtin.package supports.
 # See PKG_MGRS definition on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/pkg_mgr.py
 
-- name: Manage Debian 822 Repository
-  when: step['repo_type'] | lower == 'deb822'
-  ansible.builtin.deb822_repository:
-    allow_downgrade_to_insecure: "{{ step['allow_downgrade_to_insecure'] | default('') }}"
-    allow_insecure: "{{ step['allow_insecure'] | default('') }}"
-    allow_weak: "{{ step['allow_weak'] | default('') }}"
-    architectures: "{{ step['architectures'] | default('') }}"
-    by_hash: "{{ step['by_hash'] | default('') }}"
-    check_date: "{{ step['check_date'] | default('') }}"
-    check_valid_until: "{{ step['check_valid_until'] | default('') }}"
-    components: "{{ step['components'] | default('') }}"
-    date_max_future: "{{ step['date_max_future'] | default('') }}"
-    enabled: "{{ step['enabled'] | default('') }}"
-    inrelease_path: "{{ step['inrelease_path'] | default('') }}"
-    languages: "{{ step['languages'] | default('') }}"
-    mode: "{{ step['mode'] | default('') }}"
-    name: "{{ step['name'] }}"
-    pdiffs: "{{ step['pdiffs'] | default('') }}"
-    signed_by: "{{ step['signed_by'] | default('') }}"
-    state: "{{ step['state'] | default('') }}"
-    suites: "{{ step['suites'] | default('') }}"
-    targets: "{{ step['targets'] | default('') }}"
-    trusted: "{{ step['trusted'] | default('') }}"
-    types: "{{ step['types'] | default('') }}"
-    uris: "{{ step['uris'] | default('') }}"
-
-- name: Manage Dnf Repository Config
-  when: step['repo_type'] | lower == 'dnf-config'
-  community.general.dnf_config_manager:
-    name: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
-
-- name: Manage Homebrew Repository
-  when: step['repo_type'] | lower == 'homebrew'
-  community.general.homebrew_tap:
-    name: "{{ step['name'] }}"
-    path: "{{ step['path'] | default('') }}"
-    state: "{{ step['state'] | default('') }}"
-    url: "{{ step['url'] | default('') }}"
-
-- name: Manage Pkg5 Repository
-  when: step['repo_type'] | lower == 'pkg5'
-  community.general.pkg5_publisher:
-    enabled: "{{ step['enabled'] | default('') }}"
-    mirror: "{{ step['mirror'] | default('') }}"
-    name: "{{ step['name'] }}"
-    origin: "{{ step['origin'] | default('') }}"
-    state: "{{ step['state'] | default('') }}"
-    sticky: "{{ step['sticky'] | default('') }}"
-
-- name: Manage YUM Repository
-  when: step['repo_type'] | lower == 'yum'
-  ansible.builtin.yum_repository:
-    async: "{{ step['async'] | default('') }}"
-    attributes: "{{ step['attributes'] | default('') }}"
-    bandwidth: "{{ step['bandwidth'] | default('') }}"
-    baseurl: "{{ step['baseurl'] | default('') }}"
-    cost: "{{ step['cost'] | default('') }}"
-    deltarpm_metadata_percentage: "{{ step['deltarpm_metadata_percentage'] | default('') }}"
-    deltarpm_percentage: "{{ step['deltarpm_percentage'] | default('') }}"
-    description: "{{ step['description'] | default('') }}"
-    enabled: "{{ step['enabled'] | default('') }}"
-    enablegroups: "{{ step['enablegroups'] | default('') }}"
-    exclude: "{{ step['exclude'] | default('') }}"
-    failovermethod: "{{ step['failovermethod'] | default('') }}"
-    file: "{{ step['file'] | default('') }}"
-    gpgcakey: "{{ step['gpgcakey'] | default('') }}"
-    gpgcheck: "{{ step['gpgcheck'] | default('') }}"
-    gpgkey: "{{ step['gpgkey'] | default('') }}"
-    group: "{{ step['group'] | default('') }}"
-    http_caching: "{{ step['http_caching'] | default('') }}"
-    include: "{{ step['include'] | default('') }}"
-    includepkgs: "{{ step['includepkgs'] | default('') }}"
-    ip_resolve: "{{ step['ip_resolve'] | default('') }}"
-    keepalive: "{{ step['keepalive'] | default('') }}"
-    keepcache: "{{ step['keepcache'] | default('') }}"
-    metadata_expire: "{{ step['metadata_expire'] | default('') }}"
-    metadata_expire_filter: "{{ step['metadata_expire_filter'] | default('') }}"
-    metalink: "{{ step['metalink'] | default('') }}"
-    mirrorlist: "{{ step['mirrorlist'] | default('') }}"
-    mirrorlist_expire: "{{ step['mirrorlist_expire'] | default('') }}"
-    mode: "{{ step['mode'] | default('') }}"
-    module_hotfixes: "{{ step['module_hotfixes'] | default('') }}"
-    name: "{{ step['name'] }}"
-    owner: "{{ step['owner'] | default('') }}"
-    password: "{{ step['password'] | default('') }}"
-    priority: "{{ step['priority'] | default('') }}"
-    protect: "{{ step['protect'] | default('') }}"
-    proxy: "{{ step['proxy'] | default('') }}"
-    proxy_password: "{{ step['proxy_password'] | default('') }}"
-    proxy_username: "{{ step['proxy_username'] | default('') }}"
-    repo_gpgcheck: "{{ step['repo_gpgcheck'] | default('') }}"
-    reposdir: "{{ step['reposdir'] | default('') }}"
-    retries: "{{ step['retries'] | default('') }}"
-    s3_enabled: "{{ step['s3_enabled'] | default('') }}"
-    selevel: "{{ step['selevel'] | default('') }}"
-    serole: "{{ step['serole'] | default('') }}"
-    setype: "{{ step['setype'] | default('') }}"
-    seuser: "{{ step['seuser'] | default('') }}"
-    skip_if_unavailable: "{{ step['skip_if_unavailable'] | default('') }}"
-    ssl_check_cert_permissions: "{{ step['ssl_check_cert_permissions'] | default('') }}"
-    sslcacert: "{{ step['sslcacert'] | default('') }}"
-    sslclientcert: "{{ step['sslclientcert'] | default('') }}"
-    sslclientkey: "{{ step['sslclientkey'] | default('') }}"
-    sslverify: "{{ step['sslverify'] | default('') }}"
-    state: "{{ step['state'] | default('') }}"
-    throttle: "{{ step['throttle'] | default('') }}"
-    timeout: "{{ step['timeout'] | default('') }}"
-    ui_repoid_vars: "{{ step['ui_repoid_vars'] | default('') }}"
-    unsafe_writes: "{{ step['unsafe_writes'] | default('') }}"
-    username: "{{ step['username'] | default('') }}"
-
-- name: Manage Zypper Repository
-  when: step['repo_type'] | lower == 'zypper'
-  community.general.zypper_repository:
-    auto_import_keys: "{{ step['auto_import_keys'] | default('') }}"
-    autorefresh: "{{ step['autorefresh'] | default('') }}"
-    description: "{{ step['description'] | default('') }}"
-    disable_gpg_check: "{{ step['disable_gpg_check'] | default('') }}"
-    enabled: "{{ step['enabled'] | default('') }}"
-    name: "{{ step['name'] }}"
-    overwrite_multiple: "{{ step['overwrite_multiple'] | default('') }}"
-    priority: "{{ step['priority'] | default('') }}"
-    repo: "{{ step['repo'] | default('') }}"
-    runrefresh: "{{ step['runrefresh'] | default('') }}"
-    state: "{{ step['state'] | default('') }}"
+- name: Install Required Repositories
+  vars:
+    # Get Repositories at different levels
+    os_repo_setup: "{{ deps_mgr_list[ansible_facts['os_family']] }}"
+    dist_repo_setup: "{{ os_repo_setup[ansible_facts['distribution']] }}"
+    maj_ver_repo_setup: "{{ dist_repo_setup[ansible_facts['distribution_major_version']] }}"
+    # *Merge through various methods
+    # Only get repositories from the lowest-level that lists them.
+    lowest_only_merge: "{{ maj_ver_repo_setup['repositories'] |
+                          default(dist_repo_setup['repositories']) |
+                          default(os_repo_setup['repositories']) |
+                          default([]) }}"
+    # Combine lists with precidence ordered from most precise to least.
+    precedence_merge: "{{ [os_repo_setup['repositories'] | default([]),
+                          dist_repo_setup['repositories'] | default([]),
+                          maj_ver_repo_setup['repositories'] | default([])]
+                          | community.general.lists_mergeby('name') }}"
+  loop: "{{ lookup('ansible.builtin.vars', deps_mgr_repo_merge_method ~ '_merge') }}"
+  loop_control:
+    loop_var: step
+  ansible.builtin.include_tasks:
+    file: "repository_types/{{ step['repo_type'] | lower }}.yml"

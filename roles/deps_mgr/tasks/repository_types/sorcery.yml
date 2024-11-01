@@ -1,0 +1,13 @@
+---
+# Requires community.general 7.3.0+
+# Non-grimoire related parameters excluded.
+- name: Manage Sorcery Grimoire
+  when: step['repo_type'] | lower == 'sorcery'
+  community.general.sorcery:
+    name: "{{ step['name'] | default(step['grimoire']) }}"
+    state: "{{ step['state'] | default('') }}"
+    # Module-specific Parameters
+    cache_valid_time: "{{ step['cache_valid_time'] | default() }}"
+    repository: "{{ step['repository'] | default('*') }}"
+    update: "{{ step['update'] | default('') }}"
+    update_cache: "{{ step['update_cache'] | default('') }}"

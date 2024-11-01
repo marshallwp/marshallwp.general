@@ -1,0 +1,14 @@
+---
+- name: Manage APT Repository
+  when: step['repo_type'] | lower == 'apt'
+  ansible.builtin.apt_repository:
+    codename: "{{ step['codename'] | default('') }}"
+    filename: "{{ step['filename'] | default('') }}"
+    install_python_apt: "{{ step['install_python_apt'] | default('') }}"
+    mode: "{{ step['mode'] | default('') }}"
+    repo: "{{ step['repo'] }}"
+    state: "{{ step['state'] | default('') }}"
+    update_cache: "{{ step['update_cache'] | default('') }}"
+    update_cache_retries: "{{ step['update_cache_retries'] | default('') }}"
+    update_cache_retry_max_delay: "{{ step['update_cache_retry_max_delay'] | default('') }}"
+    validate_certs: "{{ step['validate_certs'] | default('') }}"

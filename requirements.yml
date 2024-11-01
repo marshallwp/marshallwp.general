@@ -2,3 +2,4 @@
 collections:
   - name: community.general
     type: galaxy
+    version: ">=8.2.0"
