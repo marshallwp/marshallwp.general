@@ -5,39 +5,56 @@ releases:
   1.0.1:
     changes:
       bugfixes:
-      - 'Plugins - All output strings are now run through the included to_text function
-        to ensure proper encoding.
+        - 'Plugins - All output strings are now run through the included to_text function
+          to ensure proper encoding.
 
-        See: https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#string-encoding'
+          See: https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#string-encoding'
       doc_changes:
-      - LICENSE - corrected licensing to match reality.
-      - Plugins - Added documentation to all plugins.
-      - READMEs - Added parameter definitions, expanded on dependency usage, and eliminated
-        leftover templating cruft.
+        - LICENSE - corrected licensing to match reality.
+        - Plugins - Added documentation to all plugins.
+        - READMEs - Added parameter definitions, expanded on dependency usage, and eliminated
+          leftover templating cruft.
       release_summary: Update documentation collection-wide and make minor bugfixes
         to plugins.
     fragments:
-    - 2-correct-documentation.yml
+      - 2-correct-documentation.yml
     release_date: '2024-10-24'
   1.0.2:
     changes:
       bugfixes:
-      - deps_mgr - Quoted and bracketed the "state" variable.  This prevents unexpected
-        failures due to custom states.
+        - deps_mgr - Quoted and bracketed the "state" variable.  This prevents unexpected
+          failures due to custom states.
       release_summary: Fix package installation issues with custom state values.
     fragments:
-    - 3-quote-state-variable.yml
+      - 3-quote-state-variable.yml
     release_date: '2024-10-24'
   1.0.3:
     changes:
       bugfixes:
-      - deps_mgr - Quoted the name of the 'Make Packages' task in packages.yml so the state variable value is included.
+        - deps_mgr - Quoted the name of the 'Make Packages' task in packages.yml so
+          the state variable value is included.
       minor_changes:
-      - deps_mgr - You can now specify whether to use the `lowest_only` or `precision`
-        merge methods for packages and repositories.
-      release_summary: Allow the user to specify how different levels of the deps_mgr_list are
-        merged.
+        - deps_mgr - You can now specify whether to use the `lowest_only` or `precision`
+          merge methods for packages and repositories.
+      release_summary: Allow the user to specify how different levels of the deps_mgr_list
+        are merged.
     fragments:
-    - 4-quote-make-packages-name.yml
-    - 6-merge-method.yml
+      - 4-quote-make-packages-name.yml
+      - 6-merge-method.yml
     release_date: '2024-10-28'
+  1.1.0:
+    changes:
+      doc_changes:
+        - deps_mgr - Added a breakdown of `dep_mgr_list` syntax.
+        - deps_mgr - Added a list of common repository parameters.
+        - deps_mgr - Added documentation for the new repository types.
+      minor_changes:
+        - collection - new requirement that community.general be version 8.2.0 or later
+          to support community.general.dnf_conf_manager.
+        - deps_mgr - added support for apt, apt-repo, copr, and sorcery repositories/grimoires.
+        - deps_mgr - split repository module code into separate files for each type.  Moved
+          repo var generation to the repositories.yml file.
+      release_summary: Expanded the number of supported package managers and organized steps for using each one into its own file.
+    fragments:
+      - 10-refactor-and-improve-deps_mgr.yml
+    release_date: '2024-11-06'
