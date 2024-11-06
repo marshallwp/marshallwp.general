@@ -1,5 +1,5 @@
 ---
-- name: "Make Packages - {{ state }}"
+- name: Manage Packages by Desired State
   vars:
     # Get Raw Package Lists
     _os_packages: "{{ deps_mgr_list[ansible_facts['os_family']]['packages'] }}"
@@ -42,3 +42,4 @@
             | map(attribute='state') | ansible.builtin.unique }}"
   loop_control:
     loop_var: state
+    label: "{{ state }} packages"

@@ -4,6 +4,28 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.1.0
+======
+
+Release Summary
+---------------
+
+Expanded the number of supported package managers and organized steps for using each one into its own file.
+
+Minor Changes
+-------------
+
+- collection - new requirement that community.general be version 8.2.0 or later to support community.general.dnf_conf_manager.
+- deps_mgr - added support for apt, apt-repo, copr, and sorcery repositories/grimoires.
+- deps_mgr - split repository module code into separate files for each type.  Moved repo var generation to the repositories.yml file.
+
+Documentation Changes
+---------------------
+
+- deps_mgr - Added a breakdown of `dep_mgr_list` syntax.
+- deps_mgr - Added a list of common repository parameters.
+- deps_mgr - Added documentation for the new repository types.
+
 v1.0.3
 ======
 
@@ -20,7 +42,7 @@ Minor Changes
 Bugfixes
 --------
 
-- deps_mgr - Quoted the name of the 'Make Packages' task in packages.yml.
+- deps_mgr - Quoted the name of the 'Make Packages' task in packages.yml so the state variable value is included.
 
 v1.0.2
 ======
@@ -58,4 +80,3 @@ Documentation Changes
 
 v1.0.0
 ======
-

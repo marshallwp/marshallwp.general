@@ -5,7 +5,7 @@
 
 namespace: "marshallwp"
 name: "general"
-version: 1.0.3
+version: 1.1.0
 readme: README.md
 authors:
   - William P. Marshall
@@ -15,7 +15,7 @@ license_file: LICENSE
 # TO-DO: update the tags based on your content type
 tags: ["linux", "tools", "dirtree", "package", "repository"]
 dependencies:
-  "community.general": "*"
+  "community.general": ">=8.2.0"
 
 repository: http://github.com/marshallwp/marshallwp.general
 documentation: http://github.com/marshallwp/marshallwp.general
