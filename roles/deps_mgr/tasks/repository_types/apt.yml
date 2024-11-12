@@ -6,7 +6,7 @@
     filename: "{{ step['filename'] | default('') }}"
     install_python_apt: "{{ step['install_python_apt'] | default('') }}"
     mode: "{{ step['mode'] | default('') }}"
-    repo: "{{ step['repo'] }}"
+    repo: "{{ step['name'] }}"
     state: "{{ step['state'] | default('') }}"
     update_cache: "{{ step['update_cache'] | default('') }}"
     update_cache_retries: "{{ step['update_cache_retries'] | default('') }}"
