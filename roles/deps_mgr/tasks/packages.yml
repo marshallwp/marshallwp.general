@@ -1,30 +1,24 @@
 ---
 - name: Manage Packages by Desired State
   vars:
-    # Get Raw Package Lists
-    _os_packages: "{{ deps_mgr_list[ansible_facts['os_family']]['packages'] }}"
-    _dist_packages: "{{ deps_mgr_list[ansible_facts['os_family']][ansible_facts['distribution']]['packages'] }}"
-    _maj_ver_packages: "{{
-      deps_mgr_list[ansible_facts['os_family']][ansible_facts['distribution']][ansible_facts['distribution_major_version']]['packages']
-      }}"
-    # Normalize simple members into complex members with a state of 'present'
+    # Normalize simple members into complex members with a state of deps_mgr_package_default_state (default: present)
     os_packages: "{{
-        dict(_os_packages | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue='present'))
+        dict(os_deps['packages'] | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
         | ansible.builtin.dict2items(key_name='name', value_name='state')
-        | ansible.builtin.union(_os_packages | selectattr('name', 'defined') | list)
+        | ansible.builtin.union(os_deps['packages'] | selectattr('name', 'defined') | list)
       }}"
     dist_packages: "{{
-        dict(_dist_packages | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue='present'))
+        dict(dist_deps['packages'] | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
         | ansible.builtin.dict2items(key_name='name', value_name='state')
-        | ansible.builtin.union(_dist_packages | selectattr('name', 'defined') | list)
+        | ansible.builtin.union(dist_deps['packages'] | selectattr('name', 'defined') | list)
       }}"
     maj_ver_packages: "{{
-      dict(_maj_ver_packages | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue='present'))
+      dict(maj_ver_deps['packages'] | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
       | ansible.builtin.dict2items(key_name='name', value_name='state')
-      | ansible.builtin.union(_maj_ver_packages | selectattr('name', 'defined') | list)
+      | ansible.builtin.union(maj_ver_deps['packages'] | selectattr('name', 'defined') | list)
       }}"
     # *Merge lists through various methods
-    # Only get repositories from the lowest-level that lists them.
+    # Only get packages from the lowest-level that lists them.
     lowest_only_merge: "{{ maj_ver_packages |
                           default(dist_packages) |
                           default(os_packages) |
