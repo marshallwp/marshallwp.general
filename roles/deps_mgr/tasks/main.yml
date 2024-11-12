@@ -8,7 +8,7 @@
     dist_deps: "{{ os_deps[ansible_facts['distribution']] }}"
     maj_ver_deps: "{{ dist_deps[ansible_facts['distribution_major_version']] }}"
   block:
-    - name: Manage Required Repositories
+    - name: Manage Repositories
       vars:
         # *Merge through various methods
         # Only get repositories from the lowest-level that lists them.
