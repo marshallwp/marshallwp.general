@@ -1,8 +1,32 @@
 ---
-- name: Install Required Repositories
-  ansible.builtin.include_tasks:
-    file: repositories.yml
+# Only manages repositories and packages for package managers that ansible.builtin.package supports.
+# See PKG_MGRS definition on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/pkg_mgr.py
 
-- name: Manage Packages
-  ansible.builtin.include_tasks:
-    file: packages.yml
+- name: Manage Dependencies
+  vars:
+    os_deps: "{{ deps_mgr_list[ansible_facts['os_family']] }}"
+    dist_deps: "{{ os_deps[ansible_facts['distribution']] }}"
+    maj_ver_deps: "{{ dist_deps[ansible_facts['distribution_major_version']] }}"
+  block:
+    - name: Manage Required Repositories
+      vars:
+        # *Merge through various methods
+        # Only get repositories from the lowest-level that lists them.
+        lowest_only_merge: "{{ maj_ver_deps['repositories'] |
+                              default(dist_deps['repositories']) |
+                              default(os_deps['repositories']) |
+                              default([]) }}"
+        # Combine lists with precidence ordered from most precise to least.
+        precedence_merge: "{{ [os_deps['repositories'] | default([]),
+                              dist_deps['repositories'] | default([]),
+                              maj_ver_deps['repositories'] | default([])]
+                              | community.general.lists_mergeby('name') }}"
+      loop: "{{ lookup('ansible.builtin.vars', deps_mgr_repo_merge_method ~ '_merge') }}"
+      loop_control:
+        loop_var: step
+      ansible.builtin.include_tasks:
+        file: "repository_types/{{ step['repo_type'] | lower }}.yml"
+
+    - name: Manage Packages
+      ansible.builtin.include_tasks:
+        file: packages.yml
