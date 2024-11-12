@@ -31,7 +31,7 @@ Example Playbook
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
 ```yaml
-- name: Execute tasks on servers
+- name: Create Directory Tree Under /tmp
   hosts: servers
   roles:
     - role: marshallwp.general.dirtree
@@ -51,7 +51,7 @@ Including an example of how to use your role (for instance, with variables passe
 Another way to consume this role would be:
 
 ```yaml
-- name: Initialize the run role from marshallwp.general
+- name: Create Directory Tree Under ~
   hosts: servers
   gather_facts: false
   tasks:
@@ -59,7 +59,7 @@ Another way to consume this role would be:
       ansible.builtin.include_role:
         name: marshallwp.general.dirtree
       vars:
-        dirtree_root: /tmp
+        dirtree_root: ~
         dirtree_tree:
           dir1:
             subdir_lvl1:
