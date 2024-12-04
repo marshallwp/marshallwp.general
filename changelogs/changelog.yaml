@@ -1,24 +1,25 @@
 ancestor: null
 releases:
   1.0.0:
-    release_date: '2024-10-22'
+    release_date: "2024-10-22"
   1.0.1:
     changes:
       bugfixes:
-        - 'Plugins - All output strings are now run through the included to_text function
+        - "Plugins - All output strings are now run through the included to_text function
           to ensure proper encoding.
 
-          See: https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#string-encoding'
+          See: https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#string-encoding"
       doc_changes:
         - LICENSE - corrected licensing to match reality.
         - Plugins - Added documentation to all plugins.
         - READMEs - Added parameter definitions, expanded on dependency usage, and eliminated
           leftover templating cruft.
-      release_summary: Update documentation collection-wide and make minor bugfixes
+      release_summary:
+        Update documentation collection-wide and make minor bugfixes
         to plugins.
     fragments:
       - 2-correct-documentation.yml
-    release_date: '2024-10-24'
+    release_date: "2024-10-24"
   1.0.2:
     changes:
       bugfixes:
@@ -27,7 +28,7 @@ releases:
       release_summary: Fix package installation issues with custom state values.
     fragments:
       - 3-quote-state-variable.yml
-    release_date: '2024-10-24'
+    release_date: "2024-10-24"
   1.0.3:
     changes:
       bugfixes:
@@ -36,12 +37,13 @@ releases:
       minor_changes:
         - deps_mgr - You can now specify whether to use the `lowest_only` or `precision`
           merge methods for packages and repositories.
-      release_summary: Allow the user to specify how different levels of the deps_mgr_list
+      release_summary:
+        Allow the user to specify how different levels of the deps_mgr_list
         are merged.
     fragments:
       - 4-quote-make-packages-name.yml
       - 6-merge-method.yml
-    release_date: '2024-10-28'
+    release_date: "2024-10-28"
   1.1.0:
     changes:
       doc_changes:
@@ -54,7 +56,25 @@ releases:
         - deps_mgr - added support for apt, apt-repo, copr, and sorcery repositories/grimoires.
         - deps_mgr - split repository module code into separate files for each type.  Moved
           repo var generation to the repositories.yml file.
-      release_summary: Expanded the number of supported package managers and organized steps for using each one into its own file.
+      release_summary:
+        Expanded the number of supported package managers and organized
+        steps for using each one into its own file.
     fragments:
       - 10-refactor-and-improve-deps_mgr.yml
-    release_date: '2024-11-06'
+    release_date: "2024-11-06"
+  1.2.0:
+    changes:
+      bugfixes:
+        - deps_mgr - all repository management types now require `name` and ensure it
+          is mapped to a parameter. i.e., the previously documented behavior is now
+          enforced.
+      minor_changes:
+        - deps_mgr - added the new variable `deps_mgr_package_default_state`, which
+          allows users to set the default state for simple packages.
+      release_summary:
+        deps_mgr - Reduced duplicative labels, fixed issues with repository
+        name, added an option to change the default package state, and added integration
+        tests.
+    fragments:
+      - 11-improve-labeling.yml
+    release_date: "2024-12-04"
