@@ -1,0 +1,52 @@
+---
+# See: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/package_facts_module.html#id2
+- name: Ensure package_facts dependencies are present
+  ansible.builtin.package:
+    name: "{{ pkg_list | reject('equalto', omit) | list }}"
+    state: present
+  vars:
+    pkg_list:
+      - "{{ (ansible_facts['os_family'] == 'Debian') | ansible.builtin.ternary('python-apt', omit) }}"
+      - "{{ (ansible_facts['os_family'] == 'Suse') | ansible.builtin.ternary('python3-rpm', omit) }}"
+
+- name: Test deps_mgr precedence
+  block:
+    - name: Test deps_mgr package precedence
+      vars:
+        deps_mgr_package_merge_method: precedence
+      ansible.builtin.include_role:
+        name: marshallwp.general.deps_mgr
+    - name: Get Package Facts
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Packages Managed
+      ansible.builtin.assert:
+        that:
+          - "{{ 'hello' in ansible_facts['packages'] }}"
+          - "{{ 'hello-traditional' in ansible_facts['packages'] }}"
+
+- name: Cleanup Packages
+  ansible.builtin.package:
+    name: hello hello-traditional
+    state: absent
+
+- name: Test deps_mgr lowest_only
+  block:
+    - name: Test deps_mgr package precedence
+      vars:
+        deps_mgr_package_merge_method: lowest_only
+      ansible.builtin.include_role:
+        name: marshallwp.general.deps_mgr
+    - name: Get Package Facts
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Packages Managed
+      ansible.builtin.assert:
+        that:
+          - "{{ 'hello' in ansible_facts['packages'] }}"
+          - "{{ 'hello-traditional' not in ansible_facts['packages'] }}"
+
+- name: Cleanup Packages
+  ansible.builtin.package:
+    name: hello hello-traditional
+    state: absent

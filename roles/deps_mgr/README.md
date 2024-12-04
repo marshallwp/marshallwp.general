@@ -32,6 +32,7 @@ Role Variables
 | ---- | ----- | ----------- | ------- |
 | deps_mgr_package_merge_method | | Merge method to use when choosing what packages to manage and how. | precedence |
 | deps_mgr_repo_merge_method | | Merge method to use when choosing what repositories to manage and how. | lowest_only |
+| deps_mgr_package_default_state| | The default state to assign to packages with simple definitions (i.e. lacking properties).
 | deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |
 
 ### deps_mgr_list syntax
@@ -41,8 +42,8 @@ deps_mgr_list:  # alias: dependencies
   # packages and repositories can be provided at any and/or all of three selection levels.
   <os_family>: [<distribution>: [<distribution_major_version>:]]
     packages:
-      - <package_name>  # state is assumed to be "present"
-      - name: <package_name>
+      - <package_name>        # 'simple' package definition. State is set to deps_mgr_package_default_state
+      - name: <package_name>  # 'detailed' package definitions specify both the name and package state.
         state: <package_state>
     repositories:
       - repo_type: <repository_type>
@@ -133,7 +134,7 @@ Including an example of how to use your role (for instance, with variables passe
 Another way to consume this role would be:
 
 ```yaml
-- name: Initialize the run role from marshallwp.general
+- name: Install Postgres 16
   hosts: servers
   gather_facts: false
   tasks:

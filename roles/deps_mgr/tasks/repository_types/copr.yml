@@ -2,7 +2,7 @@
 - name: Manage Copr Repository
   when: step['repo_type'] | lower == 'copr'
   community.general.copr:
-    name: "{{ step['name'] | default('') }}"
+    name: "{{ step['name'] }}"
     state: "{{ step['state'] | default('') }}"
     # Module-specific Parameters
     chroot: "{{ step['chroot'] | default('') }}"

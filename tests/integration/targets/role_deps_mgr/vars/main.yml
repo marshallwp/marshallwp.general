@@ -1,0 +1,14 @@
+---
+deps_mgr_list:
+  Debian:
+    packages:
+      - hello-traditional
+      - name: hello
+        state: absent
+    Ubuntu:
+      repositories:
+        - repo_type: apt
+          name: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
+          state: present
+      packages:
+        - hello

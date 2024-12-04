@@ -4,6 +4,24 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.2.0
+======
+
+Release Summary
+---------------
+
+deps_mgr - Reduced duplicative labels, fixed issues with repository name, added an option to change the default package state, and added integration tests.
+
+Minor Changes
+-------------
+
+- deps_mgr - added the new variable `deps_mgr_package_default_state`, which allows users to set the default state for simple packages.
+
+Bugfixes
+--------
+
+- deps_mgr - all repository management types now require `name` and ensure it is mapped to a parameter. i.e., the previously documented behavior is now enforced.
+
 v1.1.0
 ======
 
@@ -80,3 +98,4 @@ Documentation Changes
 
 v1.0.0
 ======
+

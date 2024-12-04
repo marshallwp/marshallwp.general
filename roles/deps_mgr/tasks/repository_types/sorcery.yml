@@ -4,7 +4,7 @@
 - name: Manage Sorcery Grimoire
   when: step['repo_type'] | lower == 'sorcery'
   community.general.sorcery:
-    name: "{{ step['name'] | default(step['grimoire']) }}"
+    name: "{{ step['name'] }}"
     state: "{{ step['state'] | default('') }}"
     # Module-specific Parameters
     cache_valid_time: "{{ step['cache_valid_time'] | default() }}"

@@ -2,7 +2,7 @@
 - name: Manage Homebrew Repository
   when: step['repo_type'] | lower == 'homebrew'
   community.general.homebrew_tap:
-    name: "{{ step['name'] | default(step['tap']) }}"
+    name: "{{ step['name'] }}"
     state: "{{ step['state'] | default('') }}"
     # Module-specific Parameters
     path: "{{ step['path'] | default('') }}"
