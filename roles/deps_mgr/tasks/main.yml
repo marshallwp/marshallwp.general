@@ -1,4 +1,12 @@
 ---
+- name: Gather Required Facts if Missing
+  when: ansible_facts['distribution'] is not defined
+        or ansible_facts['distribution_major_version'] is not defined
+        or ansible_facts['os_family'] is not defined
+        or ansible_facts['pkg_mgr'] is not defined
+  ansible.builtin.setup:
+    gather_subset: ['distribution', 'distribution_major_version', 'os_family', 'pkg_mgr']
+
 # Only manages repositories and packages for package managers that ansible.builtin.package supports.
 # See PKG_MGRS definition on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/pkg_mgr.py
 
