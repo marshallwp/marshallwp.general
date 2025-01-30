@@ -32,8 +32,8 @@ Role Variables
 | ---- | ----- | ----------- | ------- |
 | deps_mgr_package_merge_method | | Merge method to use when choosing what packages to manage and how. | precedence |
 | deps_mgr_repo_merge_method | | Merge method to use when choosing what repositories to manage and how. | lowest_only |
-| deps_mgr_package_default_state| | The default state to assign to packages with simple definitions (i.e. lacking properties).
-| deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |
+| deps_mgr_package_default_state| | The default state to assign to packages with simple definitions (i.e. lacking properties). | present |
+| deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. | |
 
 ### deps_mgr_list syntax
 
@@ -59,10 +59,10 @@ If you have packages or repositories specified at multiple levels of the `deps_m
 | Method | Description |
 | ------ | ----------- |
 | lowest_only | The simplest method, it gets items from the most precise matching list and ignores all the others. |
-| precedence | Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
+| precedence | Combine lists with precedence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
 
 ### Common Repository Parameters
-To help make things more generic (and to simplify merging things together), I've adoped a few common parameters for repository management.
+To help make things more generic (and to simplify merging things together), I've adopted a few common parameters for repository management.
 
 | Term | Definition |
 | ---- | ---------- |

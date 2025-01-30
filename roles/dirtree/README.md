@@ -17,7 +17,7 @@ Role Variables
 | dirtree_root | The root directory the dirtree will be created in | `/` |
 | dirtree_owner | The owner of created directories.  Passed directly to `ansible.builtin.file` | `ansible_user_id` |
 | dirtree_group | The group of created directories.  Passed directly to `ansible.builtin.file` | `ansible_user_gid` |
-| dirtree_mode | The permissions the resulting directories should have. Can be set as ocals or in symbolic mode. | |
+| dirtree_mode | The permissions the resulting directories should have. Can be set as octals or in symbolic mode. | |
 | dirtree_tree | The nested dictionary defining the directory tree. | |
 
 Dependencies
