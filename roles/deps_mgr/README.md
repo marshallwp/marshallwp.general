@@ -1,15 +1,15 @@
 marshallwp.general deps_mgr Role
 ========================
 
-Manages OS packages and repositories at the os_family, distribution, and/or distribution_major_version level.  Repository management occurs first to ensure package management succeeds.  While package management commands are performed using the generic `ansible.builtin.package` module, repository management is performed by the command associated with the `method` specified for each repository entry.  As such, repository management is unfortunately platform-specific.
+Manages OS packages and repositories at the os_family, distribution, and/or distribution_major_version level.  Repository management occurs first to ensure package management succeeds.  While package management commands are performed using the generic `ansible.builtin.package` module, repository management is performed by the command(s) associated with the `method` specified for each repository entry.  As such, repository management is unfortunately platform-specific.
 
 All package management programs supported by `ansible.builtin.package` can be used for package management.  See the definition for the `PKG_MGRS` variable on [pkg_mgr.py](https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/pkg_mgr.py).
 
 Repository management is currently only supported by the following:
 
-| repo_type | Implementing Module |
-| --------- | ------------------- |
-| alpine | ansible.builtin |
+| repo_type | Implementing Module(s) |
+| --------- | ---------------------- |
+| alpine | [`ansible.builtin.get_url`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html), [`ansible.builtin.file`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html), & [`ansible.builtin.lineinfile`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html) |
 | apt-repo | [`community.general.apt_repo`](https://docs.ansible.com/ansible/latest/collections/community/general/apt_repo_module.html) |
 | apt | [`ansible.builtin.apt_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html) |
 | copr | [`community.general.copr`](https://docs.ansible.com/ansible/latest/collections/community/general/copr_module.html) |

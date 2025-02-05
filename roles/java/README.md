@@ -1,7 +1,9 @@
 marshallwp.general java Role
 ========================
 
-Installs Java from a variety of vendors and variants.  You can do a simple Default OpenJDK install, or you can install Oracle Java, or Oracle GraalVM, or the one from Azul, Microsoft, etc.
+Installs Java from a variety of vendors and variants.  You can do a simple Default OpenJDK install, or you can install Oracle Java, or Oracle GraalVM, or the one from Azul, Microsoft, etc.  Default settings are to install the headless OpenJDK JRE available in your distro's default repository.
+
+Repository-based installs are handled via the `marshallwp.general.deps_mgr` role, while non-repository-based installs are handled through the separate `download-and-install.yml` task file.  Repository-based management is preferred where possible.
 
 Requirements
 ------------
