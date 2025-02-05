@@ -1,12 +1,10 @@
 ---
-# Construct the Download and Checksum URLs for Oracle and GraalVM Installs
+# Download and verify archive-based installs
 # See: https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
 - name: Download {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version }}
-  vars:
-    download_url: "{{ java_archive_installers[java_vendor][java_variant]['url'] }}"
   ansible.builtin.get_url:
-    url: "{{ download_url }}"
-    checksum: "sha256:{{ download_url }}.sha256"
+    url: "{{ java_archive_installers[java_vendor][java_variant]['url'] }}"
+    checksum: "{{ java_archive_installers[java_vendor][java_variant]['checksum'] }}"
     dest: "{{ java_archive_path }}"
     owner: root
     group: root
@@ -14,7 +12,7 @@
 
 # For RPM and DEB installations/upgrades
 - name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }}
-  when: (java_archive_path | ansible.builtin.splitent)[1] in ['rpm','deb']
+  when: (java_archive_path | ansible.builtin.splitent)[1] != 'tar.gz'
   ansible.builtin.package:
     name: "{{ java_archive_path }}"
     state: latest
@@ -36,6 +34,7 @@
         family: "{{ java_family }}-java-{{ java_version }}.{{ ansible_architecture }}"
         link: "{{ java_install_directory }}"
     - name: Update Alternatives - java_sdk_{{ java_version }}
+      when: java_type == 'jdk'
       community.general.alternatives:
         name: "java_sdk_{{ java_version }}"
         family: "{{ java_family }}-java-{{ java_version }}.{{ ansible_architecture }}"
@@ -64,7 +63,6 @@
             path: "{{ (java_install_directory, 'bin', 'rmiregistry') | ansible.builtin.path_join }}"
 
 - name: Cleanup Downloaded File
-  when: java_family != 'openjdk'
   ansible.builtin.file:
     path: "{{ java_archive_path }}"
     state: absent

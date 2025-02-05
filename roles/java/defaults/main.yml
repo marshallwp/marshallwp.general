@@ -9,11 +9,14 @@ java_type: jre
 java_use_headless: true
 
 # Vendor of Java.  Default, Oracle, Azul, Microsoft, etc.
-# With Default, the vendor is not important.  You get whatever Java is included in your distro's default repos.
+# With Default, you get whatever Java is included in your distro's default repos.
 java_vendor: Default
 
 # Java Variant.  OpenJDK, Java, GraalVM, Prime, etc.
 java_variant: OpenJDK
 
 # Install directory for non-package-based installs.
-java_install_directory: "/usr/lib/jvm/jdk-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}"
+java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}"
+
+# Archive download directory for non-package-based installs.
+java_archive_download_dir: /tmp

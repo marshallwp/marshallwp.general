@@ -1,7 +1,8 @@
+# As it turns out, '-headless' (or the abscence thereof) is nearly universal for indicating a java package is headless.
 java_headless: "{{ (java_use_headless) | ansible.builtin.ternary('-headless', '') }}"
 
 java_packages:
-  Default:  # With Default, the vendor is not important.  You get whatever Java is included in your distro's default repos.
+  Default:  # With Default, you get whatever Java is included in your distro's default repos.
     OpenJDK:
       Alpine:
         packages:
@@ -24,6 +25,35 @@ java_packages:
       Suse:
         packages:
           - "java-{{ java_version }}-openjdk-{{ (java_type == 'jdk') | ansible.builtin.ternary('devel', java_headless) }}"
+  Amazon:
+    OpenJDK:  # a.k.a. Corretto
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: corretto
+            uris: https://apt.corretto.aws
+            suites: ['stable', 'main']
+            signed_by: https://apt.corretto.aws/corretto.key
+        packages:
+          - "java-{{ java_version }}-amazon-corretto-{{ java_type }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: AmazonCorretto
+            description: Amazon Corretto
+            baseurl: https://yum.corretto.aws/$basearch
+            gpgkey: https://yum.corretto.aws/corretto.key
+            gpgcheck: true
+        packages:
+          - "java-{{ java_version }}-amazon-corretto-devel"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: AmazonCorretto
+            repo: https://yum.corretto.aws/corretto.repo
+            auto_import_keys: true
+        packages:
+          - "java-{{ java_version }}-amazon-corretto-devel"
   Azul:
     OpenJDK:  # a.k.a. Zulu
       # https://docs.azul.com/core/install/debian
@@ -32,9 +62,7 @@ java_packages:
           - repo_type: deb822
             name: zulu-openjdk
             uris: 'https://repos.azul.com/zulu/deb'
-            suites:
-              - stable
-              - main
+            suites: ['stable', 'main']
             signed_by: 'https://repos.azul.com/azul-repo.key'
         packages:
           - "zulu{{ java_version }}-ca-{{ java_type }}{{ java_headless }}"
@@ -55,8 +83,72 @@ java_packages:
         repositories:
           - repo_type: zypper
             name: 'https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm'
+            auto_import_keys: true
         packages:
           - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
+  Bellsoft:
+    OpenJDK:
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name:
+            uris: https://apt.bell-sw.com/
+            suites: ['stable', 'main']
+            signed_by: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: BELLSOFT
+            description: BELLSOFT Repository
+            baseurl: https://yum.bell-sw.com
+            gpgkey: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
+            gpgcheck: true
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: BELLSOFT
+            repo: "https://yum.bell-sw.com"
+            auto_import_keys: true
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+  # https://adoptium.net/blog/2021/12/eclipse-temurin-linux-installers-available/
+  Eclipse:
+    OpenJDK:  # a.k.a. Temurin
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: adoptium
+            uris: https://packages.adoptium.net/artifactory/deb
+            suites:
+              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
+              - main
+            signed_by: https://packages.adoptium.net/artifactory/api/gpg/key/public
+        packages:
+          - apt-transport-https
+          - gnupg
+          - "temurin-{{ java_version }}-{{ java_type }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: adoptium
+            description: Adoptium
+            baseurl: "https://packages.adoptium.net/artifactory/rpm/{{ ansible_distribution | lower }}/$releasever/$basearch"
+            gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
+            gpgcheck: true
+        packages:
+          - "temurin-{{ java_version }}-{{ java_type }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: adoptium
+            repo: "https://packages.adoptium.net/artifactory/rpm/opensuse/$releasever/$basearch"
+            auto_import_keys: true
+        packages:
+          - "temurin-{{ java_version }}-{{ java_type }}"
   # https://learn.microsoft.com/en-us/java/openjdk/install
   Microsoft:
     OpenJDK:
@@ -72,9 +164,10 @@ java_packages:
         packages:
           - "msopenjdk-{{ java_version }}"
 
+
 # For installations that can not be managed by dependency_mgr
-java_oracle_arch: "{{ {'x86_64': 'x64'}[ansible_architecture] | default(ansible_architecture) }}"
 java_archive_installers:
+  Azul:
   # https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
   Oracle:
     GraalVM:
@@ -85,4 +178,10 @@ java_archive_installers:
         java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
         {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}"
 
-java_archive_path: "{{ ('/tmp', java_archive_installers[java_vendor][java_variant]['url'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
+# Full path of the downloaded archive file
+java_archive_path: "{{
+  (java_archive_download_dir, java_archive_installers[java_vendor][java_variant]['url'] | ansible.builtin.basename) | ansible.builtin.path_join
+  }}"
+
+# Oracle download files use weird architecture strings.
+java_oracle_arch: "{{ {'x86_64': 'x64'}[ansible_architecture] | default(ansible_architecture) }}"
