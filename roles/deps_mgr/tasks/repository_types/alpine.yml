@@ -1,0 +1,28 @@
+---
+# Alpine Repositories don't have a specific ansible role, but they're easy enough to manage.
+- name: Manage Alpine Repositories
+  when: step['repo_type'] | lower == 'alpine'
+  block:
+    - name: Add Repository Public Key
+      when:
+        - step['signed_by'] is defined
+        - step['state'] | default('present') != 'absent'
+      ansible.builtin.get_url:
+        dest: "{{ ('/etc','apk','keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
+        url: "{{ step['signed_by'] }}"
+        owner: root
+        group: root
+    - name: Remove Repository Public Key
+      when:
+        - step['signed_by'] is defined
+        - step['state'] | default('present') == 'absent'
+      ansible.builtin.file:
+        path: "{{ ('/etc','apk','keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
+        state: 'absent'
+
+    - name: Manage Repository URL
+      ansible.builtin.lineinfile:
+        path: '/etc/apk/repositories'
+        line: "{{ step['name'] }}"
+        search_string: "{{ step['name'] }}"
+        state: "{{ step['state'] | default('present') }}"
