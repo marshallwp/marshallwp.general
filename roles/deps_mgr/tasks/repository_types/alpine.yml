@@ -8,7 +8,7 @@
         - step['signed_by'] is defined
         - step['state'] | default('present') != 'absent'
       ansible.builtin.get_url:
-        dest: "{{ ('/etc','apk','keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
+        dest: "{{ ('/etc', 'apk', 'keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
         url: "{{ step['signed_by'] }}"
         owner: root
         group: root
@@ -17,7 +17,7 @@
         - step['signed_by'] is defined
         - step['state'] | default('present') == 'absent'
       ansible.builtin.file:
-        path: "{{ ('/etc','apk','keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
+        path: "{{ ('/etc', 'apk', 'keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
         state: 'absent'
 
     - name: Manage Repository URL
