@@ -166,17 +166,22 @@ java_packages:
 
 
 # For installations that can not be managed by dependency_mgr
-java_archive_installers:
+java_archives:
   Azul:
   # https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
   Oracle:
     GraalVM:
       url: "https://download.oracle.com/graalvm/{{ java_version }}/latest/graalvm-jdk-{{
         java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.tar.gz"
-    Oracle:
+      checksum: "sha256:https://download.oracle.com/graalvm/{{ java_version }}/latest/graalvm-jdk-{{
+        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.tar.gz.sha256"
+    Java:
       url: "https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
         java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
         {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}"
+      checksum: "sha256:https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
+        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
+        {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}.sha256"
 
 # Full path of the downloaded archive file
 java_archive_path: "{{
