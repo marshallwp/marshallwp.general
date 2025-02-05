@@ -21,10 +21,10 @@ java_packages:
           - "openjdk{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-jre', '') }}"
       RedHat:
         packages:
-          - "java-{{ java_version }}-openjdk-{{ (java_type == 'jdk') | ansible.builtin.ternary('devel', java_headless) }}"
+          - "java-{{ java_version }}-openjdk-{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, 'devel') }}"
       Suse:
         packages:
-          - "java-{{ java_version }}-openjdk-{{ (java_type == 'jdk') | ansible.builtin.ternary('devel', java_headless) }}"
+          - "java-{{ java_version }}-openjdk-{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, 'devel') }}"
   Amazon:
     OpenJDK:  # a.k.a. Corretto
       Debian:
