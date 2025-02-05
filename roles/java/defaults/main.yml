@@ -1,0 +1,19 @@
+---
+# Default Java Version.  Should always be a supported version of java.
+java_version: 21
+
+# Valid values are JRE or JDK.  JRE is not available for all vendors and variants.
+java_type: jre
+
+# Headless variants exclude GUI components and are good for terminal-only servers.
+java_use_headless: true
+
+# Vendor of Java.  Default, Oracle, Azul, Microsoft, etc.
+# With Default, the vendor is not important.  You get whatever Java is included in your distro's default repos.
+java_vendor: Default
+
+# Java Variant.  OpenJDK, Java, GraalVM, Prime, etc.
+java_variant: OpenJDK
+
+# Install directory for non-package-based installs.
+java_install_directory: "/usr/lib/jvm/jdk-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}"

@@ -1,0 +1,70 @@
+---
+# Construct the Download and Checksum URLs for Oracle and GraalVM Installs
+# See: https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
+- name: Download {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version }}
+  vars:
+    download_url: "{{ java_archive_installers[java_vendor][java_variant]['url'] }}"
+  ansible.builtin.get_url:
+    url: "{{ download_url }}"
+    checksum: "sha256:{{ download_url }}.sha256"
+    dest: "{{ java_archive_path }}"
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=r
+
+# For RPM and DEB installations/upgrades
+- name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }}
+  when: (java_archive_path | ansible.builtin.splitent)[1] in ['rpm','deb']
+  ansible.builtin.package:
+    name: "{{ java_archive_path }}"
+    state: latest
+
+# For tar.gz installations
+- name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Archive' }}
+  when: (java_archive_path | ansible.builtin.splitent)[1] == 'tar.gz'
+  block:
+    - name: Extract {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version }}
+      ansible.builtin.unarchive:
+        src: "{{ java_archive_path }}"
+        dest: "{{ java_install_directory }}"
+        owner: root
+        group: root
+        mode: "u=rwx,g=rx,o=x"
+    - name: Update Alternatives - jre_{{ java_version }}
+      community.general.alternatives:
+        name: "jre_{{ java_version }}"
+        family: "{{ java_family }}-java-{{ java_version }}.{{ ansible_architecture }}"
+        link: "{{ java_install_directory }}"
+    - name: Update Alternatives - java_sdk_{{ java_version }}
+      community.general.alternatives:
+        name: "java_sdk_{{ java_version }}"
+        family: "{{ java_family }}-java-{{ java_version }}.{{ ansible_architecture }}"
+        link: "{{ java_install_directory }}"
+    - name: Update Alternatives - java
+      community.general.alternatives:
+        name: java
+        family: "{{ java_family }}-java-{{ java_version }}.{{ ansible_architecture }}"
+        link: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
+        state: auto
+        subcommands:
+          - name: jre
+            link: "{{ (java_install_directory | ansible.builtin.normpath | ansible.builtin.dirname, 'jre') | ansible.builtin.path_join }}"
+            path: "{{ java_install_directory }}"
+          - name: alt-java
+            link: /usr/bin/alt-java
+            path: "{{ (java_install_directory, 'bin', 'alt-java') | ansible.builtin.path_join }}"
+          - name: jcmd
+            link: /usr/bin/jcmd
+            path: "{{ (java_install_directory, 'bin', 'jconsole') | ansible.builtin.path_join }}"
+          - name: keytool
+            link: /usr/bin/keytool
+            path: "{{ (java_install_directory, 'bin', 'keytool') | ansible.builtin.path_join }}"
+          - name: rmiregistry
+            link: /usr/bin/rmiregistry
+            path: "{{ (java_install_directory, 'bin', 'rmiregistry') | ansible.builtin.path_join }}"
+
+- name: Cleanup Downloaded File
+  when: java_family != 'openjdk'
+  ansible.builtin.file:
+    path: "{{ java_archive_path }}"
+    state: absent

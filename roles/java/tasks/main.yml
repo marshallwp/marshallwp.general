@@ -1,0 +1,16 @@
+---
+# TODO: Make this work in a more generic manner instead of calling out Oracle's non OpenJDK builds for different treatment.
+
+- name: Install Java from Repository
+  when: java_variant == 'OpenJDK' or java_vendor != 'Oracle'
+  ansible.builtin.include_role:
+    name: marshallwp.general.deps_mgr
+  vars:
+    deps_mgr_list: "{{ java_packages[java_vendor][java_variant] }}"
+
+- name: Install Java from Downloaded Package
+  when:
+    - java_vendor == 'Oracle'
+    - java_variant != 'OpenJDK'
+  ansible.builtin.include_tasks:
+    file: install-from-package.yml
