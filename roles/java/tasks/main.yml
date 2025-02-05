@@ -1,6 +1,4 @@
 ---
-# TODO: Make this work in a more generic manner instead of calling out Oracle's non OpenJDK builds for different treatment.
-
 - name: Install Java from Repository
   when: java_packages[java_vendor][java_variant] != None
   ansible.builtin.include_role:
@@ -11,4 +9,4 @@
 - name: Non-Repository Download and Install
   when: java_archives[java_vendor][java_variant] != None
   ansible.builtin.include_tasks:
-    file: install-from-archive.yml
+    file: download-and-install.yml
