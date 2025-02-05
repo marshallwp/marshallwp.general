@@ -26,6 +26,7 @@ java_packages:
         packages:
           - "java-{{ java_version }}-openjdk-{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, 'devel') }}"
   Amazon:
+    # https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/generic-linux-install.html
     OpenJDK:  # a.k.a. Corretto
       Debian:
         repositories:
@@ -46,6 +47,10 @@ java_packages:
             gpgcheck: true
         packages:
           - "java-{{ java_version }}-amazon-corretto-devel"
+        # https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/amazon-linux-install.html
+        Amazon:
+          packages:
+            - "java-{{ java_version }}-amazon-corretto{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, 'devel') }}"
       Suse:
         repositories:
           - repo_type: zypper
@@ -167,7 +172,6 @@ java_packages:
 
 # For installations that can not be managed by dependency_mgr
 java_archives:
-  Azul:
   # https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
   Oracle:
     GraalVM:
