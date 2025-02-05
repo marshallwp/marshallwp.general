@@ -105,6 +105,37 @@ java_packages:
             auto_import_keys: true
         packages:
           - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
+    Zing:
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: zing
+            uris: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}"
+            suites:
+              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
+              - main
+            signed_by: https://repos.azul.com/azul-repo.key
+        packages:
+          - "zing-jdk{{ java_version }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: zing
+            description: zing-$releasever - Azul Systems Inc., Zing packages for $basearch
+            baseurl: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}/current/$basearch"
+            gpgkey: https://repos.azul.com/azul-repo.key
+            gpgcheck: true
+            protect: true
+        packages:
+          - "zing-jdk{{ java_version }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: zing
+            repo: https://repos.azul.com/zing/sles/$releasever/$basearch
+            auto_import_keys: true
+        packages:
+          - "zing-jdk{{ java_version }}"
   Bellsoft:
     OpenJDK:
       Alpine:
