@@ -9,6 +9,7 @@ Repository management is currently only supported by the following:
 
 | repo_type | Implementing Module |
 | --------- | ------------------- |
+| alpine | ansible.builtin |
 | apt-repo | [`community.general.apt_repo`](https://docs.ansible.com/ansible/latest/collections/community/general/apt_repo_module.html) |
 | apt | [`ansible.builtin.apt_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html) |
 | copr | [`community.general.copr`](https://docs.ansible.com/ansible/latest/collections/community/general/copr_module.html) |
