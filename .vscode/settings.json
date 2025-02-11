@@ -3,5 +3,7 @@
     "files.associations": {
         "*.j2": "ansible-jinja",
         "*.yml": "ansible"
-    }
+    },
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true
 }

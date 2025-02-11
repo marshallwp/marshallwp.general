@@ -1,0 +1,28 @@
+---
+# Default Java Version.  Should always be a supported version of java.
+java_version: 21
+
+# Valid values are JRE or JDK.  JRE is not available for all vendors and variants.
+java_type: jre
+
+# Headless variants exclude GUI components and are good for terminal-only servers.
+java_use_headless: true
+
+# Vendor of Java.  Default, Oracle, Azul, Microsoft, etc.
+# With Default, you get whatever Java is included in your distro's default repos.
+java_vendor: Default
+
+# Java Variant.  OpenJDK, Java, GraalVM, Prime, etc.
+java_variant: OpenJDK
+
+# Install directory for non-repository-based installs.
+java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}"
+
+# Archive download directory for non-repository-based installs.
+java_archive_download_dir: /tmp
+
+
+# When not installing from a repository, file extension will determine whether a file is
+# installed via ansible.builtin.package or extracted via ansible.builtin.unarchive.
+# Files with extensions matching this list will go through the latter process.
+java_archive_exts: ['.bz2', '.tbz', '.gz', '.tgz', '.lz', '.lzma', '.tlz', '.xz', '.txz', '.zst', '.tzst']

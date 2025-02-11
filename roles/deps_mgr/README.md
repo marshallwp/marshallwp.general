@@ -1,14 +1,15 @@
 marshallwp.general deps_mgr Role
 ========================
 
-Manages OS packages and repositories at the os_family, distribution, and/or distribution_major_version level.  Repository management occurs first to ensure package management succeeds.  While package management commands are performed using the generic `ansible.builtin.package` module, repository management is performed by the command associated with the `method` specified for each repository entry.  As such, repository management is unfortunately platform-specific.
+Manages OS packages and repositories at the os_family, distribution, and/or distribution_major_version level.  Repository management occurs first to ensure package management succeeds.  While package management commands are performed using the generic `ansible.builtin.package` module, repository management is performed by the command(s) associated with the `method` specified for each repository entry.  As such, repository management is unfortunately platform-specific.
 
 All package management programs supported by `ansible.builtin.package` can be used for package management.  See the definition for the `PKG_MGRS` variable on [pkg_mgr.py](https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/pkg_mgr.py).
 
 Repository management is currently only supported by the following:
 
-| repo_type | Implementing Module |
-| --------- | ------------------- |
+| repo_type | Implementing Module(s) |
+| --------- | ---------------------- |
+| alpine | [`ansible.builtin.get_url`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html), [`ansible.builtin.file`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html), & [`ansible.builtin.lineinfile`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html) |
 | apt-repo | [`community.general.apt_repo`](https://docs.ansible.com/ansible/latest/collections/community/general/apt_repo_module.html) |
 | apt | [`ansible.builtin.apt_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html) |
 | copr | [`community.general.copr`](https://docs.ansible.com/ansible/latest/collections/community/general/copr_module.html) |
@@ -32,8 +33,8 @@ Role Variables
 | ---- | ----- | ----------- | ------- |
 | deps_mgr_package_merge_method | | Merge method to use when choosing what packages to manage and how. | precedence |
 | deps_mgr_repo_merge_method | | Merge method to use when choosing what repositories to manage and how. | lowest_only |
-| deps_mgr_package_default_state| | The default state to assign to packages with simple definitions (i.e. lacking properties).
-| deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |
+| deps_mgr_package_default_state| | The default state to assign to packages with simple definitions (i.e. lacking properties). | present |
+| deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. | |
 
 ### deps_mgr_list syntax
 
@@ -59,10 +60,10 @@ If you have packages or repositories specified at multiple levels of the `deps_m
 | Method | Description |
 | ------ | ----------- |
 | lowest_only | The simplest method, it gets items from the most precise matching list and ignores all the others. |
-| precedence | Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
+| precedence | Combine lists with precedence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones. |
 
 ### Common Repository Parameters
-To help make things more generic (and to simplify merging things together), I've adoped a few common parameters for repository management.
+To help make things more generic (and to simplify merging things together), I've adopted a few common parameters for repository management.
 
 | Term | Definition |
 | ---- | ---------- |

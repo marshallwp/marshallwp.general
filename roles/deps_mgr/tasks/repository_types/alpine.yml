@@ -1,0 +1,49 @@
+---
+# Alpine Repositories don't have a specific ansible role, but they're easy enough to manage.
+# Parameters:
+#   name: repository url. called such for consistency with other repos.
+#   state: the desired state of the repository. Can be 'present' or 'absent'.
+#   signed_by: the URL or path of a file on the controller to copy over as the public key.
+- name: Manage Alpine Repository Public Key
+  when:
+    - step['repo_type'] | lower == 'alpine'
+    - step['signed_by'] is defined
+  vars:
+    dest_path: "{{ ('/etc', 'apk', 'keys', step['signed_by'] | ansible.builtin.basename) | ansible.builtin.path_join }}"
+  block:
+    - name: Download Public Key from URL
+      when:
+        - step['state'] | default('present') != 'absent'
+        - step['signed_by'] is ansible.builtin.url
+      ansible.builtin.get_url:
+        dest: "{{ dest_path }}"
+        url: "{{ step['signed_by'] }}"
+        owner: root
+        group: root
+        mode: 'u=rw,g=r,o=r'
+
+    - name: Copy Local Public Key to Node
+      when:
+        - step['state'] | default('present') != 'absent'
+        - step['signed_by'] is ansible.builtin.file # This specifically refers to files on the controller filesystem.
+      ansible.builtin.copy:
+        src: "{{ step['signed_by'] }}"
+        dest: "{{ dest_path }}"
+        owner: root
+        group: root
+        mode: 'u=rw,g=r,o=r'
+
+    - name: Remove Repository Public Key
+      when: step['state'] | default('present') == 'absent'
+      ansible.builtin.file:
+        path: "{{ dest_path }}"
+        state: 'absent'
+
+
+- name: Manage Alpine Repository
+  when: step['repo_type'] | lower == 'alpine'
+  ansible.builtin.lineinfile:
+    path: '/etc/apk/repositories'
+    line: "{{ step['name'] }}"
+    search_string: "{{ step['name'] }}"
+    state: "{{ step['state'] | default('present') }}"

@@ -1,0 +1,256 @@
+# As it turns out, '-headless' (or the abscence thereof) is nearly universal for indicating a java package is headless.
+java_headless: "{{ (java_use_headless) | ansible.builtin.ternary('-headless', '') }}"
+
+# java_packages is split by java_vendor and java_variant, before the remainder is passed as a deps_mgr_list to marshallwp.general.deps_mgr
+java_packages:
+  Default:  # With Default, you get whatever Java is included in your distro's default repos.
+    OpenJDK:
+      Alpine:
+        packages:
+          - "openjdk{{ java_version }}-{{ (java_type == 'jre') | ansible.builtin.ternary('jre'~java_headless, 'jdk') }}"
+      Altlinux:
+        packages:
+          - "java-{{ java_version }}-openjdk-{{ (java_type == 'jre') | ansible.builtin.ternary('headless', 'devel') }}"
+      Archlinux:
+        packages:
+          - "{{ java_type }}{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '') }}"
+      Debian:
+        packages:
+          - "openjdk-{{ java_version }}-{{ java_type }}{{ java_headless }}"
+      FreeBSD:
+        packages:
+          - "openjdk{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-jre', '') }}"
+      RedHat:
+        packages:
+          - "java-{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '-devel') }}"
+      Suse:
+        packages:
+          - "java-{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '-devel') }}"
+  Amazon:
+    # https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/generic-linux-install.html
+    OpenJDK:  # a.k.a. Corretto
+      Alpine:
+        repositories:
+          - repo_type: alpine
+            name: https://apk.corretto.aws/
+            signed_by: https://apk.corretto.aws/amazoncorretto.rsa.pub
+        packages:
+          - "amazon-corretto-{{ java_version }}"
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: corretto
+            uris: https://apt.corretto.aws
+            suites: ['stable', 'main']
+            signed_by: https://apt.corretto.aws/corretto.key
+        packages:
+          - "java-{{ java_version }}-amazon-corretto-{{ java_type }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: AmazonCorretto
+            description: Amazon Corretto
+            baseurl: https://yum.corretto.aws/$basearch
+            gpgkey: https://yum.corretto.aws/corretto.key
+            gpgcheck: true
+        packages:
+          - "java-{{ java_version }}-amazon-corretto-devel"
+        # https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/amazon-linux-install.html
+        Amazon:
+          packages:
+            - "java-{{ java_version }}-amazon-corretto{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, 'devel') }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: AmazonCorretto
+            repo: https://yum.corretto.aws/corretto.repo
+            auto_import_keys: true
+        packages:
+          - "java-{{ java_version }}-amazon-corretto-devel"
+  Azul:
+    OpenJDK:  # a.k.a. Zulu
+      Alpine:
+        repositories:
+          - repo_type: alpine
+            name: https://repos.azul.com/zulu/alpine
+            signed_by: https://cdn.azul.com/public_keys/alpine-signing@azul.com-5d5dc44c.rsa.pub
+        packages:
+          - "zulu{{ java_version }}-{{ java_type }}"
+      # https://docs.azul.com/core/install/debian
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: zulu-openjdk
+            uris: 'https://repos.azul.com/zulu/deb'
+            suites: ['stable', 'main']
+            signed_by: 'https://repos.azul.com/azul-repo.key'
+        packages:
+          - "zulu{{ java_version }}-ca-{{ java_type }}{{ java_headless }}"
+      # https://docs.azul.com/core/install/rpm-based-linux
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: zulu-openjdk
+            description: zulu-openjdk - Azul Systems Inc., Zulu packages
+            baseurl: 'https://repos.azul.com/zulu/rpm'
+            gpgkey: 'https://assets.azul.com/files/0xB1998361219BD9C9.txt'
+            gpgcheck: true
+            protect: true
+        packages:
+          - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
+      # https://docs.azul.com/core/install/rpm-based-linux
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: 'https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm'
+            auto_import_keys: true
+        packages:
+          - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
+    Zing:
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: zing
+            uris: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}"
+            suites:
+              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
+              - main
+            signed_by: https://repos.azul.com/azul-repo.key
+        packages:
+          - "zing-jdk{{ java_version }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: zing
+            description: zing-$releasever - Azul Systems Inc., Zing packages for $basearch
+            baseurl: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}/current/$basearch"
+            gpgkey: https://repos.azul.com/azul-repo.key
+            gpgcheck: true
+            protect: true
+        packages:
+          - "zing-jdk{{ java_version }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: zing
+            repo: https://repos.azul.com/zing/sles/$releasever/$basearch
+            auto_import_keys: true
+        packages:
+          - "zing-jdk{{ java_version }}"
+  Bellsoft:
+    OpenJDK:  # a.k.a. Liberica
+      Alpine:
+        repositories:
+          - repo_type: alpine
+            name: https://apk.bell-sw.com/main
+            signed_by: https://apk.bell-sw.com/info@bell-sw.com-5fea454e.rsa.pub
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: BELLSOFT
+            uris: https://apt.bell-sw.com/
+            suites: ['stable', 'main']
+            signed_by: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: BELLSOFT
+            description: BELLSOFT Repository
+            baseurl: https://yum.bell-sw.com
+            gpgkey: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
+            gpgcheck: true
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: BELLSOFT
+            repo: "https://yum.bell-sw.com"
+            auto_import_keys: true
+        packages:
+          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+  # https://adoptium.net/blog/2021/12/eclipse-temurin-linux-installers-available/
+  Eclipse:
+    OpenJDK:  # a.k.a. Temurin
+      Alpine:
+        repositories:
+          - repo_type: alpine
+            name: https://packages.adoptium.net/artifactory/apk/alpine/main
+            signed_by: https://packages.adoptium.net/artifactory/api/security/keypair/public/repositories/apk
+        packages:
+          - "temurin-{{ java_version }}-{{ java_type }}"
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: adoptium
+            uris: https://packages.adoptium.net/artifactory/deb
+            suites:
+              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
+              - main
+            signed_by: https://packages.adoptium.net/artifactory/api/gpg/key/public
+        packages:
+          - apt-transport-https
+          - gnupg
+          - "temurin-{{ java_version }}-{{ java_type }}"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: adoptium
+            description: Adoptium
+            baseurl: "https://packages.adoptium.net/artifactory/rpm/{{ ansible_distribution | lower }}/$releasever/$basearch"
+            gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
+            gpgcheck: true
+        packages:
+          - "temurin-{{ java_version }}-{{ java_type }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: adoptium
+            repo: "https://packages.adoptium.net/artifactory/rpm/opensuse/$releasever/$basearch"
+            auto_import_keys: true
+        packages:
+          - "temurin-{{ java_version }}-{{ java_type }}"
+  # https://learn.microsoft.com/en-us/java/openjdk/install
+  Microsoft:
+    OpenJDK:
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: microsoft-prod
+            baseurl: "https://packages.microsoft.com/packages/debian/{{ ansible_facts['distribution_major_version'] }}/prod"
+            suites:
+              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
+              - main
+            signed_by: https://packages.microsoft.com/keys/microsoft.asc
+        packages:
+          - "msopenjdk-{{ java_version }}"
+
+
+# For installations that can not be managed by dependency_mgr
+java_archives:
+  # https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
+  Oracle:
+    GraalVM:
+      url: "https://download.oracle.com/graalvm/{{ java_version }}/latest/graalvm-jdk-{{
+        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.tar.gz"
+      checksum: "sha256:https://download.oracle.com/graalvm/{{ java_version }}/latest/graalvm-jdk-{{
+        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.tar.gz.sha256"
+    Java:
+      url: "https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
+        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
+        {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}"
+      checksum: "sha256:https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
+        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
+        {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}.sha256"
+
+# Full path of the downloaded archive file
+java_archive_path: "{{
+  (java_archive_download_dir, java_archive_installers[java_vendor][java_variant]['url'] | ansible.builtin.basename) | ansible.builtin.path_join
+  }}"
+
+# Oracle download files use weird architecture strings.
+java_oracle_arch: "{{ {'x86_64': 'x64'}[ansible_architecture] | default(ansible_architecture) }}"
