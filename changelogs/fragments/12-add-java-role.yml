@@ -1,5 +1,7 @@
 minor_changes:
-  - deps_mgr - will now gather required facts (and only those facts) if they are missing. This will allow the role to work if the playbook has``gather_facts: false`` or an incompatible ``gather_subset`` setting.
+  - >-
+    deps_mgr - will now gather required facts if they are missing. This allows the role to work
+    if the playbook has``gather_facts: false`` or an incompatible ``gather_subset`` setting.
   - deps_mgr - alpine repositories now support copying the public key from the controller instead of downloading from a URL.
 
 doc_changes:
