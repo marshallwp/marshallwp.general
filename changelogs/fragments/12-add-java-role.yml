@@ -1,0 +1,5 @@
+minor_changes:
+  - deps_mgr - will now gather required facts (and only those facts) if they are missing. This should allow the role to work even if the playbook has ``gather_facts: false`` or an incompatible ``gather_subset`` setting.
+
+doc_changes:
+  - deps_mgr - updated the README.md to fix spelling and formatting errors.
