@@ -25,4 +25,4 @@ java_archive_download_dir: /tmp
 # When not installing from a repository, file extension will determine whether a file is
 # installed via ansible.builtin.package or extracted via ansible.builtin.unarchive.
 # Files with extensions matching this list will go through the latter process.
-java_archive_exts: ['.bz2','.tbz','.gz','.tgz','.lz','.lzma','.tlz','.xz','.txz','.zst','.tzst']
+java_archive_exts: ['.bz2', '.tbz', '.gz', '.tgz', '.lz', '.lzma', '.tlz', '.xz', '.txz', '.zst', '.tzst']

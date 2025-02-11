@@ -11,7 +11,7 @@
     mode: u=rwx,g=rx,o=r
 
 # For Package-based installations/upgrades
-- name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }}
+- name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }} # noqa: package-latest
   when: (java_archive_path | ansible.builtin.splitent)[1] not in java_archive_exts
   ansible.builtin.package:
     name: "{{ java_archive_path }}"
