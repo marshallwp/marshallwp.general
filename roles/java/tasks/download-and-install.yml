@@ -23,7 +23,7 @@
   vars:
     # Only RedHat-based distros support the family parameter.
     alternatives_family: "{{ (ansible_facts['os_family'] == 'RedHat') | ansible.builtin.ternary(
-      java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_architecture, None)}}"
+      java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_architecture, undef())}}"
   block:
     - name: Extract {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version }}
       ansible.builtin.unarchive:
@@ -35,18 +35,18 @@
     - name: Update Alternatives - jre_{{ java_version }}
       community.general.alternatives:
         name: "jre_{{ java_version }}"
-        family: "{{ alternatives_family }}"
+        family: "{{ alternatives_family | default() }}"
         link: "{{ java_install_directory }}"
     - name: Update Alternatives - java_sdk_{{ java_version }}
       when: java_type == 'jdk'
       community.general.alternatives:
         name: "java_sdk_{{ java_version }}"
-        family: "{{ alternatives_family }}"
+        family: "{{ alternatives_family | default() }}"
         link: "{{ java_install_directory }}"
     - name: Update Alternatives - java (JRE)
       community.general.alternatives:
         name: java
-        family: "{{ alternatives_family }}"
+        family: "{{ alternatives_family | default() }}"
         link: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
         state: auto
         subcommands:
@@ -63,7 +63,7 @@
       when: java_type == 'jdk'
       community.general.alternatives:
         name: java
-        family: "{{ alternatives_family }}"
+        family: "{{ alternatives_family | default() }}"
         link: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
         state: auto
         subcommands:
