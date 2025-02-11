@@ -4,6 +4,25 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.3.0
+======
+
+Release Summary
+---------------
+
+Added a new Java role and made minor enhancements to deps_mgr.
+
+Minor Changes
+-------------
+
+- deps_mgr - alpine repositories now support copying the public key from the controller instead of downloading from a URL.
+- deps_mgr - will now gather required facts if they are missing. This allows the role to work if the playbook has``gather_facts: false`` or an incompatible ``gather_subset`` setting.
+
+Documentation Changes
+---------------------
+
+- deps_mgr - updated the README.md to fix spelling and formatting errors.
+
 v1.2.0
 ======
 
