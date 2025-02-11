@@ -1,0 +1,29 @@
+---
+# See: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/package_facts_module.html#id2
+- name: Ensure package_facts dependencies are present
+  ansible.builtin.package:
+    name: "{{ pkg_list | reject('equalto', omit) | list }}"
+    state: present
+  vars:
+    pkg_list:
+      - "{{ (ansible_facts['os_family'] == 'Debian') | ansible.builtin.ternary('python-apt', omit) }}"
+      - "{{ (ansible_facts['os_family'] == 'Suse') | ansible.builtin.ternary('python3-rpm', omit) }}"
+
+- name: Test Java Default Installation from Repository
+  block:
+    - name: Test java installation
+      ansible.builtin.include_role:
+        name: marshallwp.general.java
+        public: true
+    - name: Get Package Facts
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Package Present
+      ansible.builtin.assert:
+        that:
+          - "{{ java_packages[java_vendor][java_variant][ansible_facts['os_family']]['packages'][0] in ansible_facts['packages'] }}"
+
+- name: Cleanup Packages
+  ansible.builtin.package:
+    name: "{{ java_packages[java_vendor][java_variant][ansible_facts['os_family']]['packages'] }}"
+    state: absent
