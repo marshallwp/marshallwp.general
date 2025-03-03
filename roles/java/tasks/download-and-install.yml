@@ -29,6 +29,7 @@
       ansible.builtin.unarchive:
         src: "{{ java_archive_path }}"
         dest: "{{ java_install_directory }}"
+        remote_src: true
         owner: root
         group: root
         mode: "u=rwx,g=rx,o=x"
