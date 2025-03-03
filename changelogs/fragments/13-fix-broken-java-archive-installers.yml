@@ -1,0 +1,4 @@
+release_summary: fixed a bug that broke archive-based installs of java.
+
+bugfixes:
+  - The `java_archive_path` variable was composed using the invalid `java_archive_installers` variable instead of the `java_archives` variable.
