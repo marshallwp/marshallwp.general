@@ -25,6 +25,13 @@
     alternatives_family: "{{ (ansible_facts['os_family'] == 'RedHat') | ansible.builtin.ternary(
       java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_architecture, undef())}}"
   block:
+    - name: Ensure Destination Directory Exists
+      ansible.builtin.file:
+        path: "{{ java_install_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "u=rwx,g=rx,o=x"
     - name: Extract {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version }}
       ansible.builtin.unarchive:
         src: "{{ java_archive_path }}"
