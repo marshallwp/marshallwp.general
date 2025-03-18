@@ -12,38 +12,50 @@
 
 # For Package-based installations/upgrades
 - name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }} # noqa: package-latest
-  when: (java_archive_path | ansible.builtin.splitent)[1] not in java_archive_exts
+  when: (java_archive_path | ansible.builtin.splitext)[1] not in java_archive_exts
   ansible.builtin.package:
     name: "{{ java_archive_path }}"
     state: latest
 
 # For Archive-based installations
 - name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Archive' }}
-  when: (java_archive_path | ansible.builtin.splitent)[1] in java_archive_exts
+  when: (java_archive_path | ansible.builtin.splitext)[1] in java_archive_exts
   vars:
     # Only RedHat-based distros support the family parameter.
     alternatives_family: "{{ (ansible_facts['os_family'] == 'RedHat') | ansible.builtin.ternary(
       java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_architecture, undef())}}"
   block:
+    - name: Ensure Destination Directory Exists
+      ansible.builtin.file:
+        path: "{{ java_install_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "u=rwx,g=rx,o=x"
     - name: Extract {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version }}
       ansible.builtin.unarchive:
         src: "{{ java_archive_path }}"
         dest: "{{ java_install_directory }}"
+        remote_src: true
         owner: root
         group: root
         mode: "u=rwx,g=rx,o=x"
     - name: Update Alternatives - jre_{{ java_version }}
+      when: java_update_alternatives | default(false)
       community.general.alternatives:
         name: "jre_{{ java_version }}"
         family: "{{ alternatives_family | default() }}"
         link: "{{ java_install_directory }}"
     - name: Update Alternatives - java_sdk_{{ java_version }}
-      when: java_type == 'jdk'
+      when:
+        - java_update_alternatives | default(false)
+        - java_type == 'jdk'
       community.general.alternatives:
         name: "java_sdk_{{ java_version }}"
         family: "{{ alternatives_family | default() }}"
         link: "{{ java_install_directory }}"
     - name: Update Alternatives - java (JRE)
+      when: java_update_alternatives | default(false)
       community.general.alternatives:
         name: java
         family: "{{ alternatives_family | default() }}"
@@ -60,7 +72,9 @@
             link: /usr/bin/keytool
             path: "{{ (java_install_directory, 'bin', 'keytool') | ansible.builtin.path_join }}"
     - name: Update Alternatives - java (JDK)
-      when: java_type == 'jdk'
+      when:
+        - java_update_alternatives | default(false)
+        - java_type == 'jdk'
       community.general.alternatives:
         name: java
         family: "{{ alternatives_family | default() }}"

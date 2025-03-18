@@ -249,7 +249,7 @@ java_archives:
 
 # Full path of the downloaded archive file
 java_archive_path: "{{
-  (java_archive_download_dir, java_archive_installers[java_vendor][java_variant]['url'] | ansible.builtin.basename) | ansible.builtin.path_join
+  (java_archive_download_dir, java_archives[java_vendor][java_variant]['url'] | ansible.builtin.basename) | ansible.builtin.path_join
   }}"
 
 # Oracle download files use weird architecture strings.
