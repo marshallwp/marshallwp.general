@@ -4,6 +4,27 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.3.1
+======
+
+Release Summary
+---------------
+
+fixed a bug that broke archive-based installs of java.
+
+Minor Changes
+-------------
+
+- can now skip changing alternatives after installing an archived copy of Java.
+
+Bugfixes
+--------
+
+- Missing destination directory creation step in archive extraction.
+- The `java_archive_path` variable was composed using the invalid `java_archive_installers` variable instead of the `java_archives` variable.
+- Typo, `ansible.builtin.splitent` was used instead of `ansible.builtin.splitext`.
+- Unarchive task required remote_src = true to work.
+
 v1.3.0
 ======
 

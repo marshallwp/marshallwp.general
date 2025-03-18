@@ -89,3 +89,18 @@ releases:
     fragments:
       - 12-add-java-role.yml
     release_date: '2025-02-11'
+  1.3.1:
+    changes:
+      bugfixes:
+        - Missing destination directory creation step in archive extraction.
+        - The `java_archive_path` variable was composed using the invalid `java_archive_installers`
+          variable instead of the `java_archives` variable.
+        - Typo, `ansible.builtin.splitent` was used instead of `ansible.builtin.splitext`.
+        - Unarchive task required remote_src = true to work.
+      minor_changes:
+        - can now skip changing alternatives after installing an archived copy of
+          Java.
+      release_summary: fixed a bug that broke archive-based installs of java.
+    fragments:
+      - 13-fix-broken-java-archive-installers.yml
+    release_date: '2025-03-18'
