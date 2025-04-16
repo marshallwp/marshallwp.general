@@ -9,7 +9,7 @@ Repository management is currently only supported by the following:
 
 | repo_type | Implementing Module(s) |
 | --------- | ---------------------- |
-| alpine | [`ansible.builtin.get_url`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html), [`ansible.builtin.file`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html), & [`ansible.builtin.lineinfile`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html) |
+| alpine | [custom-implementation](tasks/repository_types/alpine.yml) using only [`ansible.builtin`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin) modules |
 | apt-repo | [`community.general.apt_repo`](https://docs.ansible.com/ansible/latest/collections/community/general/apt_repo_module.html) |
 | apt | [`ansible.builtin.apt_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html) |
 | copr | [`community.general.copr`](https://docs.ansible.com/ansible/latest/collections/community/general/copr_module.html) |
@@ -84,9 +84,11 @@ Example Playbook
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
 ```yaml
-# Example for Installing Postgres 16 with packages required for configuration via community.general.postgres.
-- name: Install Postgres 16
+# Example for Installing PostgreSQL 16 with packages required for configuration via community.general.postgres.
+- name: Install PostgreSQL 16
   hosts: servers
+  vars:
+    postgresql_version: 16
   roles:
     - role: marshallwp.general.deps_mgr
       dependencies:
@@ -135,7 +137,7 @@ Including an example of how to use your role (for instance, with variables passe
 Another way to consume this role would be:
 
 ```yaml
-- name: Install Postgres 16
+- name: Install PostgreSQL 16
   hosts: servers
   gather_facts: false
   tasks:
@@ -147,5 +149,5 @@ Another way to consume this role would be:
           Alpine:
             packages:
               - py3-psycopg
-              - "postgresql{{ postgresql_version | default(16) }}"
+              - "postgresql16"
 ```
