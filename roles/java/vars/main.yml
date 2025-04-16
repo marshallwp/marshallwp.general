@@ -1,4 +1,4 @@
-# As it turns out, '-headless' (or the abscence thereof) is nearly universal for indicating a java package is headless.
+# As it turns out, '-headless' (or the absence thereof) is nearly universal for indicating a java package is headless.
 java_headless: "{{ (java_use_headless) | ansible.builtin.ternary('-headless', '') }}"
 
 # java_packages is split by java_vendor and java_variant, before the remainder is passed as a deps_mgr_list to marshallwp.general.deps_mgr

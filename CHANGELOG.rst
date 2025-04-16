@@ -4,6 +4,21 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.3.2
+======
+
+Release Summary
+---------------
+
+Fixes documentation by removing duplicates, clarifying examples, and rectifying typos.
+
+Documentation Changes
+---------------------
+
+- docs(deps_mgr) - clarify examples and how the alpine repo_type is managed.
+- docs(java) - fix typo in vars/main.yml comments.
+- docs(java) - remove duplicate text from parameter description.
+
 v1.3.1
 ======
 

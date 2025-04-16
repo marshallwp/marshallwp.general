@@ -104,3 +104,14 @@ releases:
     fragments:
       - 13-fix-broken-java-archive-installers.yml
     release_date: '2025-03-18'
+  1.3.2:
+    changes:
+      doc_changes:
+        - docs(deps_mgr) - clarify examples and how the alpine repo_type is managed.
+        - docs(java) - fix typo in vars/main.yml comments.
+        - docs(java) - remove duplicate text from parameter description.
+      release_summary: Fixes documentation by removing duplicates, clarifying examples,
+        and rectifying typos.
+    fragments:
+      - 14-docs-fixup.yml
+    release_date: '2025-04-16'
