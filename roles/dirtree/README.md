@@ -1,7 +1,7 @@
 marshallwp.general dirtree Role
 ========================
 
-Creates a directory tree from a dictionary of dictionaries. Lets you declare such a tree in an intuitive hierarchial manner instead of a flat list of paths.
+Creates a directory tree from a dictionary of dictionaries. Lets you declare such a tree in an intuitive hierarchical manner instead of a flat list of paths.
 
 Requirements
 ------------
