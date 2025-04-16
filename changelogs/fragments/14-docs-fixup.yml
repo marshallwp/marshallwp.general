@@ -1,6 +1,0 @@
-release_summary: Fixes documentation by removing duplicates, clarifying examples, and rectifying typos.
-
-doc_changes:
-  - docs(java): remove duplicate text from parameter description.
-  - docs(java): fix typo in vars/main.yml comments.
-  - docs(deps_mgr): clarify examples and how the alpine repo_type is managed.
