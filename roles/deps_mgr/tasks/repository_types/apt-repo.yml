@@ -3,7 +3,7 @@
   when: step['repo_type'] | lower == 'apt-repo'
   community.general.apt_repo:
     repo: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"
     # Module-specific parameters.
-    remove_others: "{{ step['remove_others'] | default('') }}"
-    update: "{{ step['update'] | default('') }}"
+    remove_others: "{{ step['remove_others'] | default(omit) }}"
+    update: "{{ step['update'] | default(omit) }}"

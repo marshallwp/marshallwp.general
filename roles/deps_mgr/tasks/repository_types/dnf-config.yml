@@ -3,4 +3,4 @@
   when: step['repo_type'] | lower == 'dnf-config'
   community.general.dnf_config_manager:
     name: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"

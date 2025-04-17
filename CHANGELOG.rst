@@ -4,6 +4,20 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.3.3
+======
+
+Release Summary
+---------------
+
+In deps_mgr, fix looping issues with the packages handler and default value issues with the repository_types handlers.
+
+Bugfixes
+--------
+
+- deps_mgr - flatten the query results used to loop Manage Packages by Desired State in packages.yml.  This will allow us to use query to ensure looping, but flatten the looped value down to one list.
+- deps_mgr - repository_types handlers now use `default(omit)` when a parameter is not specified.  Fixes issues related to type casting.
+
 v1.3.2
 ======
 

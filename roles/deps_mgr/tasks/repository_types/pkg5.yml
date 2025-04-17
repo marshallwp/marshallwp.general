@@ -3,9 +3,9 @@
   when: step['repo_type'] | lower == 'pkg5'
   community.general.pkg5_publisher:
     name: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"
     # Module-specific Parameters
-    enabled: "{{ step['enabled'] | default('') }}"
-    mirror: "{{ step['mirror'] | default('') }}"
-    origin: "{{ step['origin'] | default('') }}"
-    sticky: "{{ step['sticky'] | default('') }}"
+    enabled: "{{ step['enabled'] | default(omit) }}"
+    mirror: "{{ step['mirror'] | default(omit) }}"
+    origin: "{{ step['origin'] | default(omit) }}"
+    sticky: "{{ step['sticky'] | default(omit) }}"

@@ -32,7 +32,7 @@
     name: "{{ lookup('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge')
               | selectattr('state', 'equalto', state) | map(attribute='name') }}"
     state: "{{ state }}"
-  loop: "{{ query('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge')
+  loop: "{{ query('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge') | ansible.builtin.flatten(1)
             | map(attribute='state') | ansible.builtin.unique }}"
   loop_control:
     loop_var: state

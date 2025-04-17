@@ -115,3 +115,16 @@ releases:
     fragments:
       - 14-docs-fixup.yml
     release_date: '2025-04-16'
+  1.3.3:
+    changes:
+      bugfixes:
+        - deps_mgr - flatten the query results used to loop Manage Packages by Desired
+          State in packages.yml.  This will allow us to use query to ensure looping,
+          but flatten the looped value down to one list.
+        - deps_mgr - repository_types handlers now use `default(omit)` when a parameter
+          is not specified.  Fixes issues related to type casting.
+      release_summary: In deps_mgr, fix looping issues with the packages handler and
+        default value issues with the repository_types handlers.
+    fragments:
+      - 15-fix-repo-defaults.yaml
+    release_date: '2025-04-17'

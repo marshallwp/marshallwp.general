@@ -2,13 +2,13 @@
 - name: Manage APT Repository
   when: step['repo_type'] | lower == 'apt'
   ansible.builtin.apt_repository:
-    codename: "{{ step['codename'] | default('') }}"
-    filename: "{{ step['filename'] | default('') }}"
-    install_python_apt: "{{ step['install_python_apt'] | default('') }}"
-    mode: "{{ step['mode'] | default('') }}"
+    codename: "{{ step['codename'] | default(omit) }}"
+    filename: "{{ step['filename'] | default(omit) }}"
+    install_python_apt: "{{ step['install_python_apt'] | default(omit) }}"
+    mode: "{{ step['mode'] | default(omit) }}"
     repo: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
-    update_cache: "{{ step['update_cache'] | default('') }}"
-    update_cache_retries: "{{ step['update_cache_retries'] | default('') }}"
-    update_cache_retry_max_delay: "{{ step['update_cache_retry_max_delay'] | default('') }}"
-    validate_certs: "{{ step['validate_certs'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"
+    update_cache: "{{ step['update_cache'] | default(omit) }}"
+    update_cache_retries: "{{ step['update_cache_retries'] | default(omit) }}"
+    update_cache_retry_max_delay: "{{ step['update_cache_retry_max_delay'] | default(omit) }}"
+    validate_certs: "{{ step['validate_certs'] | default(omit) }}"

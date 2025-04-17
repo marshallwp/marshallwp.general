@@ -3,10 +3,10 @@
   when: step['repo_type'] | lower == 'copr'
   community.general.copr:
     name: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"
     # Module-specific Parameters
-    chroot: "{{ step['chroot'] | default('') }}"
+    chroot: "{{ step['chroot'] | default(omit) }}"
     excludepkgs: "{{ step['excludepkgs'] | default([]) }}"
-    host: "{{ step['host'] | default('') }}"
+    host: "{{ step['host'] | default(omit) }}"
     includepkgs: "{{ step['includepkgs'] | default([]) }}"
-    protocol: "{{ step['protocol'] | default('') }}"
+    protocol: "{{ step['protocol'] | default(omit) }}"
