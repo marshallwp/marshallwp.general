@@ -3,7 +3,7 @@
   when: step['repo_type'] | lower == 'homebrew'
   community.general.homebrew_tap:
     name: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"
     # Module-specific Parameters
-    path: "{{ step['path'] | default('') }}"
-    url: "{{ step['url'] | default('') }}"
+    path: "{{ step['path'] | default(omit) }}"
+    url: "{{ step['url'] | default(omit) }}"

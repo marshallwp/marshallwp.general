@@ -5,9 +5,9 @@
   when: step['repo_type'] | lower == 'sorcery'
   community.general.sorcery:
     name: "{{ step['name'] }}"
-    state: "{{ step['state'] | default('') }}"
+    state: "{{ step['state'] | default(omit) }}"
     # Module-specific Parameters
     cache_valid_time: "{{ step['cache_valid_time'] | default() }}"
     repository: "{{ step['repository'] | default('*') }}"
-    update: "{{ step['update'] | default('') }}"
-    update_cache: "{{ step['update_cache'] | default('') }}"
+    update: "{{ step['update'] | default(omit) }}"
+    update_cache: "{{ step['update_cache'] | default(omit) }}"
