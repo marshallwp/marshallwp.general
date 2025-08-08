@@ -1,0 +1,20 @@
+depencencies_by_family:
+  Alpine:
+    - openssl
+    - socat
+    - bind-tools
+  Debian:
+    - openssl
+    - socat
+    - cron
+    - bind9-dnsutils
+  RedHat:
+    - openssl
+    - socat
+    - crontabs
+    - bind-utils
+  Suse:
+    - openssl
+    - socat
+    - crontabs
+    - bind-utils

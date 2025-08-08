@@ -1,0 +1,69 @@
+---
+- name: Install Dependencies
+  tags: ['acmesh::install']
+  ansible.builtin.package:
+    name: "{{ depencencies_by_family[ansible_facts['os_family']] }}"
+    state: present
+
+- name: ACME.sh Exists
+  tags: ['acmesh::install']
+  ansible.builtin.stat:
+    path: "{{ (acmesh_home, 'acme.sh') | ansible.builtin.path_join }}"
+  register: stat_result
+
+- name: ACME.sh Installed
+  when: not stat_result.stat.exists
+  tags: ['acmesh::install']
+  block:
+    - name: Download ACME.sh
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/acmesh-official/acme.sh/{{ acmesh_branch | default('master') }}/acme.sh
+        dest: /tmp/acme.sh
+        mode: u=rwx
+    - name: Install ACME.sh
+      ansible.builtin.command:
+        chdir: "/tmp"
+        cmd: "sh ./acme.sh --install --no-cron --home '{{ acmesh_home }}' --config-home '{{ acmesh_home }}'"
+        creates: "{{ (acmesh_home, 'acme.sh') | ansible.builtin.path_join }}"
+
+- name: Cleanup ACME.sh Installer
+  tags: ['acmesh::install']
+  ansible.builtin.file:
+    path: /tmp/acme.sh
+    state: absent
+
+- name: Configure account.conf settings
+  tags: ['acmesh::install']
+  ansible.builtin.lineinfile:
+    path: "{{ (acmesh_home, 'account.conf') | ansible.builtin.path_join }}"
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value }}"
+    state: present
+  loop: "{{ acmesh_env_variables | ansible.builtin.combine(additional_env) | ansible.builtin.dict2items }}"
+  vars:
+    additional_env:
+      - ACCOUNT_EMAIL: "{{ acmesh_account_email }}"
+      - ACCOUNT_KEY_PATH: "{{ acmesh_account_key_file }}"
+      - AUTO_UPGRADE: "{{ (acmesh_auto_update) | ansible.builtin.ternary('1', '0') }}"
+
+- name: Custom DNSAPI Extension Installed
+  tags: ['acmesh::install']
+  block:
+    - name: Create dnsapi directory
+      ansible.builtin.file:
+        path: "{{ (acmesh_home, 'dnsapi') | ansible.builtin.path_join }}"
+        state: directory
+        mode: u=rwx,g=rx
+    - name: Copy dns_nsupdates extension
+      ansible.builtin.copy:
+        src: 'dns_nsupdates.sh'
+        dest: "{{ (acmesh_home, 'dnsapi', 'dns_nsupdates.sh') | ansible.builtin.path_join }}"
+        mode: u=rx,g=rx
+
+- name: Copy Over Keys
+  when: lookup('ansible.builtin.fileglob', 'keys/*') | length > 0
+  ansible.builtin.copy:
+    src: keys/
+    dest: "{{ acmesh_home }}"
+    decrypt: true
+    mode: "u=r,g=,o="

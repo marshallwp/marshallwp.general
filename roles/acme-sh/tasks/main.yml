@@ -1,0 +1,192 @@
+---
+# ACME.sh is a certificate renewal provider. It happens to allow for custom plugins,
+# such as the one I made to update multiple nameservers during a dns-01 request.
+- name: Translate '~' in acmesh_home
+  tags: ['acmesh::install', 'acmesh::config']
+  ansible.builtin.set_fact:
+    acmesh_home: "{{ acmesh_home | ansible.builtin.expanduser }}"
+    acmesh_tls_cert_file: "{{
+      (acmesh_tls_cert_file) | ansible.builtin.ternary(acmesh_tls_cert_file | ansible.builtin.expanduser, omit) }}"
+    acmesh_tls_key_file: "{{
+      (acmesh_tls_key_file) | ansible.builtin.ternary(acmesh_tls_key_file | ansible.builtin.expanduser, omit) }}"
+    acmesh_tls_fullchain_file: "{{
+      (acmesh_tls_fullchain_file) | ansible.builtin.ternary(acmesh_tls_fullchain_file | ansible.builtin.expanduser, omit) }}"
+
+- name: Install ACME.sh
+  when: acmesh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::install']
+  ansible.builtin.include_tasks:
+    file: install.yml
+
+- name: Remove ACME.sh
+  when: acmesh_enabled is ansible.builtin.falsy
+  tags: ['acmesh::install']
+  ansible.builtin.include_tasks:
+    file: remove.yml
+
+- name: Enable/Disable ACME.sh Cronjob
+  tags: ['acmesh::install', 'acmesh::config']
+  vars:
+    acmesh_cronjobs: "{{ (acmesh_scheduler == 'cron') | ansible.builtin.ternary('present', 'absent') }}"
+  ansible.builtin.cron:
+    name: ACME.sh Cronjob
+    month: '*'
+    weekday: '*'
+    day: '*'
+    hour: "{{ 24 | ansible.builtin.random(seed=inventory_hostname) }}"
+    minute: "{{ 60 | ansible.builtin.random(seed=inventory_hostname) }}"
+    job: "{{ (acmesh_home, 'acme.sh') | ansible.builtin.path_join }} --cron --home \"{{ acmesh_home }}\" --config-home \"{{ acmesh_home }}\" > /dev/null"
+    state: "{{ (acmesh_enabled) | ansible.builtin.ternary(acmesh_cronjobs, 'absent') }}"
+
+# https://github.com/acmesh-official/acme.sh/wiki/Using-systemd-units-instead-of-cron
+- name: Enable/Disable ACME.sh SystemD Service
+  tags: ['acmesh::install', 'acmesh::config']
+  vars:
+    acmesh_systemd_enabled: "{{ (acmesh_enabled and acmesh_scheduler == 'systemd') }}"
+  block:
+    - name: Install ACME.sh Service
+      when: acmesh_systemd_enabled is ansible.builtin.truthy
+      ansible.builtin.template:
+        src: acmesh.service.j2
+        dest: /etc/systemd/system/acmesh.service
+        owner: root
+        group: root
+        mode: 'u=rw,g=r,o=r'
+    - name: Install ACME.sh Timer
+      when: acmesh_systemd_enabled is ansible.builtin.truthy
+      ansible.builtin.copy:
+        src: acmesh.timer
+        dest: /etc/systemd/system/acmesh.timer
+        owner: root
+        group: root
+        mode: 'u=rw,g=r,o=r'
+    - name: Enable/Disable ACME.sh Service
+      ansible.builtin.systemd_service:
+        name: acmesh.service
+        daemon_reload: true
+        enabled: "{{ acmesh_systemd_enabled }}"
+        state: "{{ acmesh_systemd_enabled | ansible.builtin.ternary('started', 'stopped') }}"
+    - name: Enable/Disable ACME.sh Timer
+      ansible.builtin.systemd_service:
+        name: acmesh.timer
+        enabled: "{{ acmesh_systemd_enabled }}"
+        state: "{{ acmesh_systemd_enabled | ansible.builtin.ternary('started', 'stopped') }}"
+    - name: Remove Service & Timer
+      when: acmesh_systemd_enabled is ansible.builtin.falsy
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/systemd/system/acmesh.service
+        - /etc/systemd/system/acmesh.timer
+
+
+- name: Ensure Destination Director(ies) Exists
+  when: acmesh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ acmesh_user }}"
+    group: "{{ acmesh_group }}"
+    mode: u=rwx,g=rx,o=rx
+  loop: "{{ [acmesh_tls_cert_file | ansible.builtin.dirname, acmesh_tls_key_file | ansible.builtin.dirname] | ansible.builtin.unique }}"
+
+
+- name: Get Info About systemctl reload service
+  when: acmesh_reloadcmd | ansible.builtin.regex_search('^systemctl reload (.*)$')
+  block:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Check if service exists
+      vars:
+        svc_to_find: "{{ (acmesh_reloadcmd | ansible.builtin.regex_findall('^systemctl reload (.*)$'))[0] }}"
+      ansible.builtin.set_fact:
+        acmesh_reloadcmd_possible: "{{ ansible_facts['services'][svc_to_find~'.service']['state'] | default('not-found') == 'running' }}"
+
+
+# omit is a special variable
+# See https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html#omit-elements-from-a-list
+- name: Issue New Certificates
+  when: acmesh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  ansible.builtin.command:
+    chdir: "{{ acmesh_home }}"
+    argv: "{{ command_args | reject('equalto', omit) | list }}"
+    creates: "{{ acmesh_tls_fullchain_file | default(acmesh_tls_cert_file) }}"
+  vars:
+    command_args:
+      - "{{ (acmesh_home | ansible.builtin.normpath, 'acme.sh') | ansible.builtin.path_join }}"
+      - '--issue'
+      - "--{{ acmesh_mode | mandatory }}"
+      - "{{ acmesh_mode_value | default(omit) }}"
+      - '--server'
+      - "{{ acmesh_server | mandatory }}"
+      - '--domain'
+      - "{{ acmesh_domain | default(ansible_facts['nodename'], true) }}"
+      - "{{ (acmesh_keylength | default(false)) | ansible.builtin.ternary('--keylength', omit) }}"
+      - "{{ (acmesh_keylength | default(false)) | ansible.builtin.ternary(acmesh_keylength, omit) }}"
+      # Sets the domain alias to use in place of the actual domain
+      # See: https://github.com/acmesh-official/acme.sh/wiki/DNS-alias-mode#7-challenge-alias-or-domain-alias
+      - "{{ (acmesh_mode == 'dns') | ansible.builtin.ternary('--domain-alias', omit) }}"
+      - "{{ (acmesh_mode == 'dns') | ansible.builtin.ternary(ansible_hostname~'.'~acmesh_dns_zone, omit) }}"
+      - "{{ (acmesh_mode == 'dns' and (acmesh_dns_sleep | default(false))) | ansible.builtin.ternary('--dnssleep', omit) }}"
+      - "{{ (acmesh_mode == 'dns' and (acmesh_dns_sleep | default(false))) | ansible.builtin.ternary(acmesh_dns_sleep | string, omit) }}"
+      # Sets options for standalone and tls alpn mode.
+      # See: https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert#2-standalone-mode
+      - "{{ (acmesh_mode == 'standalone' and (acmesh_listening_port | default(false))) | ansible.builtin.ternary('--httpport', omit) }}"
+      - "{{ (acmesh_mode == 'alpn' and (acmesh_listening_port | default(false))) | ansible.builtin.ternary('--tlsport', omit) }}"
+      - "{{ (acmesh_mode in ['alpn', 'standalone'] and (acmesh_listening_port | default(false))) | ansible.builtin.ternary(acmesh_listening_port, omit) }}"
+      - '--cert-file'
+      - "{{ acmesh_tls_cert_file | ansible.builtin.normpath | mandatory }}"
+      - '--key-file'
+      - "{{ acmesh_tls_key_file | ansible.builtin.normpath | mandatory }}"
+      - "{{ (acmesh_tls_ca_file | default(false)) | ansible.builtin.ternary('--ca-file', omit) }}"
+      - "{{ (acmesh_tls_ca_file | default(false)) | ansible.builtin.ternary(acmesh_tls_ca_file, omit) }}"
+      - "{{ (acmesh_tls_fullchain_file | default(false)) | ansible.builtin.ternary('--fullchain-file', omit) }}"
+      - "{{ (acmesh_tls_fullchain_file | default(false)) | ansible.builtin.ternary(acmesh_tls_fullchain_file, omit) }}"
+      - '--config-home'
+      - "{{ acmesh_home }}"
+      - '--log'
+      - "{{ (acmesh_home, 'issue.log') | ansible.builtin.path_join }}"
+      # Hooks go last
+      - "{{ (acmesh_reloadcmd_possible | default(true) and acmesh_reloadcmd | default(false)) |
+              ansible.builtin.ternary('--reloadcmd', omit) }}"
+      - "{{ (acmesh_reloadcmd_possible | default(true) and acmesh_reloadcmd | default(false)) |
+              ansible.builtin.ternary(acmesh_reloadcmd, omit) }}"
+      - "{{ (acmesh_pre_hook | default(false)) | ansible.builtin.ternary('--pre-hook', omit) }}"
+      - "{{ (acmesh_pre_hook | default(false)) | ansible.builtin.ternary(acmesh_pre_hook, omit) }}"
+      - "{{ (acmesh_post_hook | default(false)) | ansible.builtin.ternary('--post-hook', omit) }}"
+      - "{{ (acmesh_post_hook | default(false)) | ansible.builtin.ternary(acmesh_post_hook, omit) }}"
+      - "{{ (acmesh_renew_hook | default(false)) | ansible.builtin.ternary('--renew-hook', omit) }}"
+      - "{{ (acmesh_renew_hook | default(false)) | ansible.builtin.ternary(acmesh_renew_hook, omit) }}"
+
+- name: Set File Permissions on Copied Certificates
+  when: acmesh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  block:
+    - name: Set file permissions on fullchain certificate
+      ansible.builtin.file:
+        path: "{{ acmesh_tls_fullchain_file }}"
+        owner: "{{ acmesh_user }}"
+        group: "{{ acmesh_group }}"
+        mode: u=rw,g=r,o=r
+    - name: Set file permissions on public certificate
+      ansible.builtin.file:
+        path: "{{ acmesh_tls_cert_file }}"
+        owner: "{{ acmesh_user }}"
+        group: "{{ acmesh_group }}"
+        mode: u=rw,g=r,o=r
+    - name: Set file permissions on private key
+      ansible.builtin.file:
+        path: "{{ acmesh_tls_key_file }}"
+        owner: "{{ acmesh_user }}"
+        group: "{{ acmesh_group }}"
+        mode: u=rw,g=r,o=
+
+- name: Update & Save Reloadcmd
+  when: acmesh_reloadcmd_possible | default(true)
+  tags: ['acmesh::config']
+  ansible.builtin.include_tasks:
+    file: update_reloadcmd.yml

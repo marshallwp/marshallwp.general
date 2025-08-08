@@ -1,0 +1,54 @@
+---
+# The reloadcmd is stored in the config file as a base64 string of unknown encoding.
+# As a workaround, you can update it by reinstalling the certificate with a new reloadcmd.
+- name: Update reloadcmd for managed certificate
+  when:
+    - acmesh_enabled is ansible.builtin.truthy
+    - ansible_local['acme.sh']['reloadcmd'] is defined
+    - acmesh_reloadcmd != ansible_local['acme.sh']['reloadcmd']
+  tags: ['acmesh::config']
+  changed_when: true
+  ansible.builtin.command:
+    chdir: "{{ acmesh_home }}"
+    argv: "{{ command_args | reject('equalto', omit) | list }}"
+  vars:
+    command_args:
+      - "{{ (acmesh_home | ansible.builtin.normpath, 'acme.sh') | ansible.builtin.path_join }}"
+      - '--install-cert'
+      - '--home'
+      - "{{ acmesh_home }}"
+      - '--domain'
+      - "{{ acmesh_domain | default(ansible_facts['nodename'], true) }}"
+      - '--cert-file'
+      - "{{ acmesh_tls_cert_file | ansible.builtin.normpath | mandatory }}"
+      - '--key-file'
+      - "{{ acmesh_tls_key_file | ansible.builtin.normpath | mandatory }}"
+      - "{{ (acmesh_tls_fullchain_file | default(false)) | ansible.builtin.ternary('--fullchain-file', omit) }}"
+      - "{{ (acmesh_tls_fullchain_file | default(false)) | ansible.builtin.ternary(acmesh_tls_fullchain_file, omit) }}"
+      - '--reloadcmd'
+      - "{{ acmesh_reloadcmd }}"
+
+- name: Save reloadcmd as local fact
+  when: acmesh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  block:
+    - name: Facts.d Directory Exists
+      ansible.builtin.file:
+        path: "{{ ('/etc', 'ansible', 'facts.d') | ansible.builtin.path_join }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: "u=rw,g=,o="
+    - name: Create facts file
+      when: acmesh_reloadcmd is defined
+      ansible.builtin.copy:
+        dest: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
+        content: "{{ {'reloadcmd': acmesh_reloadcmd} | ansible.builtin.to_nice_json }}"
+        owner: "{{ acmesh_user }}"
+        group: "{{ acmesh_group }}"
+        mode: "u=r,g=,o="
+    - name: Remove facts file
+      when: acmesh_reloadcmd is not defined
+      ansible.builtin.file:
+        path: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
+        state: absent

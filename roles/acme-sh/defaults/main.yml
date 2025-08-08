@@ -1,0 +1,61 @@
+---
+acmesh_enabled: true
+acmesh_user: root
+acmesh_group: "{{ acmesh_user }}"
+acmesh_home: ~/acme
+# Whether or Not acme.sh-created Cron Jobs that Automatically Renew Certificates are present or absent
+# Can be cron (default), systemd, or none
+acmesh_scheduler: cron
+# If true, acme.sh will automatically update itself during scheduled jobs
+acmesh_auto_update: true
+
+acmesh_tls_cert_file: "{{ acmesh_home }}/{{ ansible_facts['nodename'] }}/public.crt"
+acmesh_tls_key_file: "{{ acmesh_home }}/{{ ansible_facts['nodename'] }}/private.key"
+acmesh_tls_fullchain_file: "{{ acmesh_home }}/{{ ansible_facts['nodename'] }}/public-fullchain.crt"
+# acmesh_tls_ca_file:
+
+# The full name of the server you're creating this cert for.
+acmesh_domain: "{{ ansible_facts['nodename'] }}"
+# Supported Modes: https://github.com/acmesh-official/acme.sh?tab=readme-ov-file#supported-modes
+# Spaces are replaced by dashes and the word "mode" is excluded
+acmesh_mode: dns
+# if the mode accepts a value (such as --dns), you may specify that here.
+#   dns_nsupdates is a custom version of dns_nsupdate that supports updating multiple dns servers.
+acmesh_mode_value: dns_nsupdates
+# * DNS mode options
+# The DNS zone used during certificate renewals.
+acmesh_dns_zone: acme.example.com
+# Time in seconds to wait for all the TXT records to propagate in dns api mode.
+# It's not necessary to use this by default, acme.sh polls dns status by DOH automatically.
+acmesh_dns_sleep:
+# * Standalone & TLS Alpn mode options
+acmesh_listening_port:
+
+# Set ENVIRONMENT VARIABLES that will be stored in account.conf and used during acme.sh operations.
+# Often needed for dnsapi plugins.
+acmesh_env_variables:
+    # Comma-delimited list of nameservers to run nsupdate against
+  - NSUPDATE_SERVERS: ns1.example.com
+    # Path to the key used to create dns-01 challenge records on the nameservers.
+  - NSUPDATE_KEY: "{{ (acmesh_home | ansible.builtin.normpath, 'dns-challenge-key.private') | ansible.builtin.path_join }}"
+  - NSUPDATE_ZONE: "{{ acmesh_dns_zone }}"
+
+# Sets the --server parameter, which indicates the CA to use
+# Can be a friendly name or a ACME Server URL
+# See: https://github.com/acmesh-official/acme.sh/wiki/Server
+acmesh_server: letsencrypt
+# CA Account email
+acmesh_account_email: test@example.com
+# CA Account private key file
+acmesh_account_key_file: "{{ (acmesh_home | ansible.builtin.normpath, 'ca_account.key') | ansible.builtin.path_join }}"
+# Specifies the domain key length: 2048, 3072, 4096, 8192 or ec-256, ec-384, ec-521.
+acmesh_keylength: ec-384
+
+# Pre hook that happens before attempting to issue a certificate
+acmesh_pre_hook:
+# Post hook that happens after attempting to issue a certificate
+acmesh_post_hook:
+# Renew hook that is called when certs are *successfully* renewed
+acmesh_renew_hook:
+# Command run after newly renewed certificates are installed.
+acmesh_reloadcmd:
