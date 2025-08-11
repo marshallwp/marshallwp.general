@@ -42,9 +42,9 @@
   loop: "{{ acme_sh_env_variables | ansible.builtin.combine(additional_env) | ansible.builtin.dict2items }}"
   vars:
     additional_env:
-      - ACCOUNT_EMAIL: "{{ acme_sh_account_email }}"
-      - ACCOUNT_KEY_PATH: "{{ acme_sh_account_key_file }}"
-      - AUTO_UPGRADE: "{{ (acme_sh_auto_update) | ansible.builtin.ternary('1', '0') }}"
+      ACCOUNT_EMAIL: "{{ acme_sh_account_email }}"
+      ACCOUNT_KEY_PATH: "{{ acme_sh_account_key_file }}"
+      AUTO_UPGRADE: "{{ (acme_sh_auto_update) | ansible.builtin.ternary('1', '0') }}"
 
 - name: Custom DNSAPI Extensions Installed
   tags: ['acmesh::install']

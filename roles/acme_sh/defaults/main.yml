@@ -1,7 +1,7 @@
 ---
 acme_sh_enabled: true
-acme_sh_user: root
-acme_sh_group: "{{ acme_sh_user }}"
+acme_sh_user: "{{ ansible_user_id }}"
+acme_sh_group: "{{ ansible_user_gid }}"
 acme_sh_home: ~/acme
 # Whether or Not acme.sh-created Cron Jobs that Automatically Renew Certificates are present or absent
 # Can be cron (default), systemd, or none
@@ -24,7 +24,7 @@ acme_sh_mode: dns
 acme_sh_mode_value: dns_nsupdates
 # * DNS mode options
 # The DNS zone used during certificate renewals.
-acme_sh_dns_zone: acme.example.com
+acme_sh_dns_zone:
 # Time in seconds to wait for all the TXT records to propagate in dns api mode.
 # It's not necessary to use this by default, acme.sh polls dns status by DOH automatically.
 acme_sh_dns_sleep:
@@ -34,11 +34,11 @@ acme_sh_listening_port:
 # Set ENVIRONMENT VARIABLES that will be stored in account.conf and used during acme.sh operations.
 # Often needed for dnsapi plugins.
 acme_sh_env_variables:
-    # Comma-delimited list of nameservers to run nsupdate against
-  - NSUPDATE_SERVERS: ns1.example.com
-    # Path to the key used to create dns-01 challenge records on the nameservers.
-  - NSUPDATE_KEY: "{{ (acme_sh_home | ansible.builtin.normpath, 'dns-challenge-key.private') | ansible.builtin.path_join }}"
-  - NSUPDATE_ZONE: "{{ acme_sh_dns_zone }}"
+  # Comma-delimited list of nameservers to run nsupdate against
+  NSUPDATE_SERVERS: ns1.example.com
+  # Path to the key used to create dns-01 challenge records on the nameservers.
+  NSUPDATE_KEY: "{{ (acme_sh_home | ansible.builtin.normpath, 'dns-challenge-key.private') | ansible.builtin.path_join }}"
+  NSUPDATE_ZONE: "{{ acme_sh_dns_zone }}"
 
 # Sets the --server parameter, which indicates the CA to use
 # Can be a friendly name or a ACME Server URL
@@ -57,5 +57,5 @@ acme_sh_pre_hook:
 acme_sh_post_hook:
 # Renew hook that is called when certs are *successfully* renewed
 acme_sh_renew_hook:
-# Command run after newly renewed certificates are installed.
+# Command run after newly renewed certificates are installed
 acme_sh_reloadcmd:
