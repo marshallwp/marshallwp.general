@@ -1,8 +1,8 @@
 ---
 acme_sh_enabled: true
-acme_sh_user: "{{ ansible_user_id }}"
-acme_sh_group: "{{ ansible_user_gid }}"
-acme_sh_home: ~/acme
+acme_sh_user: "root"
+acme_sh_group: "root"
+acme_sh_home: /root/acme
 # Whether or Not acme.sh-created Cron Jobs that Automatically Renew Certificates are present or absent
 # Can be cron (default), systemd, or none
 acme_sh_scheduler: cron

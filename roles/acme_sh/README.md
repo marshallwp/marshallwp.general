@@ -15,9 +15,9 @@ Role Variables
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | acme_sh_enabled | If set to false, acme.sh will be uninstalled | `true` |
-| acme_sh_user | The user that will run and own the output of acme.sh | `ansible_user_id` |
-| acme_sh_group | The group that will run and own the output of acme.sh | `ansible_user_gid` |
-| acme_sh_home | The directory into which acme.sh will be instaled and in which configuration files will be stored | `~/acme` |
+| acme_sh_user | The user that will run and own the output of acme.sh | `root` |
+| acme_sh_group | The group that will run and own the output of acme.sh | `root` |
+| acme_sh_home | The directory into which acme.sh will be instaled and in which configuration files will be stored | `/root/acme` |
 | acme_sh_scheduler | The scheduler used to run acme.sh on a schedule. Can be `cron`, `systemd`, or `none` | `cron` |
 | acme_sh_auto_update | If true, acme.sh will check for and install updates during scheduled jobs. | `true` |
 | acme_sh_tls_cert_file | Destination filepath of the TLS Public Certificate | `"{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/public.crt"` |

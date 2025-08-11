@@ -49,16 +49,16 @@
       ansible.builtin.template:
         src: acmesh.service.j2
         dest: /etc/systemd/system/acmesh.service
-        owner: root
-        group: root
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
         mode: 'u=rw,g=r,o=r'
     - name: Install ACME.sh Timer
       when: acme_sh_systemd_enabled is ansible.builtin.truthy
       ansible.builtin.copy:
         src: acmesh.timer
         dest: /etc/systemd/system/acmesh.timer
-        owner: root
-        group: root
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
         mode: 'u=rw,g=r,o=r'
     - name: Enable/Disable ACME.sh Service
       ansible.builtin.systemd_service:
