@@ -5,4 +5,4 @@ After=network-online.target nss-lookup.target
 [Service]
 Type=oneshot
 SyslogIdentifier=acme.sh
-ExecStart="{{ (acmesh_home, 'acme.sh') | ansible.builtin.path_join }} --cron --home \"{{ acmesh_home }}\" --config-home \"{{ acmesh_home }}\"
+ExecStart="{{ (acme_sh_home, 'acme.sh') | ansible.builtin.path_join }} --cron --home \"{{ acme_sh_home }}\" --config-home \"{{ acme_sh_home }}\"

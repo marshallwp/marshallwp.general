@@ -2,13 +2,13 @@
 - name: Remove ACME.sh
   tags: ['acmesh::install']
   ansible.builtin.command:
-    cmd: "{{ (acmesh_home, 'acme.sh') | ansible.builtin.path_join }} --uninstall --no-cron --home \"{{ acmesh_home }}\""
-    removes: "{{ (acmesh_home, 'acme.sh') | ansible.builtin.path_join }}"
+    cmd: "{{ (acme_sh_home, 'acme.sh') | ansible.builtin.path_join }} --uninstall --no-cron --home \"{{ acme_sh_home }}\""
+    removes: "{{ (acme_sh_home, 'acme.sh') | ansible.builtin.path_join }}"
 
 - name: Delete directory
   tags: ['acmesh::install']
   ansible.builtin.file:
-    path: "{{ acmesh_home }}"
+    path: "{{ acme_sh_home }}"
     state: absent
 
 - name: Delete acme.sh Local Facts
