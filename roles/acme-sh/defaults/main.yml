@@ -45,7 +45,7 @@ acmesh_env_variables:
 # See: https://github.com/acmesh-official/acme.sh/wiki/Server
 acmesh_server: letsencrypt
 # CA Account email
-acmesh_account_email: test@example.com
+acmesh_account_email: admin@example.com
 # CA Account private key file
 acmesh_account_key_file: "{{ (acmesh_home | ansible.builtin.normpath, 'ca_account.key') | ansible.builtin.path_join }}"
 # Specifies the domain key length: 2048, 3072, 4096, 8192 or ec-256, ec-384, ec-521.

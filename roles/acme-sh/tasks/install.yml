@@ -46,7 +46,7 @@
       - ACCOUNT_KEY_PATH: "{{ acmesh_account_key_file }}"
       - AUTO_UPGRADE: "{{ (acmesh_auto_update) | ansible.builtin.ternary('1', '0') }}"
 
-- name: Custom DNSAPI Extension Installed
+- name: Custom DNSAPI Extensions Installed
   tags: ['acmesh::install']
   block:
     - name: Create dnsapi directory
@@ -54,10 +54,10 @@
         path: "{{ (acmesh_home, 'dnsapi') | ansible.builtin.path_join }}"
         state: directory
         mode: u=rwx,g=rx
-    - name: Copy dns_nsupdates extension
+    - name: Copy custom dnsapi extension
       ansible.builtin.copy:
-        src: 'dns_nsupdates.sh'
-        dest: "{{ (acmesh_home, 'dnsapi', 'dns_nsupdates.sh') | ansible.builtin.path_join }}"
+        src: 'custom_dnsapi/'
+        dest: "{{ (acmesh_home, 'dnsapi') | ansible.builtin.path_join }}"
         mode: u=rx,g=rx
 
 - name: Copy Over Keys
