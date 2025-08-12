@@ -1,0 +1,39 @@
+---
+- name: Facts.d Directory Exists
+  when: acme_sh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  ansible.builtin.file:
+    path: "{{ ('/etc', 'ansible', 'facts.d') | ansible.builtin.path_join }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid | marshallwp.general.get_grpname }}"
+    mode: "u=rw,g=,o="
+
+- name: Update Local Facts
+  when:
+    - acme_sh_enabled is ansible.builtin.truthy
+    - acme_sh_run_hook_setup is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  vars:
+    cmds:
+      reloadcmd: "{{ acme_sh_reloadcmd | default(omit) }}"
+      pre_hook: "{{ acme_sh_pre_hook | default(omit) }}"
+      post_hook: "{{ acme_sh_post_hook | default(omit) }}"
+      renew_hook: "{{ acme_sh_renew_hook | default(omit) }}"
+  block:
+    - name: Update facts file
+      when: cmds | ansible.builtin.items2dict | rejectattr('value', '==', omit) | length > 0
+      tags: ['acmesh::config']
+      ansible.builtin.copy:
+        dest: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
+        content: "{{ cmds | ansible.builtin.to_nice_json }}"
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
+        mode: "u=r,g=,o="
+
+    - name: Remove facts file
+      when: cmds | ansible.builtin.items2dict | rejectattr('value', '==', omit) | length == 0
+      tags: ['acmesh::config']
+      ansible.builtin.file:
+        path: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
+        state: absent

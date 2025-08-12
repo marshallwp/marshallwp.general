@@ -93,19 +93,6 @@
   loop: "{{ [acme_sh_tls_cert_file | ansible.builtin.dirname, acme_sh_tls_key_file | ansible.builtin.dirname] | ansible.builtin.unique }}"
 
 
-- name: Get Info About systemctl reload service
-  when: acme_sh_reloadcmd | ansible.builtin.regex_search('^systemctl reload (.*)$')
-  block:
-    - name: Populate service facts
-      ansible.builtin.service_facts:
-
-    - name: Check if service exists
-      vars:
-        svc_to_find: "{{ (acme_sh_reloadcmd | ansible.builtin.regex_findall('^systemctl reload (.*)$'))[0] }}"
-      ansible.builtin.set_fact:
-        acme_sh_reloadcmd_possible: "{{ ansible_facts['services'][svc_to_find~'.service']['state'] | default('not-found') == 'running' }}"
-
-
 # omit is a special variable
 # See https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html#omit-elements-from-a-list
 - name: Issue New Certificates
@@ -151,16 +138,15 @@
       - '--log'
       - "{{ (acme_sh_home, 'issue.log') | ansible.builtin.path_join }}"
       # Hooks go last
-      - "{{ (acme_sh_reloadcmd_possible | default(true) and acme_sh_reloadcmd | default(false)) |
-              ansible.builtin.ternary('--reloadcmd', omit) }}"
-      - "{{ (acme_sh_reloadcmd_possible | default(true) and acme_sh_reloadcmd | default(false)) |
-              ansible.builtin.ternary(acme_sh_reloadcmd, omit) }}"
-      - "{{ (acme_sh_pre_hook | default(false)) | ansible.builtin.ternary('--pre-hook', omit) }}"
-      - "{{ (acme_sh_pre_hook | default(false)) | ansible.builtin.ternary(acme_sh_pre_hook, omit) }}"
-      - "{{ (acme_sh_post_hook | default(false)) | ansible.builtin.ternary('--post-hook', omit) }}"
-      - "{{ (acme_sh_post_hook | default(false)) | ansible.builtin.ternary(acme_sh_post_hook, omit) }}"
-      - "{{ (acme_sh_renew_hook | default(false)) | ansible.builtin.ternary('--renew-hook', omit) }}"
-      - "{{ (acme_sh_renew_hook | default(false)) | ansible.builtin.ternary(acme_sh_renew_hook, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_reloadcmd | default(false)) | ansible.builtin.ternary('--reloadcmd', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_reloadcmd | default(false)) | ansible.builtin.ternary(acme_sh_reloadcmd, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_pre_hook | default(false)) | ansible.builtin.ternary('--pre-hook', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_pre_hook | default(false)) | ansible.builtin.ternary(acme_sh_pre_hook, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_post_hook | default(false)) | ansible.builtin.ternary('--post-hook', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_post_hook | default(false)) | ansible.builtin.ternary(acme_sh_post_hook, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_renew_hook | default(false)) | ansible.builtin.ternary('--renew-hook', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_renew_hook | default(false)) | ansible.builtin.ternary(acme_sh_renew_hook, omit) }}"
+
 
 - name: Set File Permissions on Copied Certificates
   when: acme_sh_enabled is ansible.builtin.truthy
@@ -185,8 +171,11 @@
         group: "{{ acme_sh_group }}"
         mode: u=rw,g=r,o=
 
-- name: Update & Save Reloadcmd
-  when: acme_sh_reloadcmd_possible | default(true)
+
+- name: Save hooks to local facts
+  when:
+    - acme_sh_enabled is ansible.builtin.truthy
+    - acme_sh_run_hook_setup is ansible.builtin.truthy
   tags: ['acmesh::config']
   ansible.builtin.include_tasks:
-    file: update_reloadcmd.yml
+    file: update_local_facts.yml
