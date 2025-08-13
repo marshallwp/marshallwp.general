@@ -4,6 +4,19 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.4.1
+======
+
+Release Summary
+---------------
+
+Fixes a bug in the acme_sh role that causes it to fail when specifying cron as the scheduler.
+
+Bugfixes
+--------
+
+- `acme_sh` role would fail when you used cron as the scheduler. This was caused by a lack of error handling for systemd_service ansible roles, which produced errors about systemd services not existing.
+
 v1.4.0
 ======
 
