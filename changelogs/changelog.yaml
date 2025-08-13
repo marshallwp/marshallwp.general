@@ -157,3 +157,16 @@ releases:
     fragments:
       - 17-fix-acmesh-systemd-svc
     release_date: '2025-08-13'
+  1.4.2:
+    changes:
+      minor_changes:
+        - dns_nsupdates.sh was altered to make shellcheck and ansible shebang sanity
+          test happy.
+      release_summary: Eliminates open-ended copy operations and makes ansible code-checking
+        happy.
+      security_fixes:
+        - acme_sh will no longer copy keys (of which there are none) from the role's
+          files/keys directory to the destination.
+    fragments:
+      - 18-misc-patch.yml
+    release_date: '2025-08-13'

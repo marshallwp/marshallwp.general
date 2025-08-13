@@ -4,6 +4,24 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.4.2
+======
+
+Release Summary
+---------------
+
+Eliminates open-ended copy operations and makes ansible code-checking happy.
+
+Minor Changes
+-------------
+
+- dns_nsupdates.sh was altered to make shellcheck and ansible shebang sanity test happy.
+
+Security Fixes
+--------------
+
+- acme_sh will no longer copy keys (of which there are none) from the role's files/keys directory to the destination.
+
 v1.4.1
 ======
 
