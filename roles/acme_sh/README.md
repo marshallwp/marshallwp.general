@@ -6,13 +6,14 @@ Installs/Uninstalls and (re)configures acme.sh, custom dnsapi extensions, and sc
 ## Minimal Dependencies
 Using this role will install the following packages on the target:
 
-| name                                 | install condition                      |
-| ------------------------------------ | -------------------------------------- |
-| **socat**                            | always                                 |
-| **openssl**                          | always                                 |
-| cron/cronnie/mcron/vixie-cron        | `acme_sh_scheduler == 'cron'`    |
-| bind-utils/bind-tools/bind9-dnsutils | `acme_sh_mode == 'dns' and acme_sh_mode_value is regexp('dns_nsupdates?')` |
-| wget                                 | neither `wget` nor `curl` is installed |
+| name                                      | install condition                                                                |
+|-------------------------------------------|----------------------------------------------------------------------------------|
+| **socat**                                 | always                                                                           |
+| **openssl**                               | always                                                                           |
+| cron/cronnie/mcron/vixie-cron             | you do not have `cron`, `cronie`, `isc-cron`, `mcron`, or `vixie-cron` installed |
+| bind-utils/bind-tools/bind9-dnsutils/bind | `acme_sh_mode == 'dns' and acme_sh_mode_value is regexp('dns_nsupdates?')`       |
+| wget                                      | neither `wget` nor `curl` is installed                                           |
+
 
 Requirements
 ------------
