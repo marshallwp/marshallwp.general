@@ -66,11 +66,3 @@
         src: 'custom_dnsapi/'
         dest: "{{ (acme_sh_home, 'dnsapi') | ansible.builtin.path_join }}"
         mode: u=rx,g=rx
-
-- name: Copy Over Keys
-  when: lookup('ansible.builtin.fileglob', 'keys/*') | length > 0
-  ansible.builtin.copy:
-    src: keys/
-    dest: "{{ acme_sh_home }}"
-    decrypt: true
-    mode: "u=r,g=,o="
