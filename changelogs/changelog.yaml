@@ -144,3 +144,16 @@ releases:
           name: acme_sh
           namespace: null
     release_date: '2025-08-13'
+  1.4.1:
+    changes:
+      bugfixes:
+        - '`acme_sh` role would fail when you used cron as the scheduler. This was
+          caused by a lack of error handling for systemd_service ansible roles, which
+          produced errors about systemd services not existing.
+
+          '
+      release_summary: Fixes a bug in the acme_sh role that causes it to fail when
+        specifying cron as the scheduler.
+    fragments:
+      - 17-fix-acmesh-systemd-svc
+    release_date: '2025-08-13'
