@@ -61,12 +61,16 @@
         group: "{{ acme_sh_group }}"
         mode: 'u=rw,g=r,o=r'
     - name: Enable/Disable ACME.sh Service
+      failed_when: acme_sh_stop_svc_result is failed and ('Could not find the requested service' not in acme_sh_stop_svc_result['msg'])
+      register: acme_sh_stop_svc_result
       ansible.builtin.systemd_service:
         name: acmesh.service
         daemon_reload: true
         enabled: "{{ acme_sh_systemd_enabled }}"
         state: "{{ acme_sh_systemd_enabled | ansible.builtin.ternary('started', 'stopped') }}"
     - name: Enable/Disable ACME.sh Timer
+      failed_when: acme_sh_stop_svc_result is failed and ('Could not find the requested service' not in acme_sh_stop_svc_result['msg'])
+      register: acme_sh_stop_svc_result
       ansible.builtin.systemd_service:
         name: acmesh.timer
         enabled: "{{ acme_sh_systemd_enabled }}"
