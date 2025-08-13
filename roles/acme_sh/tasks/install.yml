@@ -1,9 +1,14 @@
 ---
+- name: Enumerate Installed Packages
+  tags: ['acmesh::install']
+  ansible.builtin.package_facts:
+
 - name: Install Dependencies
   tags: ['acmesh::install']
-  ansible.builtin.package:
-    name: "{{ depencencies_by_family[ansible_facts['os_family']] }}"
-    state: present
+  ansible.builtin.include_role:
+    name: marshallwp.general.deps_mgr
+  vars:
+    deps_mgr_list: "{{ acme_sh_dependencies }}"
 
 - name: ACME.sh Exists
   tags: ['acmesh::install']
@@ -15,9 +20,11 @@
   when: not stat_result.stat.exists
   tags: ['acmesh::install']
   block:
+    # The master branch is specified in documentation.
+    # See: https://github.com/acmesh-official/acme.sh/wiki/How-to-install#2-or-install-from-github
     - name: Download ACME.sh
       ansible.builtin.get_url:
-        url: https://raw.githubusercontent.com/acmesh-official/acme.sh/{{ acme_sh_branch | default('master') }}/acme.sh
+        url: https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh
         dest: /tmp/acme.sh
         mode: u=rwx
     - name: Install ACME.sh

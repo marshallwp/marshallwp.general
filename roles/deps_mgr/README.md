@@ -71,6 +71,10 @@ To help make things more generic (and to simplify merging things together), I've
 | name | The name of the repository. This maps to the `name` or equivalent parameter on a module.  Ex. when using `apt-repo` it maps to `repo` parameter. **Required** |
 | state | Indicates the desired repository state. |
 
+#### Useful documentation
+A full list of Ansible's OS Families and Distributions is hard to find, but it is listed in their code as the `OS_FAMILY_MAP` variable. See:
+https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/distribution.py#L525-L551
+
 Dependencies
 ------------
 

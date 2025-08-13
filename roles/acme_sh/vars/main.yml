@@ -1,20 +1,79 @@
-depencencies_by_family:
+# acme.sh requires either wget or curl.  If neither exists, install wget (it's smaller than curl)
+acme_sh_install_wget: "{{ ansible_facts['packages'] | select('in', ['curl', 'wget']) | length == 0 }}"
+# if configuring acme.sh to use nslookup for dns-01 challenges, make sure it's installed.
+acme_sh_install_nsupdate: "{{ acme_sh_mode == 'dns' and acme_sh_mode_value is ansible.builtin.regexp('dns_nsupdates?') }}"
+# ensure some form of vixie-compatible cron daemon is installed when using cron as the scheduler.
+acme_sh_install_cron: "{{ acme_sh_scheduler == 'cron' and (ansible_facts['packages']
+                        | select('in', ['cron', 'cronie', 'isc-cron', 'mcron', 'vixie-cron']) | length == 0) }}"
+
+acme_sh_deps_by_family:
   Alpine:
-    - openssl
-    - socat
-    - bind-tools
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind-tools', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
+  Altlinux:
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('mcron', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind-utils', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
+  Archlinux:
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
   Debian:
-    - openssl
-    - socat
-    - cron
-    - bind9-dnsutils
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind9-dnsutils', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
+  FreeBSD:
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('isc-cron', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind-tools', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
+  Gentoo:
+    packages:
+      - dev-libs/openssl
+      - net-misc/socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('sys-process/cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('net-dns/bind-tools', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('net-misc/wget', omit) }}"
+  Mandrake:
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind-utils', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
+  NetBSD:
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('vixie-cron', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
   RedHat:
-    - openssl
-    - socat
-    - crontabs
-    - bind-utils
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind-utils', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"
   Suse:
-    - openssl
-    - socat
-    - crontabs
-    - bind-utils
+    packages:
+      - openssl
+      - socat
+      - "{{ (acme_sh_install_cron) | ansible.builtin.ternary('cronie', omit) }}"
+      - "{{ (acme_sh_install_nsupdate) | ansible.builtin.ternary('bind-utils', omit) }}"
+      - "{{ (acme_sh_install_wget) | ansible.builtin.ternary('wget', omit) }}"

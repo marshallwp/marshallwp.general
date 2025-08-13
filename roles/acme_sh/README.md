@@ -1,7 +1,18 @@
 marshallwp.general acme_sh Role
 ========================
 
-Installs/Uninstalls and (re)configures acme.sh, custom dnsapi extensions, and scheduled runs of the same.  Acme.sh is "a pure Unix shell script implementing ACME client protocol" for certificate management. It requires no dependencies and is compatible with bash, dash, and sh.
+Installs/Uninstalls and (re)configures acme.sh, custom dnsapi extensions, and scheduled runs of the same.  Acme.sh is "a pure Unix shell script implementing ACME client protocol" for certificate management. It requires minimal dependencies and is compatible with bash, dash, and sh.
+
+## Minimal Dependencies
+Using this role will install the following packages on the target:
+
+| name                                 | install condition                      |
+| ------------------------------------ | -------------------------------------- |
+| **socat**                            | always                                 |
+| **openssl**                          | always                                 |
+| cron/cronnie/mcron/vixie-cron        | `acme_sh_scheduler == 'cron'`    |
+| bind-utils/bind-tools/bind9-dnsutils | `acme_sh_mode == 'dns' and acme_sh_mode_value is regexp('dns_nsupdates?')` |
+| wget                                 | neither `wget` nor `curl` is installed |
 
 Requirements
 ------------
