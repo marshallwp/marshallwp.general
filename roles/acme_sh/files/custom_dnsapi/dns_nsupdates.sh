@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # Custom variant of the built-in dns_nsupdate.sh script that supports
 # cases where you must update multiple name-servers for every renewal.
@@ -10,6 +10,7 @@
 # fulldomain is provided by acme.sh and is equivalent to the --domain-alias or --challenge-alias
 # txtvalue is similarly provided by acme.sh.
 
+#shellcheck disable=SC2034
 dns_nsupdate_info='nsupdate RFC 2136 DynDNS client
 Site: bind9.readthedocs.io/en/v9.18.19/manpages.html#nsupdate-dynamic-dns-update-utility
 Docs: github.com/acmesh-official/acme.sh/wiki/dnsapi#dns_nsupdate
@@ -42,7 +43,7 @@ dns_nsupdates_add() {
   _saveaccountconf_mutable NSUPDATE_OPT "${NSUPDATE_OPT}"
 
   # Perform the update on each nameserver in the list.
-  for NSUPDATE_SERVER in ${NSUPDATE_SERVERS//,/ }
+  for NSUPDATE_SERVER in $(echo "$NSUPDATE_SERVERS" | sed 's/,/ /g')
   do
     [ -n "${NSUPDATE_SERVER}" ] || NSUPDATE_SERVER="localhost"
     [ -n "${NSUPDATE_SERVER_PORT}" ] || NSUPDATE_SERVER_PORT=53
@@ -53,12 +54,14 @@ dns_nsupdates_add() {
     [ -n "$DEBUG" ] && [ "$DEBUG" -ge "$DEBUG_LEVEL_2" ] && nsdebug="-D"
 
     if [ -z "${NSUPDATE_ZONE}" ]; then
+      #shellcheck disable=SC2086
       nsupdate -k "${NSUPDATE_KEY}" $nsdebug $NSUPDATE_OPT <<EOF
 server ${NSUPDATE_SERVER}  ${NSUPDATE_SERVER_PORT}
 update add ${fulldomain}. 60 in txt "${txtvalue}"
 send
 EOF
     else
+      #shellcheck disable=SC2086
       nsupdate -k "${NSUPDATE_KEY}" $nsdebug $NSUPDATE_OPT <<EOF
 server ${NSUPDATE_SERVER}  ${NSUPDATE_SERVER_PORT}
 zone ${NSUPDATE_ZONE}.
@@ -66,7 +69,7 @@ update add ${fulldomain}. 60 in txt "${txtvalue}"
 send
 EOF
     fi
-
+    #shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
       _err "error updating domain"
       return 1
@@ -87,7 +90,7 @@ dns_nsupdates_rm() {
   NSUPDATE_OPT="${NSUPDATE_OPT:-$(_readaccountconf_mutable NSUPDATE_OPT)}"
 
   # Perform the update on each nameserver in the list.
-  for NSUPDATE_SERVER in ${NSUPDATE_SERVERS//,/ }
+  for NSUPDATE_SERVER in $(echo "$NSUPDATE_SERVERS" | sed 's/,/ /g')
   do
     _checkKeyFile || return 1
     [ -n "${NSUPDATE_SERVER}" ] || NSUPDATE_SERVER="localhost"
@@ -97,12 +100,14 @@ dns_nsupdates_rm() {
     [ -n "$DEBUG" ] && [ "$DEBUG" -ge "$DEBUG_LEVEL_2" ] && nsdebug="-D"
 
     if [ -z "${NSUPDATE_ZONE}" ]; then
+      #shellcheck disable=SC2086
       nsupdate -k "${NSUPDATE_KEY}" $nsdebug $NSUPDATE_OPT <<EOF
 server ${NSUPDATE_SERVER}  ${NSUPDATE_SERVER_PORT}
 update delete ${fulldomain}. txt
 send
 EOF
     else
+      #shellcheck disable=SC2086
       nsupdate -k "${NSUPDATE_KEY}" $nsdebug $NSUPDATE_OPT <<EOF
 server ${NSUPDATE_SERVER}  ${NSUPDATE_SERVER_PORT}
 zone ${NSUPDATE_ZONE}.
@@ -110,6 +115,7 @@ update delete ${fulldomain}. txt
 send
 EOF
     fi
+    #shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
       _err "error updating domain"
       return 1

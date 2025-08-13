@@ -1,0 +1,8 @@
+---
+release_summary: Eliminates open-ended copy operations and makes ansible code-checking happy.
+
+security_fixes:
+  - acme_sh will no longer copy keys (of which there are none) from the role's files/keys directory to the destination.
+
+minor_changes:
+  - dns_nsupdates.sh was altered to make shellcheck and ansible shebang sanity test happy.
