@@ -40,7 +40,7 @@ galaxy_info:
   #   - 99.99
 
   galaxy_tags:
-    - acme.sh
+    - acmesh
     - certificate management
     - cert manager
     - ACME
