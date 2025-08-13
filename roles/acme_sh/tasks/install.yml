@@ -1,0 +1,76 @@
+---
+- name: Enumerate Installed Packages
+  tags: ['acmesh::install']
+  ansible.builtin.package_facts:
+
+- name: Install Dependencies
+  tags: ['acmesh::install']
+  ansible.builtin.include_role:
+    name: marshallwp.general.deps_mgr
+  vars:
+    deps_mgr_list: "{{ acme_sh_dependencies }}"
+
+- name: ACME.sh Exists
+  tags: ['acmesh::install']
+  ansible.builtin.stat:
+    path: "{{ (acme_sh_home, 'acme.sh') | ansible.builtin.path_join }}"
+  register: acme_sh_stat_result
+
+- name: ACME.sh Installed
+  when: not acme_sh_stat_result.stat.exists
+  tags: ['acmesh::install']
+  block:
+    # The master branch is specified in documentation.
+    # See: https://github.com/acmesh-official/acme.sh/wiki/How-to-install#2-or-install-from-github
+    - name: Download ACME.sh
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh
+        dest: /tmp/acme.sh
+        mode: u=rwx
+    - name: Install ACME.sh
+      ansible.builtin.command:
+        chdir: "/tmp"
+        cmd: "sh ./acme.sh --install --no-cron --home '{{ acme_sh_home }}' --config-home '{{ acme_sh_home }}'"
+        creates: "{{ (acme_sh_home, 'acme.sh') | ansible.builtin.path_join }}"
+
+- name: Cleanup ACME.sh Installer
+  tags: ['acmesh::install']
+  ansible.builtin.file:
+    path: /tmp/acme.sh
+    state: absent
+
+- name: Configure account.conf settings
+  tags: ['acmesh::install']
+  ansible.builtin.lineinfile:
+    path: "{{ (acme_sh_home, 'account.conf') | ansible.builtin.path_join }}"
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value }}"
+    state: present
+  loop: "{{ acme_sh_env_variables | ansible.builtin.combine(additional_env) | ansible.builtin.dict2items }}"
+  vars:
+    additional_env:
+      ACCOUNT_EMAIL: "{{ acme_sh_account_email | mandatory }}"
+      ACCOUNT_KEY_PATH: "{{ acme_sh_account_key_file | mandatory }}"
+      AUTO_UPGRADE: "{{ (acme_sh_auto_update) | ansible.builtin.ternary('1', '0') }}"
+
+- name: Custom DNSAPI Extensions Installed
+  tags: ['acmesh::install']
+  block:
+    - name: Create dnsapi directory
+      ansible.builtin.file:
+        path: "{{ (acme_sh_home, 'dnsapi') | ansible.builtin.path_join }}"
+        state: directory
+        mode: u=rwx,g=rx
+    - name: Copy custom dnsapi extension
+      ansible.builtin.copy:
+        src: 'custom_dnsapi/'
+        dest: "{{ (acme_sh_home, 'dnsapi') | ansible.builtin.path_join }}"
+        mode: u=rx,g=rx
+
+- name: Copy Over Keys
+  when: lookup('ansible.builtin.fileglob', 'keys/*') | length > 0
+  ansible.builtin.copy:
+    src: keys/
+    dest: "{{ acme_sh_home }}"
+    decrypt: true
+    mode: "u=r,g=,o="

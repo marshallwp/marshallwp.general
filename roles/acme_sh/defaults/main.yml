@@ -1,0 +1,76 @@
+---
+acme_sh_enabled: true
+acme_sh_user: "root"
+acme_sh_group: "root"
+acme_sh_home: /root/acme
+# Whether or Not acme.sh-created Cron Jobs that Automatically Renew Certificates are present or absent
+# Can be cron (default), systemd, or none
+acme_sh_scheduler: cron
+# If true, acme.sh will automatically update itself during scheduled jobs
+acme_sh_auto_update: true
+
+# Placement of the output TLS certificate and keys
+# These default to something that works with non-root users.
+acme_sh_tls_cert_file: "{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/public.crt"
+acme_sh_tls_key_file: "{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/private.key"
+acme_sh_tls_fullchain_file: "{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/public-fullchain.crt"
+# acme_sh_tls_ca_file:
+
+# The full name of the server you're creating this cert for.
+acme_sh_domain: "{{ ansible_facts['nodename'] }}"
+# Supported Modes: https://github.com/acmesh-official/acme.sh?tab=readme-ov-file#supported-modes
+# Modes: standalone, tls-alpn, and dns are supported.
+# Spaces are replaced by dashes and the word "mode" is excluded
+acme_sh_mode: dns
+# if the mode accepts a value (such as --dns), you may specify that here.
+#   dns_nsupdates is a custom version of dns_nsupdate that supports updating multiple dns servers.
+acme_sh_mode_value: dns_nsupdates
+# * DNS mode options
+# The DNS zone used during certificate renewals.
+acme_sh_dns_zone:
+# Time in seconds to wait for all the TXT records to propagate in dns api mode.
+# It's not necessary to use this by default, acme.sh polls dns status by DOH automatically.
+acme_sh_dns_sleep:
+# * Standalone & TLS Alpn mode options
+acme_sh_listening_port:
+
+# Set ENVIRONMENT VARIABLES that will be stored in account.conf and used during acme.sh operations.
+# Often needed for dnsapi plugins.
+acme_sh_env_variables:
+  # Comma-delimited list of nameservers to run nsupdate against
+  # NSUPDATE_SERVERS: ns1.example.com
+  # Path to the key used to create dns-01 challenge records on the nameservers.
+  # NSUPDATE_KEY: "{{ (acme_sh_home | ansible.builtin.normpath, 'dns-challenge-key.private') | ansible.builtin.path_join }}"
+  # NSUPDATE_ZONE: "{{ acme_sh_dns_zone }}"
+
+# Sets the --server parameter, which indicates the CA to use
+# Can be a friendly name or a ACME Server URL
+# See: https://github.com/acmesh-official/acme.sh/wiki/Server
+acme_sh_server: letsencrypt_test
+# CA Account email (eg. admin@example.com)
+acme_sh_account_email:
+# CA Account private key file (eg. "{{ (acme_sh_home | ansible.builtin.normpath, 'ca_account.key') | ansible.builtin.path_join }}")
+acme_sh_account_key_file:
+# Specifies the domain key length: 2048, 3072, 4096, 8192 or ec-256, ec-384, ec-521.
+acme_sh_keylength: ec-384
+
+# Operations ACME.sh should do after certain events.
+# See: https://github.com/acmesh-official/acme.sh/wiki/Using-pre-hook-post-hook-renew-hook-reloadcmd
+# Pre hook that happens before attempting to issue a certificate
+acme_sh_pre_hook:
+# Post hook that happens after attempting to issue a certificate
+acme_sh_post_hook:
+# Renew hook that is called when certs are *successfully* renewed
+acme_sh_renew_hook:
+# Command run after newly renewed certificates are installed
+acme_sh_reloadcmd:
+# Skips setting the hooks and reloadcmd. Useful when the command executed by the hook won't work
+# prior to the certificates existing.  You can set them later by running.
+#
+# - name: Set acme.sh hooks
+#   ansible.builtin.include_role:
+#     name: marshallwp.general.acme_sh
+#     tasks_from: update_cmds.yml
+#   vars:
+#     acme_sh_run_hook_setup: true
+acme_sh_run_hook_setup: true

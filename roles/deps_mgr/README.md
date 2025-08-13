@@ -9,7 +9,7 @@ Repository management is currently only supported by the following:
 
 | repo_type | Implementing Module(s) |
 | --------- | ---------------------- |
-| alpine | [custom-implementation](tasks/repository_types/alpine.yml) using only [`ansible.builtin`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin) modules |
+| alpine | [custom-implementation](https://github.com/marshallwp/marshallwp.general/blob/main/roles/deps_mgr/tasks/repository_types/alpine.yml) using only [`ansible.builtin`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin) modules |
 | apt-repo | [`community.general.apt_repo`](https://docs.ansible.com/ansible/latest/collections/community/general/apt_repo_module.html) |
 | apt | [`ansible.builtin.apt_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html) |
 | copr | [`community.general.copr`](https://docs.ansible.com/ansible/latest/collections/community/general/copr_module.html) |
@@ -70,6 +70,10 @@ To help make things more generic (and to simplify merging things together), I've
 | repo_type | The type of repository being managed. Essentially, it routes the command to a particular module |
 | name | The name of the repository. This maps to the `name` or equivalent parameter on a module.  Ex. when using `apt-repo` it maps to `repo` parameter. **Required** |
 | state | Indicates the desired repository state. |
+
+#### Useful documentation
+A full list of Ansible's OS Families and Distributions is hard to find, but it is listed in their code as the `OS_FAMILY_MAP` variable. See:
+https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/facts/system/distribution.py#L525-L551
 
 Dependencies
 ------------

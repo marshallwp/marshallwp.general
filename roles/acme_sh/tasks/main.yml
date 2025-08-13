@@ -1,0 +1,181 @@
+---
+# ACME.sh is a certificate renewal provider. It happens to allow for custom plugins,
+# such as the one I made to update multiple nameservers during a dns-01 request.
+- name: Translate '~' in acme_sh_home
+  tags: ['acmesh::install', 'acmesh::config']
+  ansible.builtin.set_fact:
+    acme_sh_home: "{{ acme_sh_home | ansible.builtin.expanduser }}"
+    acme_sh_tls_cert_file: "{{
+      (acme_sh_tls_cert_file) | ansible.builtin.ternary(acme_sh_tls_cert_file | ansible.builtin.expanduser, omit) }}"
+    acme_sh_tls_key_file: "{{
+      (acme_sh_tls_key_file) | ansible.builtin.ternary(acme_sh_tls_key_file | ansible.builtin.expanduser, omit) }}"
+    acme_sh_tls_fullchain_file: "{{
+      (acme_sh_tls_fullchain_file) | ansible.builtin.ternary(acme_sh_tls_fullchain_file | ansible.builtin.expanduser, omit) }}"
+
+- name: Install ACME.sh
+  when: acme_sh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::install']
+  ansible.builtin.include_tasks:
+    file: install.yml
+
+- name: Remove ACME.sh
+  when: acme_sh_enabled is ansible.builtin.falsy
+  tags: ['acmesh::install']
+  ansible.builtin.include_tasks:
+    file: remove.yml
+
+- name: Enable/Disable ACME.sh Cronjob
+  tags: ['acmesh::install', 'acmesh::config']
+  vars:
+    acme_sh_cronjobs: "{{ (acme_sh_scheduler == 'cron') | ansible.builtin.ternary('present', 'absent') }}"
+  ansible.builtin.cron:
+    name: ACME.sh Cronjob
+    month: '*'
+    weekday: '*'
+    day: '*'
+    hour: "{{ 24 | ansible.builtin.random(seed=inventory_hostname) }}"
+    minute: "{{ 60 | ansible.builtin.random(seed=inventory_hostname) }}"
+    job: "{{ (acme_sh_home, 'acme.sh') | ansible.builtin.path_join }} --cron --home \"{{ acme_sh_home }}\" --config-home \"{{ acme_sh_home }}\" > /dev/null"
+    state: "{{ (acme_sh_enabled) | ansible.builtin.ternary(acme_sh_cronjobs, 'absent') }}"
+
+# https://github.com/acmesh-official/acme.sh/wiki/Using-systemd-units-instead-of-cron
+- name: Enable/Disable ACME.sh SystemD Service
+  tags: ['acmesh::install', 'acmesh::config']
+  vars:
+    acme_sh_systemd_enabled: "{{ (acme_sh_enabled and acme_sh_scheduler == 'systemd') }}"
+  block:
+    - name: Install ACME.sh Service
+      when: acme_sh_systemd_enabled is ansible.builtin.truthy
+      ansible.builtin.template:
+        src: acmesh.service.j2
+        dest: /etc/systemd/system/acmesh.service
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
+        mode: 'u=rw,g=r,o=r'
+    - name: Install ACME.sh Timer
+      when: acme_sh_systemd_enabled is ansible.builtin.truthy
+      ansible.builtin.copy:
+        src: acmesh.timer
+        dest: /etc/systemd/system/acmesh.timer
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
+        mode: 'u=rw,g=r,o=r'
+    - name: Enable/Disable ACME.sh Service
+      ansible.builtin.systemd_service:
+        name: acmesh.service
+        daemon_reload: true
+        enabled: "{{ acme_sh_systemd_enabled }}"
+        state: "{{ acme_sh_systemd_enabled | ansible.builtin.ternary('started', 'stopped') }}"
+    - name: Enable/Disable ACME.sh Timer
+      ansible.builtin.systemd_service:
+        name: acmesh.timer
+        enabled: "{{ acme_sh_systemd_enabled }}"
+        state: "{{ acme_sh_systemd_enabled | ansible.builtin.ternary('started', 'stopped') }}"
+    - name: Remove Service & Timer
+      when: acme_sh_systemd_enabled is ansible.builtin.falsy
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/systemd/system/acmesh.service
+        - /etc/systemd/system/acmesh.timer
+
+
+- name: Ensure Destination Director(ies) Exists
+  when: acme_sh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ acme_sh_user }}"
+    group: "{{ acme_sh_group }}"
+    mode: u=rwx,g=rx,o=rx
+  loop: "{{ [acme_sh_tls_cert_file | ansible.builtin.dirname, acme_sh_tls_key_file | ansible.builtin.dirname] | ansible.builtin.unique }}"
+
+
+# omit is a special variable
+# See https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html#omit-elements-from-a-list
+- name: Issue New Certificates
+  when: acme_sh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  ansible.builtin.command:
+    chdir: "{{ acme_sh_home }}"
+    argv: "{{ command_args | reject('equalto', omit) | list }}"
+    creates: "{{ acme_sh_tls_fullchain_file | default(acme_sh_tls_cert_file) }}"
+  vars:
+    command_args:
+      - "{{ (acme_sh_home | ansible.builtin.normpath, 'acme.sh') | ansible.builtin.path_join }}"
+      - '--issue'
+      - "--{{ acme_sh_mode | mandatory }}"
+      - "{{ acme_sh_mode_value | default(omit) }}"
+      - '--server'
+      - "{{ acme_sh_server | mandatory }}"
+      - '--domain'
+      - "{{ acme_sh_domain | default(ansible_facts['nodename'], true) }}"
+      - "{{ (acme_sh_keylength | default(false)) | ansible.builtin.ternary('--keylength', omit) }}"
+      - "{{ (acme_sh_keylength | default(false)) | ansible.builtin.ternary(acme_sh_keylength, omit) }}"
+      # Sets the domain alias to use in place of the actual domain
+      # See: https://github.com/acmesh-official/acme.sh/wiki/DNS-alias-mode#7-challenge-alias-or-domain-alias
+      - "{{ (acme_sh_mode == 'dns') | ansible.builtin.ternary('--domain-alias', omit) }}"
+      - "{{ (acme_sh_mode == 'dns') | ansible.builtin.ternary(ansible_hostname~'.'~acme_sh_dns_zone, omit) }}"
+      - "{{ (acme_sh_mode == 'dns' and (acme_sh_dns_sleep | default(false))) | ansible.builtin.ternary('--dnssleep', omit) }}"
+      - "{{ (acme_sh_mode == 'dns' and (acme_sh_dns_sleep | default(false))) | ansible.builtin.ternary(acme_sh_dns_sleep | string, omit) }}"
+      # Sets options for standalone and tls alpn mode.
+      # See: https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert#2-standalone-mode
+      - "{{ (acme_sh_mode == 'standalone' and (acme_sh_listening_port | default(false))) | ansible.builtin.ternary('--httpport', omit) }}"
+      - "{{ (acme_sh_mode == 'alpn' and (acme_sh_listening_port | default(false))) | ansible.builtin.ternary('--tlsport', omit) }}"
+      - "{{ (acme_sh_mode in ['alpn', 'standalone'] and (acme_sh_listening_port | default(false))) | ansible.builtin.ternary(acme_sh_listening_port, omit) }}"
+      - '--cert-file'
+      - "{{ acme_sh_tls_cert_file | ansible.builtin.normpath | mandatory }}"
+      - '--key-file'
+      - "{{ acme_sh_tls_key_file | ansible.builtin.normpath | mandatory }}"
+      - "{{ (acme_sh_tls_ca_file | default(false)) | ansible.builtin.ternary('--ca-file', omit) }}"
+      - "{{ (acme_sh_tls_ca_file | default(false)) | ansible.builtin.ternary(acme_sh_tls_ca_file, omit) }}"
+      - "{{ (acme_sh_tls_fullchain_file | default(false)) | ansible.builtin.ternary('--fullchain-file', omit) }}"
+      - "{{ (acme_sh_tls_fullchain_file | default(false)) | ansible.builtin.ternary(acme_sh_tls_fullchain_file, omit) }}"
+      - '--config-home'
+      - "{{ acme_sh_home }}"
+      - '--log'
+      - "{{ (acme_sh_home, 'issue.log') | ansible.builtin.path_join }}"
+      # Hooks go last
+      - "{{ (acme_sh_run_hook_setup and acme_sh_reloadcmd | default(false)) | ansible.builtin.ternary('--reloadcmd', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_reloadcmd | default(false)) | ansible.builtin.ternary(acme_sh_reloadcmd, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_pre_hook | default(false)) | ansible.builtin.ternary('--pre-hook', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_pre_hook | default(false)) | ansible.builtin.ternary(acme_sh_pre_hook, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_post_hook | default(false)) | ansible.builtin.ternary('--post-hook', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_post_hook | default(false)) | ansible.builtin.ternary(acme_sh_post_hook, omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_renew_hook | default(false)) | ansible.builtin.ternary('--renew-hook', omit) }}"
+      - "{{ (acme_sh_run_hook_setup and acme_sh_renew_hook | default(false)) | ansible.builtin.ternary(acme_sh_renew_hook, omit) }}"
+
+
+- name: Set File Permissions on Copied Certificates
+  when: acme_sh_enabled is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  block:
+    - name: Set file permissions on fullchain certificate
+      ansible.builtin.file:
+        path: "{{ acme_sh_tls_fullchain_file }}"
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
+        mode: u=rw,g=r,o=r
+    - name: Set file permissions on public certificate
+      ansible.builtin.file:
+        path: "{{ acme_sh_tls_cert_file }}"
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
+        mode: u=rw,g=r,o=r
+    - name: Set file permissions on private key
+      ansible.builtin.file:
+        path: "{{ acme_sh_tls_key_file }}"
+        owner: "{{ acme_sh_user }}"
+        group: "{{ acme_sh_group }}"
+        mode: u=rw,g=r,o=
+
+
+- name: Save hooks to local facts
+  when:
+    - acme_sh_enabled is ansible.builtin.truthy
+    - acme_sh_run_hook_setup is ansible.builtin.truthy
+  tags: ['acmesh::config']
+  ansible.builtin.include_tasks:
+    file: update_local_facts.yml
