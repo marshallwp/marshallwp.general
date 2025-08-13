@@ -128,3 +128,19 @@ releases:
     fragments:
       - 15-fix-repo-defaults.yaml
     release_date: '2025-04-17'
+  1.4.0:
+    changes:
+      release_summary: Add a role to manage acme.sh and fix a few documentation issues.
+    fragments:
+      - 16-add-acme_sh-role.yml
+    objects:
+      role:
+        - description: 'A role to install/update/remove, configure, and schedule acme.sh.
+            acme.sh is a certificate manager written purely in Shell and thus has
+            minimal dependencies (wget or curl). It is highly extensible and works
+            on just about anything.
+
+            '
+          name: acme_sh
+          namespace: null
+    release_date: '2025-08-13'

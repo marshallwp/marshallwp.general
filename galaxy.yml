@@ -5,7 +5,7 @@
 
 namespace: "marshallwp"
 name: "general"
-version: 1.3.3
+version: 1.4.0
 readme: README.md
 authors:
   - William P. Marshall
@@ -13,7 +13,7 @@ authors:
 description: Generic general tooling that is broadly useful and have little to no dependencies or platform restrictions.
 license_file: LICENSE
 # TO-DO: update the tags based on your content type
-tags: ["linux", "tools", "dirtree", "package", "repository", "java", "acmesh"]
+tags: ["linux", "tools", "dirtree", "package", "repository", "java", "acmesh", "acme.sh"]
 dependencies:
   "community.general": ">=8.2.0"
 

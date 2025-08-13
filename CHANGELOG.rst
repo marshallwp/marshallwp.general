@@ -4,6 +4,19 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.4.0
+======
+
+Release Summary
+---------------
+
+Add a role to manage acme.sh and fix a few documentation issues.
+
+New Roles
+---------
+
+- acme_sh - A role to install/update/remove, configure, and schedule acme.sh. acme.sh is a certificate manager written purely in Shell and thus has minimal dependencies (wget or curl). It is highly extensible and works on just about anything.
+
 v1.3.3
 ======
 
