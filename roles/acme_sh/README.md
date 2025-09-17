@@ -10,7 +10,7 @@ Using this role will install the following packages on the target:
 |-------------------------------------------|----------------------------------------------------------------------------------|
 | **socat**                                 | always                                                                           |
 | **openssl**                               | always                                                                           |
-| cron/cronnie/mcron/vixie-cron             | you do not have `cron`, `cronie`, `isc-cron`, `mcron`, or `vixie-cron` installed |
+| cron/cronnie/isc-cron/mcron/vixie-cron    | you do not have a vixie-cron compatible program installed but have enabled installing cronjobs |
 | bind-utils/bind-tools/bind9-dnsutils/bind | `acme_sh_mode == 'dns' and acme_sh_mode_value is regexp('dns_nsupdates?')`       |
 | wget                                      | neither `wget` nor `curl` is installed                                           |
 
