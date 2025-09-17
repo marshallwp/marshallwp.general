@@ -1,0 +1,2 @@
+# Python packages that are required for running tests on this collection
+filesizelib == 0.12.1

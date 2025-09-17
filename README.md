@@ -9,6 +9,9 @@ This repository contains the `marshallwp.general` Ansible Collection.  Everythin
 
 `community.general`
 
+### Python Packages
+`filesizelib v0.12.1` – This package itself has no dependencies.
+
 ## Included content
 
 <!--start collection content-->

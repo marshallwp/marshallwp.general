@@ -1,1 +1,2 @@
-# TO-DO: add python packages that are required for this collection
+# Python packages that are required for this collection
+filesizelib == 0.12.1
