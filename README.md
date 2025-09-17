@@ -1,5 +1,7 @@
 # Marshallwp General Collection
 
+[![Ansible Galaxy Downloads](https://img.shields.io/ansible/collection/d/marshallwp/general?label=Ansible%20Galaxy%20Downloads)](https://galaxy.ansible.com/ui/repo/published/marshallwp/general/)
+
 This repository contains the `marshallwp.general` Ansible Collection.  Everything within this collection is useful in wide-ranging situations and contains minimal external dependencies.  It is intended to be extremely generic and where possible has no platform limitations.  Where platform limitations do exist (such as the `deps_mgr` role), they are made as broad as possible.
 
 <!--start requires_ansible-->
