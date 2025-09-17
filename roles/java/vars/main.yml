@@ -228,6 +228,15 @@ java_packages:
             signed_by: https://packages.microsoft.com/keys/microsoft.asc
         packages:
           - "msopenjdk-{{ java_version }}"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: microsoft-prod
+            repo: "https://packages.microsoft.com/config/{{ ansible_facts['distribution'] | lower }}/{{
+                    ansible_facts['distribution_major_version'] }}/packages-microsoft-prod.rpm"
+            auto_import_keys: true
+        packages:
+          - "msopenjdk-{{ java_version }}"
 
 
 # For installations that can not be managed by dependency_mgr
@@ -246,6 +255,7 @@ java_archives:
       checksum: "sha256:https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
         java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
         {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}.sha256"
+
 
 # Full path of the downloaded archive file
 java_archive_path: "{{
