@@ -1,4 +1,4 @@
-release_summary: add [Ansible argument specs](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html#role-argument-validation) to all roles. Also explicitly made deps_mgr package and replsitory management tasks elevated.
+release_summary: add `Ansible argument specs <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html#role-argument-validation>` to all roles. Also explicitly made deps_mgr package and replsitory management tasks elevated.
 
 major_changes:
   - deps_mgr - explicitly specificed that tasks related to package installation or repository management should be elevated.
