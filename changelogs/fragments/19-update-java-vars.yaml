@@ -1,4 +1,0 @@
-release_summary: add support for installing Microsoft OpenJDK on Suse distributions.
-
-minor_changes:
-  - Add support for installing Microsoft OpenJDK for Suse distributions.

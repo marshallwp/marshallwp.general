@@ -1,21 +1,10 @@
-objects:
-  role: {}
+objects: {}
 plugins:
   become: {}
   cache: {}
   callback: {}
   cliconf: {}
   connection: {}
-  filter:
-    generate_paths:
-      description: Flattens a nested directory tree of directory names into a list
-        of paths.
-      name: generate_paths
-      version_added: 1.0.0
-    get_grpname:
-      description: Match the input name or GID to a real group and return its name.
-      name: get_grpname
-      version_added: 1.0.0
   httpapi: {}
   inventory: {}
   lookup: {}
@@ -23,6 +12,5 @@ plugins:
   netconf: {}
   shell: {}
   strategy: {}
-  test: {}
   vars: {}
-version: 1.4.2
+version: 1.4.3

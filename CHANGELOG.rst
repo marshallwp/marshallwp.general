@@ -4,6 +4,28 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.4.3
+======
+
+Release Summary
+---------------
+
+Add support for installing Microsoft OpenJDK on Suse distributions. Add Ansible argument specs to all roles. Explicitly made deps_mgr package and replsitory management tasks elevated.
+
+Major Changes
+-------------
+
+- deps_mgr - explicitly specificed that tasks related to package installation or repository management should be elevated.
+
+Minor Changes
+-------------
+
+- Add argument spec to acme_sh role.
+- Add argument spec to deps_mgr role.
+- Add argument spec to dirtree role.
+- Add argument spec to java role.
+- Add support for installing Microsoft OpenJDK for Suse distributions.
+
 v1.4.2
 ======
 

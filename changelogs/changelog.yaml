@@ -170,3 +170,21 @@ releases:
     fragments:
       - 18-misc-patch.yml
     release_date: '2025-08-13'
+  1.4.3:
+    changes:
+      major_changes:
+        - deps_mgr - explicitly specificed that tasks related to package installation
+          or repository management should be elevated.
+      minor_changes:
+        - Add argument spec to acme_sh role.
+        - Add argument spec to deps_mgr role.
+        - Add argument spec to dirtree role.
+        - Add argument spec to java role.
+        - Add support for installing Microsoft OpenJDK for Suse distributions.
+      release_summary: Add support for installing Microsoft OpenJDK on Suse distributions.
+        Add Ansible argument specs to all roles. Explicitly made deps_mgr package
+        and replsitory management tasks elevated.
+    fragments:
+      - 19-update-java-vars.yaml
+      - 21-add-argument-specs.yaml
+    release_date: '2025-10-21'
