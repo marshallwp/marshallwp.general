@@ -1,0 +1,7 @@
+release_summary: add [Ansible argument specs](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html#role-argument-validation) to all roles.
+
+minor_changes:
+  - Add argument spec to acme_sh role.
+  - Add argument spec to deps_mgr role.
+  - Add argument spec to dirtree role.
+  - Add argument spec to java role.
