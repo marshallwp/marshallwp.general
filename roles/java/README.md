@@ -19,7 +19,7 @@ Role Variables
 | java_version | Default Java Version.  Should always be a supported version of java. | 21 |
 | java_type | Indicates whether the role should try to install the JRE or JDK. | jre |
 | java_use_headless | Headless variants exclude GUI components and are good for terminal-only servers. | true |
-| java_vendor | The vendor providing you with Java.  `Default` means your disto's default repositories. | Default |
+| java_vendor | The vendor providing you with Java.  `Default` means your distro's default repositories. | Default |
 | java_variant | Some vendors provide multiple versions of Java. This variable lets you specify which to install. | OpenJDK |
 | java_install_directory | Install directory for non-repository-based installs. | `/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}` |
 | java_archive_download_dir | Archive download directory for non-repository-based installs. | `/tmp` |

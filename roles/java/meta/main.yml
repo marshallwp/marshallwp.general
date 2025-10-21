@@ -78,7 +78,7 @@ argument_specs:
         type: bool
         default: true
       java_vendor:
-        description: The vendor providing you with Java.  `Default` means your disto's default repositories.
+        description: The vendor providing you with Java.  `Default` means your distro's default repositories.
         default: Default
         choice:
           - Default
