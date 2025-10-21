@@ -13,6 +13,7 @@
 # For Package-based installations/upgrades
 - name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }} # noqa: package-latest
   when: (java_archive_path | ansible.builtin.splitext)[1] not in java_archive_exts
+  become: true
   ansible.builtin.package:
     name: "{{ java_archive_path }}"
     state: latest
@@ -24,6 +25,7 @@
     # Only RedHat-based distros support the family parameter.
     alternatives_family: "{{ (ansible_facts['os_family'] == 'RedHat') | ansible.builtin.ternary(
       java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_architecture, undef())}}"
+  become: true
   block:
     - name: Ensure Destination Directory Exists
       ansible.builtin.file:
