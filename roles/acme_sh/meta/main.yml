@@ -56,3 +56,104 @@ dependencies:
   []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.
+
+argument_specs:
+  main:
+    short_description: Manage acme.sh, a lightweight certificate managemenent tool.
+    description: >
+      Installs/Uninstalls and (re)configures acme.sh, custom dnsapi extensions, and scheduled runs of the same.
+      Acme.sh is "a pure Unix shell script implementing ACME client protocol" for certificate management. It
+      requires minimal dependencies and is compatible with bash, dash, and sh.
+    author: ['William P. Marshall']
+    version_added: '1.4.0'
+    options:
+      acme_sh_enabled:
+        description: If set to false, acme.sh will be uninstalled
+        type: bool
+        default: true
+      acme_sh_user:
+        description: The user that will run and own the output of acme.sh
+        default: root
+      acme_sh_group:
+        description: The group that will run and own the output of acme.sh
+        default: root
+      acme_sh_home:
+        description: The directory into which acme.sh will be installed and in which configuration files will be stored
+        default: /root/acme
+      acme_sh_scheduler:
+        description: The scheduler used to run acme.sh on a schedule.
+        default: cron
+        choice:
+          - cron
+          - systemd
+          - none
+      acme_sh_auto_update:
+        description: Whether acme.sh should check for and install updates during scheduled jobs.
+        type: bool
+        default: true
+      acme_sh_tls_cert_file:
+        description: Destination filepath of the TLS Public Certificate
+        default: '{{ acme_sh_home }}/{{ ansible_facts["nodename"] }}/public.crt'
+      acme_sh_tls_key_file:
+        description: Destination filepath of the TLS Private Key
+        default: '{{ acme_sh_home }}/{{ ansible_facts["nodename"] }}/private.key'
+      acme_sh_tls_fullchain_file:
+        description: Destination filepath of the TLS Fullchain Public Certificate
+        default: '{{ acme_sh_home }}/{{ ansible_facts["nodename"] }}/public-fullchain.crt'
+      acme_sh_domain:
+        description: The domain you want to get a certificate for.
+        default: ansible_facts['nodename']
+      acme_sh_mode:
+        description: The mode to use when performing ACME challenges.
+        default: dns
+        choice:
+          - dns
+          - standalone
+          - alpn
+      acme_sh_mode_value:
+        description: Some modes (like `dns`) take an input value. Use this to pass it.
+        default: dns_nsupdates
+      acme_sh_dns_zone:
+        description: The DNS zone used during certificate renewals.
+        required: true
+      acme_sh_dns_sleep:
+        description: Time in seconds to wait for all TXT records to propagate in dnsapi mode.  By default acme.sh polls DNS status by DOH.
+        type: int
+      acme_sh_listening_port:
+        description: The port acme_sh should listen on when using `standalone` or `alpn` modes.
+        type: int
+      acme_sh_env_variables:
+        description: A dictionary of environment variables to be set during acme.sh operations.  Primarily for dnsapi extensions.
+        type: dict
+      acme_sh_server:
+        description: Sets the [`--server`](https://github.com/acmesh-official/acme.sh/wiki/Server) parameter.
+        default: letsencrypt_test
+      acme_sh_account_email:
+        description: The email of the account to request a certificate under.
+        required: true
+      acme_sh_account_keyfile:
+        description: File containing your account key for authentication with the ACME server
+        default: '{{ acme_sh_home }}/ca_account.key'
+      acme_sh_keylength:
+        description: Specifies the domain key length
+        default: 'ec-384'
+        choice:
+          - '2048'
+          - '3072'
+          - '4096'
+          - '8192'
+          - 'ec-256'
+          - 'ec-384'
+          - 'ec-521'
+      acme_sh_reloadcmd:
+        description: Command run after newly renewed certificates are installed
+      acme_sh_prehook:
+        description: Pre hook that happens before attempting to issue a certificate
+      acme_sh_post_hook:
+        description: Post hook that happens after attempting to issue a certificate
+      acme_sh_renew_hook:
+        description: Renew hook that is called when certs are *successfully* renewed
+      acme_sh_run_hook_setup:
+        description: Setup the hooks and reloadcmd. Useful when the command executed by the hook won't work without the certificates existing first.
+        type: bool
+        default: true
