@@ -28,6 +28,7 @@
         [os_packages | default([]), dist_packages | default([]), maj_ver_packages | default([])]
         | community.general.lists_mergeby('name')
       }}"
+  become: true
   ansible.builtin.package:
     name: "{{ lookup('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge')
               | selectattr('state', 'equalto', state) | map(attribute='name') }}"

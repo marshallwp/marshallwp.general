@@ -34,6 +34,8 @@
         loop_var: step
       ansible.builtin.include_tasks:
         file: "repository_types/{{ step['repo_type'] | lower }}.yml"
+        apply:
+          become: true
 
     - name: Manage Packages
       ansible.builtin.include_tasks:

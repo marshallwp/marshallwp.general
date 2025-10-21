@@ -39,7 +39,7 @@ Role Variables
 | acme_sh_mode | The mode to use when performing ACME challenges. Can be `dns`,`standalone`, or `alpn` | `dns` |
 | acme_sh_mode_value | Some modes (like `dns`) take an input value. Use this to pass it. | `dns_nsupdates` |
 | acme_sh_dns_zone | **MANDATORY** The DNS zone used during certificate renewals. | |
-| acme_sh_dns_sleep | Time in seconds to wait for all TXT records to propagate in dnsapi mode.  By default acme.sh polls dns status by DOH. | |
+| acme_sh_dns_sleep | Time in seconds to wait for all TXT records to propagate in dnsapi mode.  By default acme.sh polls DNS status by DOH. | |
 | acme_sh_listening_port | The port acme_sh should listen on when using `standalone` or `alpn` modes. | |
 | acme_sh_env_variables | A dictionary of environment variables to be set during acme.sh operations.  Primarily for dnsapi extensions. | |
 | acme_sh_server | Sets the [`--server`](https://github.com/acmesh-official/acme.sh/wiki/Server) parameter. | `letsencrypt_test` |

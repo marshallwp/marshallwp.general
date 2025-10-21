@@ -52,3 +52,68 @@ dependencies:
   []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.
+
+argument_specs:
+  main:
+    short_description: Install Java from a variety of vendors and variants.
+    long_description: >
+      Installs Java from a variety of vendors and variants.  You can do a simple Default OpenJDK install,
+      or you can install Oracle Java, or Oracle GraalVM, or the one from Azul, Microsoft, etc.  Default
+      settings are to install the headless OpenJDK JRE available in your distro's default repository.
+    author: ['William P. Marshall']
+    version_added: '1.3.0'
+    options:
+      java_version:
+        description: Default Java Version.  Should always be a supported version of java.
+        type: int
+        default: 21
+      java_type:
+        description: Indicates whether the role should try to install the JRE or JDK.
+        default: jre
+        choice:
+          - jre
+          - jdk
+      java_use_headless:
+        description: Headless variants exclude GUI components and are good for terminal-only servers.
+        type: bool
+        default: true
+      java_vendor:
+        description: The vendor providing you with Java.  `Default` means your distro's default repositories.
+        default: Default
+        choice:
+          - Default
+          - Amazon
+          - Azul
+          - Bellsoft
+          - Eclipse
+          - Microsoft
+          - Oracle
+      java_variant:
+        description:
+          - Some vendors provide multiple versions of Java. This variable lets you specify which to install.
+          - OpenJDK is the default. Zing is Azul-specific. GrallVM and Java are Oracle-specific.
+        default: OpenJDK
+        choice:
+          - OpenJDK
+          - Zing
+          - GraalVM
+          - Java
+      java_install_directory:
+        description: Install directory for non-repository-based installs.
+        default: '/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}'
+      java_archive_download_dir:
+        description: Archive download directory for non-repository-based installs.
+        default: /tmp
+      java_update_alternatives:
+        description: Enable or disable updating alternatives via update-alternatives for Archive-installed Java
+        type: bool
+        default: false
+        version_added: '1.3.1'
+      java_archive_exts:
+        description: >
+          When not installing from a repository, file extension will determine whether a file is installed
+          via ansible.builtin.package or extracted via ansible.builtin.unarchive.  Files with extensions
+          matching this list will go through the latter process.
+        type: list
+        elements: str
+        default: ['.bz2', '.tbz', '.gz', '.tgz', '.lz', '.lzma', '.tlz', '.xz', '.txz', '.zst', '.tzst']
