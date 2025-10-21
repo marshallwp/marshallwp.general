@@ -23,6 +23,7 @@ Role Variables
 | java_variant | Some vendors provide multiple versions of Java. This variable lets you specify which to install. | OpenJDK |
 | java_install_directory | Install directory for non-repository-based installs. | `/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}` |
 | java_archive_download_dir | Archive download directory for non-repository-based installs. | `/tmp` |
+| java_update_alternatives | Enable or disable updating alternatives for Java | false |
 | java_archive_exts | When not installing from a repository, file extension will determine whether a file is installed via ansible.builtin.package or extracted via ansible.builtin.unarchive.  Files with extensions matching this list will go through the latter process. | `['.bz2','.tbz','.gz','.tgz','.lz','.lzma','.tlz','.xz','.txz','.zst','.tzst']` |
 
 Dependencies
