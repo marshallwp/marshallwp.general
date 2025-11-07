@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # filter_plugins/generate_paths.py
 
 DOCUMENTATION = r'''

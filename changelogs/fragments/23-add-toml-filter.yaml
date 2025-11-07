@@ -8,3 +8,6 @@ major_changes:
 
 removed_features:
   - deps_mgr - use of the `dependencies` alias for `deps_mgr_list` has been removed due to lack of support in Ansible's Argument Specification.
+
+doc_changes:
+  - Implement REUSE specification for licensing information.

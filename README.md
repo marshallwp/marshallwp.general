@@ -1,3 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+SPDX-FileContributor: William P. Marshall
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Marshallwp General Collection
 
 This repository contains the `marshallwp.general` Ansible Collection.  Everything within this collection is useful in wide-ranging situations and contains minimal external dependencies.  It is intended to be extremely generic and where possible has no platform limitations.  Where platform limitations do exist (such as the `deps_mgr` role), they are made as broad as possible.

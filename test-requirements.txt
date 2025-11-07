@@ -2,4 +2,3 @@
 pytest-ansible
 pytest-xdist
 molecule
-tomli-w

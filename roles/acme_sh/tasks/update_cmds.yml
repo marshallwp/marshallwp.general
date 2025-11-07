@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # The commands are stored in the config file as a base64 string of unknown encoding.
 # As a workaround, you can update it by reinstalling the certificate with a command.

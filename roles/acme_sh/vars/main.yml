@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # acme.sh requires either wget or curl.  If neither exists, install wget (it's smaller than curl)
 acme_sh_install_wget: "{{ ansible_facts['packages'] | select('in', ['curl', 'wget']) | length == 0 }}"
 # if configuring acme.sh to use nslookup for dns-01 challenges, make sure it's installed.

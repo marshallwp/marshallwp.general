@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # ACME.sh is a certificate renewal provider. It happens to allow for custom plugins,
 # such as the one I made to update multiple nameservers during a dns-01 request.

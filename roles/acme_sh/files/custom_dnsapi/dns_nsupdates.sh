@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Custom variant of the built-in dns_nsupdate.sh script that supports
 # cases where you must update multiple name-servers for every renewal.
 #
