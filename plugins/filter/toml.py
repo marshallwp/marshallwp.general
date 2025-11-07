@@ -5,19 +5,19 @@
 # License Reproduced below
 # =============================================================================
 # MIT License
-
+#
 # Copyright (c) 2025 arillso
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -99,8 +99,8 @@ def from_toml(_input):
     """
     Converts a TOML-formatted string into a Python object.
 
-    :param o: The string to convert.
-    :type o: str
+    :param _input: The string to convert.
+    :type _input: str
     :return: The Python object generated from the TOML string.
     :rtype: dict
     :raises AnsibleFilterError: If the input string is not a valid TOML string or another
@@ -180,7 +180,7 @@ RETURN = r'''
         type: string
 '''
 
-def to_nice_toml(data):
+def to_nice_toml(_input):
     """
     Convert a Python dictionary to a nicely formatted TOML string.
 
@@ -188,8 +188,8 @@ def to_nice_toml(data):
     nested dictionaries and arrays of dictionaries. It ensures proper indentation and formatting
     to produce a readable TOML representation of the input dictionary.
 
-    :param data: The Python dictionary to convert.
-    :type data: dict
+    :param _input: The Python dictionary to convert.
+    :type _input: dict
     :return: A nicely formatted TOML string representing the input dictionary.
     :rtype: str
     """
@@ -222,7 +222,7 @@ def to_nice_toml(data):
         else:
             raise TypeError(f"Unsupported type: {type(value)}")
 
-    def recurse(data, indent=0, parent_key=""):
+    def recurse(_input, indent=0, parent_key=""):
         """
         Recursively traverses the data structure, formatting it into a TOML string.
 
@@ -230,7 +230,7 @@ def to_nice_toml(data):
         and arrays of dictionaries,ensuring proper TOML structure and indentation.
         """
         toml_str = ""
-        for key, value in data.items():
+        for key, value in _input.items():
             # Construct the full key path for nested dictionaries
             full_key = f"{parent_key}.{key}" if parent_key else key
 
@@ -251,7 +251,7 @@ def to_nice_toml(data):
                 toml_str += "  " * indent + f"{key} = {format_toml_value(value)}\n"
         return toml_str
 
-    return recurse(data)
+    return recurse(_input)
 
 
 # pylint: disable=R0903
