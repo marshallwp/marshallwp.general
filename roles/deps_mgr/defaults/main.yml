@@ -8,7 +8,7 @@ deps_mgr_repo_merge_method: lowest_only
 # The default state for simple package entries.
 deps_mgr_package_default_state: present
 
-deps_mgr_list: "{{ dependencies }}"
+deps_mgr_list:
 # Example for Installing Postgres 16 with packages required for configuration via community.general.postgres.
 # deps_mgr_list:
 #   Alpine:

@@ -89,7 +89,6 @@ argument_specs:
           - Can use any state supported by the package manager being used.
         default: present
       deps_mgr_list:
-        aliases: ['dependencies']
         description: Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels.
         type: dict
         required: true
