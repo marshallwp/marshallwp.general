@@ -13,7 +13,7 @@ authors:
 description: Generic general tooling that is broadly useful and have little to no dependencies or platform restrictions.
 license_file: LICENSE
 # TO-DO: update the tags based on your content type
-tags: ["linux", "tools", "dirtree", "package", "repository", "java", "cert", "certificate"]
+tags: ["linux", "tools", "dirtree", "package", "repository", "java", "cert", "certificate", "toml"]
 dependencies:
   "community.general": ">=8.2.0"
 

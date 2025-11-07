@@ -1,0 +1,7 @@
+---
+release_summary: Add filters for converting to and from TOML.
+
+major_changes:
+  - Added from_toml filter to convert TOML text to a dictionary.
+  - Added to_toml filter to convert a dictionary into TOML text.
+  - Added to_nice_toml filter to convert a complex dictionary into TOML text.
