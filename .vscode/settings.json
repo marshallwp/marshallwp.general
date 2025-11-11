@@ -2,8 +2,10 @@
     "ansible.python.interpreterPath": "/bin/python",
     "files.associations": {
         "*.j2": "ansible-jinja",
-        "*.yml": "ansible"
+        "*.yml": "ansible",
+        "*.yaml": "ansible"
     },
     "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true
+    "files.trimFinalNewlines": true,
+    "files.eol": "\n"
 }
