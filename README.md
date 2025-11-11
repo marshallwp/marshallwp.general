@@ -15,7 +15,12 @@ Requires Ansible 2.14 or later
 
 ## External requirements
 
-`community.general`
+### Ansible Collections
+- `community.general`
+
+### Python Libraries
+- `tomli-w` – only if you want to use the `to_toml` filter.
+- `tomli` – only if you want to use the `from_toml` filter while running on Python ≤ 3.10.  Python 3.11 and later have built-in support for parsing.
 
 ## Included content
 
