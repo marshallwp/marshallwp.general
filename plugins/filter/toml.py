@@ -38,8 +38,8 @@ try:
     import tomli_w as tomlw
 except ImportError as exc:
     try:
-        # pylint: disable=import-self
-        import toml as tomlw
+        # Only available on ansible-core below 2.19
+        import ansible.plugins.inventory.toml as tomlw
     except ImportError:
         raise AnsibleRuntimeError(
             'A Python library for writing TOML is required ("tomli-w" or "toml").'
