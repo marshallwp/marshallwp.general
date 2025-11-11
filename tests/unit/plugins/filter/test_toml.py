@@ -20,9 +20,12 @@ import pytest
 # In the function's body, we use the assert statement to check
 # if the convert_to_supported function given the test_input,
 # returns what we expect.
-@pytest.mark.parametrize('sample, expected', [
-    ({"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1},
-"""\
+@pytest.mark.parametrize(
+    "sample, expected",
+    [
+        (
+            {"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1},
+            """\
 val2 = 2
 val1 = 1
 
@@ -30,8 +33,10 @@ val1 = 1
 val3 = 3
 
 [table.nested]
-""")
-])
+""",
+        )
+    ],
+)
 def test_outputs_to_toml(sample, expected):
     assert to_toml(sample) == expected
 
@@ -41,8 +46,11 @@ def test_to_toml_throws_AnsibleFilterError():
         to_toml('string')
 
 
-@pytest.mark.parametrize('sample, expected', [
-    ("""\
+@pytest.mark.parametrize(
+    "sample, expected",
+    [
+        (
+            """\
 val2 = 2
 val1 = 1
 
@@ -51,8 +59,10 @@ val3 = 3
 
 [table.nested]
 """,
-{"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1})
-])
+            {"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1},
+        )
+    ],
+)
 def test_outputs_from_toml(sample, expected):
     assert from_toml(sample) == expected
 
