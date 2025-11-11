@@ -2,4 +2,5 @@
 pytest-ansible
 pytest-xdist
 molecule
-tomli-w
+tomli-w >= 1.2.0
+tomli ; python_version < '3.11'

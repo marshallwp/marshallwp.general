@@ -10,7 +10,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 This repository contains the `marshallwp.general` Ansible Collection.  Everything within this collection is useful in wide-ranging situations and contains minimal external dependencies.  It is intended to be extremely generic and where possible has no platform limitations.  Where platform limitations do exist (such as the `deps_mgr` role), they are made as broad as possible.
 
 <!--start requires_ansible-->
-Requires Ansible 2.14 or later
+Requires Ansible 2.15 or later
 <!--end requires_ansible-->
 
 ## External requirements
