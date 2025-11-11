@@ -66,6 +66,7 @@ RETURN = r'''
         type: dict
 '''
 
+
 def from_toml(_input):
     """
     Converts a TOML-formatted string into a Python object.
@@ -108,6 +109,7 @@ RETURN = r'''
         type: string
 '''
 
+
 def to_toml(_input):
     """
     Converts a Python object into a TOML-formatted string.
@@ -126,7 +128,6 @@ def to_toml(_input):
         return to_text(tomlw.dumps(_input), errors="surrogate_or_strict")
     except Exception as e:
         raise AnsibleFilterError(f"Error generating TOML: {e}") from e
-
 
 
 DOCUMENTATION = r'''
@@ -150,6 +151,7 @@ RETURN = r'''
         description: A TOML string
         type: string
 '''
+
 
 def to_nice_toml(_input):
     """

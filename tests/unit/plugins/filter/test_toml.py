@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.errors import AnsibleFilterError
-from ansible_collections.marshallwp.general.plugins.filter.toml import from_toml,to_toml
+from ansible_collections.marshallwp.general.plugins.filter.toml import from_toml, to_toml
 import pytest
 
 
@@ -55,6 +55,7 @@ val3 = 3
 ])
 def test_outputs_from_toml(sample, expected):
     assert from_toml(sample) == expected
+
 
 def test_from_toml_throws_AnsibleFilterError():
     with pytest.raises(AnsibleFilterError):
