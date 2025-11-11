@@ -42,7 +42,7 @@ except ImportError as exc:
         import ansible.plugins.inventory.toml as tomlw
     except ImportError:
         raise AnsibleRuntimeError(
-            'A Python library for writing TOML is required ("tomli-w" or "toml").'
+            'The Python library "tomli-w" is required for writing TOML on ansible-core 2.19+.'
         ) from exc
 
 
