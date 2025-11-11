@@ -56,7 +56,6 @@ val3 = 3
 def test_outputs_from_toml(sample, expected):
     assert from_toml(sample) == expected
 
-
 def test_from_toml_throws_AnsibleFilterError():
     with pytest.raises(AnsibleFilterError):
-        to_toml({"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1})
+        to_toml(32)

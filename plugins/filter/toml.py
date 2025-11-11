@@ -15,12 +15,11 @@ with support for Python versions before and after 3.11.
 
 from __future__ import absolute_import, division, print_function
 
-import json
 import sys
 from datetime import datetime
 
 # pylint: disable=import-error
-from ansible.errors import AnsibleFilterError
+from ansible.errors import AnsibleFilterError, AnsibleRuntimeError
 from ansible.module_utils._text import to_text
 from ansible.module_utils.common._collections_compat import Mapping
 
@@ -31,7 +30,7 @@ else:
     try:
         import tomli as tomllib
     except ImportError as exc:
-        raise AnsibleFilterError(
+        raise AnsibleRuntimeError(
             'The Python library "tomli" is required for reading TOML.'
         ) from exc
 
@@ -42,16 +41,9 @@ except ImportError as exc:
         # pylint: disable=import-self
         import toml as tomlw
     except ImportError:
-        raise AnsibleFilterError(
+        raise AnsibleRuntimeError(
             'A Python library for writing TOML is required ("tomli-w" or "toml").'
         ) from exc
-
-
-def datetime_converter(_input):
-    """Convert datetime objects to JSON serializable format."""
-    if isinstance(_input, datetime):
-        return _input.isoformat()
-    raise TypeError(f"Object of Type {type(_input).__name__} is not JSON serializable")
 
 
 DOCUMENTATION = r'''
@@ -90,8 +82,8 @@ def from_toml(_input):
             f"from_toml requires a string, received: {type(_input).__name__}"
         )
     try:
-        python_object = tomllib.loads(_input)
-        return json.dumps(python_object, default=datetime_converter)
+        return tomllib.loads(_input)
+        # return json.dumps(python_object, default=datetime_converter)
     except Exception as e:
         raise AnsibleFilterError(f"Error parsing TOML: {e}") from e
 
