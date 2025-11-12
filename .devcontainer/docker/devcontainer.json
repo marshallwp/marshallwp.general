@@ -5,7 +5,7 @@
   },
   "containerUser": "root",
   "containerEnv": {
-    "ANSIBLE_CONFIG": "${containerWorkspaceFolder}/ansible.cfg",
+    "ANSIBLE_CONFIG": "${containerWorkspaceFolder}/ansible.cfg"
   },
   "runArgs": [
     "--security-opt", "seccomp=unconfined",
@@ -26,6 +26,10 @@
         "edwinhuish.better-comments-next"
       ]
     }
+  },
+  "postCreateCommand": {
+    "safe repo": "git config --global --add safe.directory \"${containerWorkspaceFolder}\"",
+    "pre-commit": "pre-commit install"
   },
   "postStartCommand": {
     "ansible deps": "ansible-galaxy install -r requirements.yml"

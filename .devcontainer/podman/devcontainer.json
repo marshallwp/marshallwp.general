@@ -28,6 +28,10 @@
       ]
     }
   },
+  "postCreateCommand": {
+    "safe repo": "git config --global --add safe.directory \"${containerWorkspaceFolder}\"",
+    "pre-commit": "pre-commit install"
+  },
   "postStartCommand": {
     "ansible deps": "ansible-galaxy install -r requirements.yml"
   },
