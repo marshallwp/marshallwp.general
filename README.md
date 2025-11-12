@@ -80,8 +80,8 @@ GNU General Public License v3.0 or later.
 
 See [LICENSE](https://github.com/marshallwp/marshallwp.general/blob/main/LICENSES/GPL-3.0-or-later.txt) to see the full text.
 
-Some content was adapted from projects under different, but [GPL-compatible](https://www.gnu.org/licenses/license-list.en.html#GPLCompatibleLicenses), licensing schemes. All such content is marked via the `SPDX-License-Identifier` header or snippet identifier. You may use these specific sections under the license indicated, but the overall project remains GPL-3.0-or-later licensed.
+Some content was adapted from projects under different, but [GPL-compatible](https://www.gnu.org/licenses/license-list.en.html#GPLCompatibleLicenses), licensing schemes. All such content is marked via a `SPDX-License-Identifier` header or snippet identifier. You may use these specific sections under the license indicated, but the overall project remains GPL-3.0-or-later licensed.
 
 A copy of all licenses used in the project can be found in the [LICENSES](https://github.com/marshallwp/marshallwp.general/blob/main/LICENSES/) directory.
 
-This project attempts to comply with the [REUSE specification](https://reuse.software/spec-3.3/), though I'm still considering how to handle files that are largely scaffolding provided by ansible-creator.
+This project complies with version 3.3 of the the [REUSE specification](https://reuse.software/spec-3.3/).

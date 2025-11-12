@@ -3,8 +3,7 @@
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: MIT
-
-# This code is derived from https://github.com/arillso/ansible.system/blob/42edd560716685e5fe81b3b07540610588a4bd92/plugins/filter/toml.py
+# This code is adapted from https://github.com/arillso/ansible.system/blob/42edd560716685e5fe81b3b07540610588a4bd92/plugins/filter/toml.py
 
 """
 Ansible Filter Plugin for TOML conversion.
@@ -31,7 +30,7 @@ else:
         import tomli as tomllib
     except ImportError as exc:
         raise AnsibleRuntimeError(
-            'The Python library "tomli" is required for reading TOML.'
+            'The Python library "tomli" is required for reading TOML in Python 3.10 and below.'
         ) from exc
 
 try:

@@ -3,8 +3,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# filter_plugins/generate_paths.py
-
 DOCUMENTATION = r'''
     name: get_grpname
     short_description: Match the input name or GID to a real group and return its name.

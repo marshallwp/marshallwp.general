@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 Red Hat, Inc.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Contributing
 
 Refer to the [Ansible community guide](https://docs.ansible.com/ansible/devel/community/index.html).

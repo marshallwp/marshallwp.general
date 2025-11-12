@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 release_summary: Add filters for converting to and from TOML.
 

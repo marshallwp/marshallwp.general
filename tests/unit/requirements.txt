@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # add python packages that are required for this collection
 tomli-w >= 1.2.0
 tomli ; python_version < '3.11'
