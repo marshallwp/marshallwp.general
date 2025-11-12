@@ -1,4 +1,9 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 FROM ghcr.io/ansible/community-ansible-dev-tools:latest
 USER root
-RUN microdnf install -y podman-compose unzip && \
+RUN microdnf install -y podman-compose unzip reuse && \
 	microdnf clean all

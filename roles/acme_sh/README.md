@@ -1,3 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileContributor: William P. Marshall
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 marshallwp.general acme_sh Role
 ========================
 
@@ -10,7 +17,7 @@ Using this role will install the following packages on the target:
 |-------------------------------------------|----------------------------------------------------------------------------------|
 | **socat**                                 | always                                                                           |
 | **openssl**                               | always                                                                           |
-| cron/cronnie/mcron/vixie-cron             | you do not have `cron`, `cronie`, `isc-cron`, `mcron`, or `vixie-cron` installed |
+| cron/cronnie/mcron/vixie-cron             | `acme_sh_scheduler == 'cron'` and you do not have `cron`, `cronie`, `isc-cron`, `mcron`, or `vixie-cron` installed |
 | bind-utils/bind-tools/bind9-dnsutils/bind | `acme_sh_mode == 'dns' and acme_sh_mode_value is regexp('dns_nsupdates?')`       |
 | wget                                      | neither `wget` nor `curl` is installed                                           |
 

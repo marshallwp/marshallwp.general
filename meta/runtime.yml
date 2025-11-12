@@ -1,2 +1,6 @@
+# SPDX-FileCopyrightText: NONE
+#
+# SPDX-License-Identifier: CC-PDM-1.0
+
 ---
 requires_ansible: ">=2.15.0"

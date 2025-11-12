@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: NONE
+#
+# SPDX-License-Identifier: CC-PDM-1.0
+
 # files we don't want prettier to ever to look into
 .*/
 coverage/

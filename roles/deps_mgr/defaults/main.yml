@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # List merge method can be either
 # precedence - Combine lists with precidence ordered from most precise to least. Higher-level items will be included, but can be overridden by lower level ones.
@@ -8,7 +13,7 @@ deps_mgr_repo_merge_method: lowest_only
 # The default state for simple package entries.
 deps_mgr_package_default_state: present
 
-deps_mgr_list: "{{ dependencies }}"
+deps_mgr_list:
 # Example for Installing Postgres 16 with packages required for configuration via community.general.postgres.
 # deps_mgr_list:
 #   Alpine:

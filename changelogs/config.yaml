@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: NONE
+#
+# SPDX-License-Identifier: CC-PDM-1.0
 ---
 changelog_filename_template: ../CHANGELOG.rst
 changelog_filename_version_depth: 0

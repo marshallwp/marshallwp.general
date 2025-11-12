@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # This collection is initialized by https://github.com/ansible/ansible-creator 24.7.1
 
@@ -11,9 +16,10 @@ authors:
   - William P. Marshall
 
 description: Generic general tooling that is broadly useful and have little to no dependencies or platform restrictions.
-license_file: LICENSE
-# TO-DO: update the tags based on your content type
-tags: ["linux", "tools", "dirtree", "package", "repository", "java", "cert", "certificate"]
+license:
+  - GPL-3.0-or-later
+# update the tags based on your content type
+tags: ["linux", "tools", "dirtree", "package", "repository", "java", "cert", "certificate", "toml"]
 dependencies:
   "community.general": ">=8.2.0"
 

@@ -1,13 +1,26 @@
+<!--
+SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileContributor: William P. Marshall
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Marshallwp General Collection
 
 This repository contains the `marshallwp.general` Ansible Collection.  Everything within this collection is useful in wide-ranging situations and contains minimal external dependencies.  It is intended to be extremely generic and where possible has no platform limitations.  Where platform limitations do exist (such as the `deps_mgr` role), they are made as broad as possible.
 
 <!--start requires_ansible-->
+Requires Ansible 2.15 or later
 <!--end requires_ansible-->
 
 ## External requirements
 
-`community.general`
+### Ansible Collections
+- `community.general`
+
+### Python Libraries
+- `tomli-w` – only if you want to use the `to_toml` filter.
+- `tomli` – only if you want to use the `from_toml` filter while running on Python ≤ 3.10.  Python 3.11 and later have built-in support for parsing.
 
 ## Included content
 
@@ -65,4 +78,10 @@ See the [changelog](https://github.com/marshallwp/marshallwp.general/tree/main/C
 
 GNU General Public License v3.0 or later.
 
-See [LICENSE](https://github.com/marshallwp/marshallwp.general/blob/main/LICENSE) to see the full text.
+See [LICENSE](https://github.com/marshallwp/marshallwp.general/blob/main/LICENSES/GPL-3.0-or-later.txt) to see the full text.
+
+Some content was adapted from projects under different, but [GPL-compatible](https://www.gnu.org/licenses/license-list.en.html#GPLCompatibleLicenses), licensing schemes. All such content is marked via a `SPDX-License-Identifier` header or snippet identifier. You may use these specific sections under the license indicated, but the overall project remains GPL-3.0-or-later licensed.
+
+A copy of all licenses used in the project can be found in the [LICENSES](https://github.com/marshallwp/marshallwp.general/blob/main/LICENSES/) directory.
+
+This project complies with version 3.3 of the the [REUSE specification](https://reuse.software/spec-3.3/).

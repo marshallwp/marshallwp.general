@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 ---
 # This will make sure that plugin and module documentation gets Edit on GitHub links
 # that allow users to directly create a PR for this plugin or module in GitHub's UI.
@@ -31,17 +36,17 @@ extra_links:
 
 # Specify communication channels for your collection. We suggest to not specify more
 # than one place for communication per communication tool to avoid confusion.
-communication:
-  matrix_rooms:
-    - topic: General usage and support questions
-      room: "#users:ansible.im"
-  irc_channels:
-    - topic: General usage and support questions
-      network: Libera
-      channel: "#ansible"
-  mailing_lists:
-    - topic: Ansible Project List
-      url: https://groups.google.com/g/ansible-project
+# communication:
+#   matrix_rooms:
+#     - topic: General usage and support questions
+#       room: "#users:ansible.im"
+#   irc_channels:
+#     - topic: General usage and support questions
+#       network: Libera
+#       channel: "#ansible"
+#   mailing_lists:
+#     - topic: Ansible Project List
+#       url: https://groups.google.com/g/ansible-project
       # You can also add a `subscribe` field with an URI that allows to subscribe
       # to the mailing list. For lists on https://groups.google.com/ a subscribe link is
       # automatically generated.

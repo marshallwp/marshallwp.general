@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Red Hat, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for molecule scenarios."""
 
 from __future__ import absolute_import, division, print_function

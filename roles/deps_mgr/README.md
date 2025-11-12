@@ -1,3 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileContributor: William P. Marshall
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 marshallwp.general deps_mgr Role
 ========================
 
@@ -29,12 +36,13 @@ Requires the `community.general` collection for Apt-repo, Copr, DNF Config, Home
 Role Variables
 --------------
 
-| Name | Alias | Description | Default |
-| ---- | ----- | ----------- | ------- |
-| deps_mgr_package_merge_method | | Merge method to use when choosing what packages to manage and how. | precedence |
-| deps_mgr_repo_merge_method | | Merge method to use when choosing what repositories to manage and how. | lowest_only |
-| deps_mgr_package_default_state| | The default state to assign to packages with simple definitions (i.e. lacking properties). | present |
-| deps_mgr_list | dependencies | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. | |
+| Name | Description | Default |
+| --- | --- | --- |
+| deps_mgr_package_merge_method | Merge method to use when choosing what packages to manage and how. | precedence |
+| deps_mgr_repo_merge_method | Merge method to use when choosing what repositories to manage and how. | lowest_only |
+| deps_mgr_package_default_state | The default state to assign to packages with simple definitions (i.e. lacking properties). | present |
+| deps_mgr_list | Hierarchical dictionary of packages and repositories to be configured at the os family, distribution, and major version levels. |  |
+
 
 ### deps_mgr_list syntax
 
@@ -95,7 +103,7 @@ Including an example of how to use your role (for instance, with variables passe
     postgresql_version: 16
   roles:
     - role: marshallwp.general.deps_mgr
-      dependencies:
+      deps_mgr_list:
         Alpine:
           packages:
             - py3-psycopg

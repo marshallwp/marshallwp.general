@@ -1,4 +1,9 @@
-# TO-DO: add python packages that are required for testing this collection
+# SPDX-FileCopyrightText: 2024 Red Hat, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Add python packages that are required for testing this collection
+# These are *in addition* to the packages in requirements.txt
 pytest-ansible
 pytest-xdist
 molecule

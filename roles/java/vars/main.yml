@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # As it turns out, '-headless' (or the absence thereof) is nearly universal for indicating a java package is headless.
 java_headless: "{{ (java_use_headless) | ansible.builtin.ternary('-headless', '') }}"
 
@@ -27,7 +32,7 @@ java_packages:
         packages:
           - "java-{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '-devel') }}"
   Amazon:
-    # https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/generic-linux-install.html
+    # https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/generic-linux-install.html
     OpenJDK:  # a.k.a. Corretto
       Alpine:
         repositories:
@@ -39,7 +44,7 @@ java_packages:
       Debian:
         repositories:
           - repo_type: deb822
-            name: corretto
+            name: AmazonCorretto
             uris: https://apt.corretto.aws
             suites: ['stable', 'main']
             signed_by: https://apt.corretto.aws/corretto.key
@@ -93,7 +98,7 @@ java_packages:
             name: zulu-openjdk
             description: zulu-openjdk - Azul Systems Inc., Zulu packages
             baseurl: 'https://repos.azul.com/zulu/rpm'
-            gpgkey: 'https://assets.azul.com/files/0xB1998361219BD9C9.txt'
+            gpgkey: 'https://repos.azul.com/azul-repo.key'
             gpgcheck: true
             protect: true
         packages:
@@ -102,7 +107,7 @@ java_packages:
       Suse:
         repositories:
           - repo_type: zypper
-            name: 'https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm'
+            name: 'https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-2.noarch.rpm'
             auto_import_keys: true
         packages:
           - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
@@ -123,7 +128,7 @@ java_packages:
           - repo_type: yum
             name: zing
             description: zing-$releasever - Azul Systems Inc., Zing packages for $basearch
-            baseurl: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}/current/$basearch"
+            baseurl: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}/$releasever/$basearch"
             gpgkey: https://repos.azul.com/azul-repo.key
             gpgcheck: true
             protect: true
@@ -137,6 +142,7 @@ java_packages:
             auto_import_keys: true
         packages:
           - "zing-jdk{{ java_version }}"
+  # https://docs.bell-sw.com/liberica-jdk/25.0.1b11/general/install-guide
   Bellsoft:
     OpenJDK:  # a.k.a. Liberica
       Alpine:
@@ -145,7 +151,8 @@ java_packages:
             name: https://apk.bell-sw.com/main
             signed_by: https://apk.bell-sw.com/info@bell-sw.com-5fea454e.rsa.pub
         packages:
-          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+          - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
+              (java_use_headless) | ansible.builtin.ternary('-lite', '')) }}"
       Debian:
         repositories:
           - repo_type: deb822
@@ -154,7 +161,8 @@ java_packages:
             suites: ['stable', 'main']
             signed_by: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
         packages:
-          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+          - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
+              (java_use_headless) | ansible.builtin.ternary('-lite', '')) }}"
       RedHat:
         repositories:
           - repo_type: yum
@@ -164,7 +172,8 @@ java_packages:
             gpgkey: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
             gpgcheck: true
         packages:
-          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+          - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
+              (java_use_headless) | ansible.builtin.ternary('-lite', '')) }}"
       Suse:
         repositories:
           - repo_type: zypper
@@ -172,7 +181,8 @@ java_packages:
             repo: "https://yum.bell-sw.com"
             auto_import_keys: true
         packages:
-          - "bellsoft-java{{ java_version }}-{{ java_type == 'jre' | ansible.builtin.ternary('runtime', 'lite') }}"
+          - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
+              (java_use_headless) | ansible.builtin.ternary('-lite', '')) }}"
   # https://adoptium.net/blog/2021/12/eclipse-temurin-linux-installers-available/
   Eclipse:
     OpenJDK:  # a.k.a. Temurin
