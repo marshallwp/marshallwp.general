@@ -1,7 +1,3 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-
 ---
 ancestor: null
 releases:
@@ -192,3 +188,25 @@ releases:
       - 19-update-java-vars.yaml
       - 21-add-argument-specs.yaml
     release_date: '2025-10-21'
+  1.5.0:
+    changes:
+      doc_changes:
+        - Implement REUSE specification for licensing information.
+      release_summary: Add filters for converting to and from TOML.
+      removed_features:
+        - deps_mgr - use of the `dependencies` alias for `deps_mgr_list` has been
+          removed due to lack of support in Ansible's Argument Specification.
+    fragments:
+      - 23-add-toml-filter.yaml
+    plugins:
+      filter:
+        - description: Converts a dictionary into a nice TOML-formatted string
+          name: from_toml
+          namespace: null
+        - description: Converts a dictionary into a nice TOML-formatted string
+          name: to_nice_toml
+          namespace: null
+        - description: Converts a dictionary into a nice TOML-formatted string
+          name: to_toml
+          namespace: null
+    release_date: '2025-11-12'

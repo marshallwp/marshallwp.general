@@ -1,13 +1,36 @@
-.. SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
-.. SPDX-FileContributor: William P. Marshall
-..
-.. SPDX-License-Identifier: GPL-3.0-or-later
-
 ===========================================
 Marshallwp General Collection Release Notes
 ===========================================
 
 .. contents:: Topics
+
+v1.5.0
+======
+
+Release Summary
+---------------
+
+Add filters for converting to and from TOML.
+
+Removed Features (previously deprecated)
+----------------------------------------
+
+- deps_mgr - use of the `dependencies` alias for `deps_mgr_list` has been removed due to lack of support in Ansible's Argument Specification.
+
+Documentation Changes
+---------------------
+
+- Implement REUSE specification for licensing information.
+
+New Plugins
+-----------
+
+Filter
+~~~~~~
+
+- from_toml - Converts a dictionary into a nice TOML-formatted string
+- to_nice_toml - Converts a dictionary into a nice TOML-formatted string
+- to_toml - Converts a dictionary into a nice TOML-formatted string
 
 v1.4.3
 ======
