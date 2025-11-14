@@ -7,10 +7,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 # Marshallwp General Collection
 
+[![Ansible Galaxy Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgalaxy.ansible.com%2Fapi%2Fv3%2Fplugin%2Fansible%2Fcontent%2Fpublished%2Fcollections%2Findex%2Fmarshallwp%2Fgeneral%2F&query=%24.download_count&style=flat&logo=ansible&label=Galaxy%20Downloads)](https://galaxy.ansible.com/ui/repo/published/marshallwp/general/)
+
 This repository contains the `marshallwp.general` Ansible Collection.  Everything within this collection is useful in wide-ranging situations and contains minimal external dependencies.  It is intended to be extremely generic and where possible has no platform limitations.  Where platform limitations do exist (such as the `deps_mgr` role), they are made as broad as possible.
 
 <!--start requires_ansible-->
-Requires Ansible 2.15 or later
 <!--end requires_ansible-->
 
 ## External requirements

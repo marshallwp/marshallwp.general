@@ -3,12 +3,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
+
 __metaclass__ = type
 
-from ansible.errors import AnsibleFilterError
-from ansible_collections.marshallwp.general.plugins.filter.toml import from_toml, to_toml
 import pytest
+
+from ansible.errors import AnsibleFilterError
+
+from ansible_collections.marshallwp.general.plugins.filter.from_toml import from_toml
 
 
 # We use the @pytest.mark.parametrize decorator to parametrize the function
@@ -24,32 +28,6 @@ import pytest
     "sample, expected",
     [
         (
-            {"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1},
-            """\
-val2 = 2
-val1 = 1
-
-[table]
-val3 = 3
-
-[table.nested]
-""",
-        )
-    ],
-)
-def test_outputs_to_toml(sample, expected):
-    assert to_toml(sample) == expected
-
-
-def test_to_toml_throws_AnsibleFilterError():
-    with pytest.raises(AnsibleFilterError):
-        to_toml('string')
-
-
-@pytest.mark.parametrize(
-    "sample, expected",
-    [
-        (
             """\
 val2 = 2
 val1 = 1
@@ -60,7 +38,7 @@ val3 = 3
 [table.nested]
 """,
             {"table": {"nested": {}, "val3": 3}, "val2": 2, "val1": 1},
-        )
+        ),
     ],
 )
 def test_outputs_from_toml(sample, expected):
@@ -69,4 +47,4 @@ def test_outputs_from_toml(sample, expected):
 
 def test_from_toml_throws_AnsibleFilterError():
     with pytest.raises(AnsibleFilterError):
-        to_toml(32)
+        from_toml(32)

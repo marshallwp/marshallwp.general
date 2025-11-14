@@ -5,131 +5,14 @@
 # SPDX-License-Identifier: MIT
 # This code is adapted from https://github.com/arillso/ansible.system/blob/42edd560716685e5fe81b3b07540610588a4bd92/plugins/filter/toml.py
 
-"""
-Ansible Filter Plugin for TOML conversion.
-
-This module provides filters for converting between TOML strings and Python objects,
-with support for Python versions before and after 3.11.
-"""
-
 from __future__ import absolute_import, division, print_function
 
-import sys
 from datetime import datetime
 
-# pylint: disable=import-error
-from ansible.errors import AnsibleFilterError, AnsibleRuntimeError
-from ansible.module_utils._text import to_text
-from ansible.module_utils.common._collections_compat import Mapping
-
-# Importing libraries for reading and writing TOML
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    try:
-        import tomli as tomllib
-    except ImportError as exc:
-        raise AnsibleRuntimeError(
-            'The Python library "tomli" is required for reading TOML in Python 3.10 and below.'
-        ) from exc
-
-try:
-    import tomli_w as tomlw
-except ImportError as exc:
-    try:
-        # Only available on ansible-core below 2.19
-        import ansible.plugins.inventory.toml as tomlw
-    except ImportError:
-        raise AnsibleRuntimeError(
-            'The Python library "tomli-w" is required for writing TOML on ansible-core 2.19+.'
-        ) from exc
+from ansible.module_utils.common.text.converters import to_text
 
 
-DOCUMENTATION = r'''
-    name: from_toml
-    short_description: Converts a TOML-formatted string into a Python object.
-    version_added: 1.5.0
-    author: arillso
-    description:
-        - Converts a TOML string into a Python Object
-    options:
-        _input:
-            description: A TOML string
-            type: string
-            required: true
-'''
-
-RETURN = r'''
-    _value:
-        description: The parsed output as a dictionary
-        type: dict
-'''
-
-
-def from_toml(_input):
-    """
-    Converts a TOML-formatted string into a Python object.
-
-    :param _input: The string to convert.
-    :type _input: str
-    :return: The Python object generated from the TOML string.
-    :rtype: dict
-    :raises AnsibleFilterError: If the input string is not a valid TOML string or another
-        error occurs.
-    """
-    if not isinstance(_input, str):
-        raise AnsibleFilterError(
-            f"from_toml requires a string, received: {type(_input).__name__}"
-        )
-    try:
-        return tomllib.loads(_input)
-        # return json.dumps(python_object, default=datetime_converter)
-    except Exception as e:
-        raise AnsibleFilterError(f"Error parsing TOML: {e}") from e
-
-
-DOCUMENTATION = r'''
-    name: to_toml
-    short_description: Converts a dictionary into a TOML-formatted string
-    version_added: 1.5.0
-    author: arillso
-    description:
-        - Converts a dictionary into a TOML string
-    options:
-        _input:
-            description: A dictionary to convert into a TOML string.
-            type: dict
-            required: true
-'''
-
-RETURN = r'''
-    _value:
-        description: A TOML string
-        type: string
-'''
-
-
-def to_toml(_input):
-    """
-    Converts a Python object into a TOML-formatted string.
-
-    :param _input: The Python object to convert.
-    :type _input: Mapping
-    :return: A string in TOML format.
-    :rtype: str
-    :raises AnsibleFilterError: If the object cannot be converted or another error occurs.
-    """
-    if not isinstance(_input, Mapping):
-        raise AnsibleFilterError(
-            f"to_toml requires a dict, received: {type(_input).__name__}"
-        )
-    try:
-        return to_text(tomlw.dumps(_input), errors="surrogate_or_strict")
-    except Exception as e:
-        raise AnsibleFilterError(f"Error generating TOML: {e}") from e
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
     name: to_nice_toml
     short_description: Converts a dictionary into a nice TOML-formatted string
     version_added: 1.5.0
@@ -143,13 +26,13 @@ DOCUMENTATION = r'''
             description: A dictionary to convert into a TOML string.
             type: dict
             required: true
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
     _value:
         description: A TOML string
         type: string
-'''
+"""
 
 
 def to_nice_toml(_input):
@@ -223,18 +106,13 @@ def to_nice_toml(_input):
                 toml_str += "  " * indent + f"{key} = {format_toml_value(value)}\n"
         return toml_str
 
-    return recurse(_input)
+    return to_text(recurse(_input))
 
 
 # pylint: disable=R0903
 class FilterModule:
     """
-    Ansible Filter Module for converting between TOML and Python objects with improved formatting.
-
-    Provides three filters:
-    - from_toml: Converts TOML strings to Python objects.
-    - to_toml: Converts Python objects to TOML strings.
-    - to_nice_toml: Converts Python objects to nicely formatted TOML strings.
+    to_nice_toml converts Python objects to nicely formatted TOML strings.
     """
 
     def filters(self):
@@ -245,7 +123,5 @@ class FilterModule:
         :rtype: dict
         """
         return {
-            "to_toml": to_toml,
             "to_nice_toml": to_nice_toml,
-            "from_toml": from_toml,
         }

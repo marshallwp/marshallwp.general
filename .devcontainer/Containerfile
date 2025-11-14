@@ -5,5 +5,5 @@
 
 FROM ghcr.io/ansible/community-ansible-dev-tools:latest
 USER root
-RUN microdnf install -y podman-compose unzip reuse && \
+RUN microdnf install -y glibc-langpack-en podman-compose unzip reuse pre-commit && \
 	microdnf clean all
