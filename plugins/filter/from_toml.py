@@ -5,6 +5,14 @@
 # SPDX-License-Identifier: MIT
 # This code is adapted from https://github.com/arillso/ansible.system/blob/42edd560716685e5fe81b3b07540610588a4bd92/plugins/filter/toml.py
 
+from __future__ import absolute_import, division, print_function
+
+import sys
+
+# pylint: disable=import-error
+from ansible.errors import AnsibleFilterError, AnsibleRuntimeError
+
+
 DOCUMENTATION = r"""
     name: from_toml
     short_description: Converts a TOML-formatted string into a Python object.
@@ -24,14 +32,6 @@ RETURN = r"""
         description: The parsed output as a dictionary
         type: dict
 """
-
-from __future__ import absolute_import, division, print_function
-
-import sys
-
-# pylint: disable=import-error
-from ansible.errors import AnsibleFilterError, AnsibleRuntimeError
-
 
 # Importing libraries for reading
 if sys.version_info >= (3, 11):

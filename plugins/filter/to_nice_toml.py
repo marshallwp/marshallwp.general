@@ -5,6 +5,13 @@
 # SPDX-License-Identifier: MIT
 # This code is adapted from https://github.com/arillso/ansible.system/blob/42edd560716685e5fe81b3b07540610588a4bd92/plugins/filter/toml.py
 
+from __future__ import absolute_import, division, print_function
+
+from datetime import datetime
+
+from ansible.module_utils.common.text.converters import to_text
+
+
 DOCUMENTATION = r"""
     name: to_nice_toml
     short_description: Converts a dictionary into a nice TOML-formatted string
@@ -26,14 +33,6 @@ RETURN = r"""
         description: A TOML string
         type: string
 """
-
-from __future__ import absolute_import, division, print_function
-
-import sys
-
-from datetime import datetime
-
-from ansible.module_utils.common.text.converters import to_text
 
 
 def to_nice_toml(_input):

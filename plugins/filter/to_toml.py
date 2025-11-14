@@ -5,6 +5,14 @@
 # SPDX-License-Identifier: MIT
 # This code is adapted from https://github.com/arillso/ansible.system/blob/42edd560716685e5fe81b3b07540610588a4bd92/plugins/filter/toml.py
 
+from __future__ import absolute_import, division, print_function
+
+# pylint: disable=import-error
+from ansible.errors import AnsibleFilterError, AnsibleRuntimeError
+from ansible.module_utils.common._collections_compat import Mapping
+from ansible.module_utils.common.text.converters import to_text
+
+
 DOCUMENTATION = r"""
     name: to_toml
     short_description: Converts a dictionary into a TOML-formatted string
@@ -24,16 +32,6 @@ RETURN = r"""
         description: A TOML string
         type: string
 """
-
-from __future__ import absolute_import, division, print_function
-
-import sys
-
-# pylint: disable=import-error
-from ansible.errors import AnsibleFilterError, AnsibleRuntimeError
-from ansible.module_utils.common._collections_compat import Mapping
-from ansible.module_utils.common.text.converters import to_text
-
 
 # Importing libraries for writing TOML
 try:
