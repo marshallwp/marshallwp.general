@@ -11,9 +11,10 @@ __metaclass__ = type
 
 import pytest
 
-from ansible.errors import AnsibleFilterError
-
 from ansible_collections.marshallwp.general.plugins.filter.to_nice_toml import to_nice_toml
+
+
+# from ansible.errors import AnsibleFilterError
 
 
 # We use the @pytest.mark.parametrize decorator to parametrize the function
