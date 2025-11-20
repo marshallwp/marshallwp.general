@@ -62,7 +62,8 @@ dependencies:
 
 argument_specs:
   main:
-    short_description: >
+    short_description: Creates a directory tree from a dictionary of dictionaries.
+    description: >
       Creates a directory tree from a dictionary of dictionaries. Lets you declare such a tree in an
       intuitive hierarchical manner instead of a flat list of paths.
     author: ['William P. Marshall']
