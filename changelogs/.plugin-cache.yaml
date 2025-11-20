@@ -14,9 +14,7 @@ objects:
       name: deps_mgr
       version_added: 1.0.0
     dirtree:
-      description: 'Creates a directory tree from a dictionary of dictionaries. Lets
-        you declare such a tree in an intuitive hierarchical manner instead of a flat
-        list of paths.'
+      description: Creates a directory tree from a dictionary of dictionaries.
       name: dirtree
       version_added: 1.0.0
     java:
@@ -31,7 +29,7 @@ plugins:
   connection: {}
   filter:
     from_toml:
-      description: Converts a dictionary into a nice TOML-formatted string
+      description: Converts a TOML-formatted string into a Python object.
       name: from_toml
       version_added: 1.5.0
     generate_paths:
@@ -48,7 +46,7 @@ plugins:
       name: to_nice_toml
       version_added: 1.5.0
     to_toml:
-      description: Converts a dictionary into a nice TOML-formatted string
+      description: Converts a dictionary into a TOML-formatted string
       name: to_toml
       version_added: 1.5.0
   httpapi: {}
@@ -60,4 +58,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.5.0
+version: 1.5.1

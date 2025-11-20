@@ -140,12 +140,7 @@ releases:
       - 16-add-acme_sh-role.yml
     objects:
       role:
-        - description: 'A role to install/update/remove, configure, and schedule acme.sh.
-            acme.sh is a certificate manager written purely in Shell and thus has
-            minimal dependencies (wget or curl). It is highly extensible and works
-            on just about anything.
-
-            '
+        - description: Manage acme.sh, a lightweight certificate managemenent tool.
           name: acme_sh
           namespace: null
     release_date: '2025-08-13'
@@ -205,13 +200,28 @@ releases:
       - 23-add-toml-filter.yaml
     plugins:
       filter:
-        - description: Converts a dictionary into a nice TOML-formatted string
+        - description: Converts a TOML-formatted string into a Python object.
           name: from_toml
           namespace: null
         - description: Converts a dictionary into a nice TOML-formatted string
           name: to_nice_toml
           namespace: null
-        - description: Converts a dictionary into a nice TOML-formatted string
+        - description: Converts a dictionary into a TOML-formatted string
           name: to_toml
           namespace: null
     release_date: '2025-11-12'
+  1.5.1:
+    changes:
+      doc_changes:
+        - README - Added Ansible Galaxy download count and link
+      minor_changes:
+        - devcontainer - pre-commit is now installed upon first start of the devcontainer.  This
+          ensures it is enforced without further user configuration.
+        - pre-commit - rewrote the pre-commit configuration file from scratch so it
+          is no-longer based on RedHat work.
+      release_summary: Split the TOML filters into multiple files to improve documentation
+        and reduce required dependencies for those interested in using only a subset
+        of the filters.
+    fragments:
+      - 24-refactor-toml.yaml
+    release_date: '2025-11-20'

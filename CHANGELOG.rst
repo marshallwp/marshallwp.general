@@ -9,6 +9,25 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.5.1
+======
+
+Release Summary
+---------------
+
+Split the TOML filters into multiple files to improve documentation and reduce required dependencies for those interested in using only a subset of the filters.
+
+Minor Changes
+-------------
+
+- devcontainer - pre-commit is now installed upon first start of the devcontainer.  This ensures it is enforced without further user configuration.
+- pre-commit - rewrote the pre-commit configuration file from scratch so it is no-longer based on RedHat work.
+
+Documentation Changes
+---------------------
+
+- README - Added Ansible Galaxy download count and link
+
 v1.5.0
 ======
 
@@ -33,9 +52,9 @@ New Plugins
 Filter
 ~~~~~~
 
-- from_toml - Converts a dictionary into a nice TOML-formatted string
+- from_toml - Converts a TOML-formatted string into a Python object.
 - to_nice_toml - Converts a dictionary into a nice TOML-formatted string
-- to_toml - Converts a dictionary into a nice TOML-formatted string
+- to_toml - Converts a dictionary into a TOML-formatted string
 
 v1.4.3
 ======
@@ -101,7 +120,7 @@ Add a role to manage acme.sh and fix a few documentation issues.
 New Roles
 ---------
 
-- acme_sh - A role to install/update/remove, configure, and schedule acme.sh. acme.sh is a certificate manager written purely in Shell and thus has minimal dependencies (wget or curl). It is highly extensible and works on just about anything.
+- acme_sh - Manage acme.sh, a lightweight certificate managemenent tool.
 
 v1.3.3
 ======
