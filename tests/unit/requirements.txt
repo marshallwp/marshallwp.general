@@ -5,4 +5,4 @@
 
 # add python packages that are required for this collection
 tomli-w >= 1.2.0
-tomli ; python_version < '3.11'
+tomli >= 1.1.0 ; python_version < "3.11"
