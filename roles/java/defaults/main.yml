@@ -26,8 +26,8 @@ java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java
 # Archive download directory for non-repository-based installs.
 java_archive_download_dir: /tmp
 
-# Update the alternatives
-java_update_alternatives: true
+# Enable or disable updating alternatives via update-alternatives for Archive-installed Java
+java_update_alternatives: false
 
 # When not installing from a repository, file extension will determine whether a file is
 # installed via ansible.builtin.package or extracted via ansible.builtin.unarchive.
