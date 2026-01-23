@@ -183,7 +183,7 @@ java_packages:
         packages:
           - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
               (java_use_headless) | ansible.builtin.ternary('-lite', '')) }}"
-  # https://adoptium.net/blog/2021/12/eclipse-temurin-linux-installers-available/
+  # https://adoptium.net/installation/linux
   Eclipse:
     OpenJDK:  # a.k.a. Temurin
       Alpine:

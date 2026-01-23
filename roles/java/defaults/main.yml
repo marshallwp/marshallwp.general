@@ -1,11 +1,16 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
-# Default Java Version.  Should always be a supported version of java.
-java_version: 25
+# Default Java Version. The lookup queries for the latest supported LTS version of java.
+java_version: "{{
+  (lookup('ansible.builtin.url',
+      'https://java.oraclecloud.com/currentJavaReleases?isLts=true&isSupportedVersion=true&licenseType=NFTC&sortBy=jdkVersion&sortOrder=DESC')
+    | ansible.builtin.from_json)['items'][0]['jdkDetails']['jdkVersion']
+    | int
+  }}"
 
 # Valid values are JRE or JDK.  JRE is not available for all vendors and variants.
 java_type: jre
@@ -26,8 +31,8 @@ java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java
 # Archive download directory for non-repository-based installs.
 java_archive_download_dir: /tmp
 
-# Update the alternatives
-java_update_alternatives: true
+# Enable or disable updating alternatives via update-alternatives for Archive-installed Java
+java_update_alternatives: false
 
 # When not installing from a repository, file extension will determine whether a file is
 # installed via ansible.builtin.package or extracted via ansible.builtin.unarchive.

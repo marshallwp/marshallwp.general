@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 SPDX-FileContributor: William P. Marshall
 
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -23,7 +23,7 @@ Role Variables
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| java_version | Default Java Version.  Should always be a supported version of java. | 21 |
+| java_version | Default Java Version. By default it queries Oracle for the latest LTS version of Java. | |
 | java_type | Indicates whether the role should try to install the JRE or JDK. | jre |
 | java_use_headless | Headless variants exclude GUI components and are good for terminal-only servers. | true |
 | java_vendor | The vendor providing you with Java.  `Default` means your distro's default repositories. | Default |
@@ -53,16 +53,16 @@ Including an example of how to use your role (for instance, with variables passe
     - marshallwp.general.java
     # Install Oracle Java (not OpenJDK)
     - role: marshallwp.general.java
-      java_version: 21
+      java_version: 25
       java_vendor: Oracle
       java_variant: Java
     # Install Bellsoft OpenJDK
     - role: marshallwp.general.java
-      java_version: 21
+      java_version: 25
       java_vendor: Bellsoft
     # Install Amazon Corretto (their OpenJDK Build)
     - role: marshallwp.general.java
-      java_version: 21
+      java_version: 25
       java_vendor: Amazon
       java_variant: OpenJDK
 ```
@@ -74,11 +74,11 @@ Another way to consume this role would be:
   hosts: all
   gather_facts: false
   tasks:
-    - name: Install Azul Zulu 21
+    - name: Install Azul Zulu 25
       ansible.builtin.include_role:
         name: marshallwp.general.java
       vars:
-        java_version: 21
+        java_version: 25
         java_vendor: Azul
         java_variant: OpenJDK
 ```

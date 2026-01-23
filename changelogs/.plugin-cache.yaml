@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc.
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -58,4 +58,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.5.1
+version: 1.5.2

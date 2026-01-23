@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc.
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -225,3 +225,16 @@ releases:
     fragments:
       - 24-refactor-toml.yaml
     release_date: '2025-11-20'
+  1.5.2:
+    changes:
+      major_changes:
+        - The `java` role now queries `Public APIs for Oracle Java Releases <https://docs.oracle.com/en-us/iaas/jms/doc/public-api-oracle-java-releases.html>`_
+          for the latest LTS version of Java available. This should help reduce the
+          number of updates this role needs that default up-to-date.
+      minor_changes:
+        - Requirements files now include an explicit tomli version.
+      release_summary: Update testing to make Python 3.10 happy and improve java documentation,
+        spec, and default values.
+    fragments:
+      - 26-improve-consistency-and-testing.yml
+    release_date: '2026-01-23'
