@@ -1,7 +1,0 @@
-release_summary: Update testing to make Python 3.10 happy and improve java documentation, spec, and default values.
-
-major_changes:
-  - The `java` role now queries `Public APIs for Oracle Java Releases <https://docs.oracle.com/en-us/iaas/jms/doc/public-api-oracle-java-releases.html>`_ for the latest LTS version of Java available. This should help reduce the number of updates this role needs that default up-to-date.
-
-minor_changes:
-  - Requirements files now include an explicit tomli version.

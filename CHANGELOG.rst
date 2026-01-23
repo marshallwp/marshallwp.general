@@ -1,4 +1,4 @@
-.. SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc.
+.. SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc.
 .. SPDX-FileContributor: William P. Marshall
 ..
 .. SPDX-License-Identifier: GPL-3.0-or-later
@@ -8,6 +8,24 @@ Marshallwp General Collection Release Notes
 ===========================================
 
 .. contents:: Topics
+
+v1.5.2
+======
+
+Release Summary
+---------------
+
+Update testing to make Python 3.10 happy and improve java documentation, spec, and default values.
+
+Major Changes
+-------------
+
+- The `java` role now queries `Public APIs for Oracle Java Releases <https://docs.oracle.com/en-us/iaas/jms/doc/public-api-oracle-java-releases.html>`_ for the latest LTS version of Java available. This should help reduce the number of updates this role needs that default up-to-date.
+
+Minor Changes
+-------------
+
+- Requirements files now include an explicit tomli version.
 
 v1.5.1
 ======
