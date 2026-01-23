@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 SPDX-FileContributor: William P. Marshall
 
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -23,7 +23,7 @@ Role Variables
 
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| java_version | Default Java Version.  Should always be a supported version of java. | 25 |
+| java_version | Default Java Version. By default it queries Oracle for the latest LTS version of Java. | |
 | java_type | Indicates whether the role should try to install the JRE or JDK. | jre |
 | java_use_headless | Headless variants exclude GUI components and are good for terminal-only servers. | true |
 | java_vendor | The vendor providing you with Java.  `Default` means your distro's default repositories. | Default |
