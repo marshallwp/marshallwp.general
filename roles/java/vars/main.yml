@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+---
 # As it turns out, '-headless' (or the absence thereof) is nearly universal for indicating a java package is headless.
 java_headless: "{{ (java_use_headless) | ansible.builtin.ternary('-headless', '') }}"
 
