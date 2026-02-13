@@ -25,7 +25,7 @@ Minor Changes
 Bugfixes
 --------
 
-- Fix
+- Fix #29 by removing the erronious OR command from line 16 of the update_cmds.yml file.
 - Rename "choice" properties to "choices" in argument_specs to make them compliant with specifications.
 
 v1.5.2
