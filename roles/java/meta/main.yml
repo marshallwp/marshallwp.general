@@ -62,7 +62,7 @@ dependencies:
 argument_specs:
   main:
     short_description: Install Java from a variety of vendors and variants.
-    long_description: >
+    description: >
       Installs Java from a variety of vendors and variants.  You can do a simple Default OpenJDK install,
       or you can install Oracle Java, or Oracle GraalVM, or the one from Azul, Microsoft, etc.  Default
       settings are to install the headless OpenJDK JRE available in your distro's default repository.
