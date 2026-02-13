@@ -9,6 +9,25 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.5.3
+======
+
+Release Summary
+---------------
+
+fixes an issue preventing the acme_sh role from updating deployment commands and allows the from_toml filter to work in more situations.
+
+Minor Changes
+-------------
+
+- The from_toml filter now supports using ansible's built-in toml library in ansible-core 2.18 and below.
+
+Bugfixes
+--------
+
+- Fix
+- Rename "choice" properties to "choices" in argument_specs to make them compliant with specifications.
+
 v1.5.2
 ======
 

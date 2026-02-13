@@ -238,3 +238,17 @@ releases:
     fragments:
       - 26-improve-consistency-and-testing.yml
     release_date: '2026-01-23'
+  1.5.3:
+    changes:
+      bugfixes:
+        - Fix
+        - Rename "choice" properties to "choices" in argument_specs to make them compliant
+          with specifications.
+      minor_changes:
+        - The from_toml filter now supports using ansible's built-in toml library
+          in ansible-core 2.18 and below.
+      release_summary: fixes an issue preventing the acme_sh role from updating deployment
+        commands and allows the from_toml filter to work in more situations.
+    fragments:
+      - 29-fix-update_cmds.yml
+    release_date: '2026-02-13'
