@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+---
 objects:
   role:
     acme_sh:
@@ -58,4 +59,4 @@ plugins:
   strategy: {}
   test: {}
   vars: {}
-version: 1.5.2
+version: 1.5.3

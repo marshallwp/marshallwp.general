@@ -62,7 +62,7 @@ dependencies:
 argument_specs:
   main:
     short_description: Install Java from a variety of vendors and variants.
-    long_description: >
+    description: >
       Installs Java from a variety of vendors and variants.  You can do a simple Default OpenJDK install,
       or you can install Oracle Java, or Oracle GraalVM, or the one from Azul, Microsoft, etc.  Default
       settings are to install the headless OpenJDK JRE available in your distro's default repository.
@@ -76,7 +76,7 @@ argument_specs:
       java_type:
         description: Indicates whether the role should try to install the JRE or JDK.
         default: jre
-        choice:
+        choices:
           - jre
           - jdk
       java_use_headless:
@@ -86,7 +86,7 @@ argument_specs:
       java_vendor:
         description: The vendor providing you with Java.  `Default` means your distro's default repositories.
         default: Default
-        choice:
+        choices:
           - Default
           - Amazon
           - Azul
@@ -99,7 +99,7 @@ argument_specs:
           - Some vendors provide multiple versions of Java. This variable lets you specify which to install.
           - OpenJDK is the default. Zing is Azul-specific. GrallVM and Java are Oracle-specific.
         default: OpenJDK
-        choice:
+        choices:
           - OpenJDK
           - Zing
           - GraalVM

@@ -89,7 +89,7 @@ argument_specs:
       acme_sh_scheduler:
         description: The scheduler used to run acme.sh on a schedule.
         default: cron
-        choice:
+        choices:
           - cron
           - systemd
           - none
@@ -112,7 +112,7 @@ argument_specs:
       acme_sh_mode:
         description: The mode to use when performing ACME challenges.
         default: dns
-        choice:
+        choices:
           - dns
           - standalone
           - alpn
@@ -143,7 +143,7 @@ argument_specs:
       acme_sh_keylength:
         description: Specifies the domain key length
         default: 'ec-384'
-        choice:
+        choices:
           - '2048'
           - '3072'
           - '4096'

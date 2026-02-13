@@ -33,16 +33,20 @@ RETURN = r"""
         type: dict
 """
 
-# Importing libraries for reading
+# Importing libraries for reading TOML
 if sys.version_info >= (3, 11):
     import tomllib
 else:
     try:
         import tomli as tomllib
-    except ImportError as exc:
-        raise AnsibleRuntimeError(
-            'The Python library "tomli" is required for reading TOML in Python 3.10 and below.',
-        ) from exc
+    except ImportError:
+        try:
+            # Only available on ansible-core below 2.19
+            import ansible.plugins.inventory.toml as tomllib
+        except ImportError as exc:
+            raise AnsibleRuntimeError(
+                'The Python library "tomli" is required for reading TOML in Python 3.10 and below.',
+            ) from exc
 
 
 def from_toml(_input):
