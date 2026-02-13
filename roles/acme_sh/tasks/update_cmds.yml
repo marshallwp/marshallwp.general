@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -13,7 +13,7 @@
     - acme_sh_reloadcmd | default([]) != ansible_local['acme.sh']['reloadcmd'] | default([]) or
       acme_sh_pre_hook | default([]) != ansible_local['acme.sh']['pre_hook'] | default([]) or
       acme_sh_post_hook | default([]) != ansible_local['acme.sh']['post_hook'] | default([]) or
-      acme_sh_renew_hook | default([]) != ansible_local['acme.sh']['renew_hook'] | default([]) or
+      acme_sh_renew_hook | default([]) != ansible_local['acme.sh']['renew_hook'] | default([])
   tags: ['acmesh::config']
   changed_when: true
   ansible.builtin.command:

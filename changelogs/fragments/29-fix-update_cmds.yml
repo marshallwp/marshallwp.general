@@ -1,0 +1,4 @@
+release_summary: fixes an issue preventing the acme_sh role from updating deployment commands.
+
+bugfixes:
+- Fix #29 by removing the erronious OR command from line 16 of the update_cmds.yml file.
