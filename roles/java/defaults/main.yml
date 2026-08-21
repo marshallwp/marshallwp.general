@@ -26,7 +26,7 @@ java_vendor: Default
 java_variant: OpenJDK
 
 # Install directory for non-repository-based installs.
-java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_architecture }}"
+java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_facts['architecture'] }}"
 
 # Archive download directory for non-repository-based installs.
 java_archive_download_dir: /tmp

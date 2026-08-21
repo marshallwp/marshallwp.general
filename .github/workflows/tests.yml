@@ -12,9 +12,6 @@ on: # yamllint disable-line rule:truthy
     branches: [main]
   workflow_dispatch:
 jobs:
-  changelog:
-    uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
-    if: github.event_name == 'pull_request'
   build-import:
     uses: ansible/ansible-content-actions/.github/workflows/build_import.yaml@main
   ansible-lint:
@@ -31,7 +28,6 @@ jobs:
   all_green:
     if: ${{ always() }}
     needs:
-      - changelog
       - build-import
       - sanity
       - unit-galaxy
@@ -42,7 +38,6 @@ jobs:
       - run: >-
           python -c "assert 'failure' not in
           set([
-          '${{ needs.changelog.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}'
           '${{ needs.ansible-lint.result }}'

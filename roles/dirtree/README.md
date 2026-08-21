@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 SPDX-FileContributor: William P. Marshall
 
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -22,8 +22,8 @@ Role Variables
 | Name | Description | Default |
 | ---- | ----------- | ------- |
 | dirtree_root | The root directory the dirtree will be created in | `/` |
-| dirtree_owner | The owner of created directories.  Passed directly to `ansible.builtin.file` | `ansible_user_id` |
-| dirtree_group | The group of created directories.  Passed directly to `ansible.builtin.file` | `ansible_user_gid` |
+| dirtree_owner | The owner of created directories.  Passed directly to `ansible.builtin.file` | `ansible_facts['user_id']` |
+| dirtree_group | The group of created directories.  Passed directly to `ansible.builtin.file` | `ansible_facts['user_gid']` |
 | dirtree_mode | The permissions the resulting directories should have. Can be set as octals or in symbolic mode. | |
 | dirtree_tree | The nested dictionary defining the directory tree. | |
 

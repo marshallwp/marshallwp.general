@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 SPDX-FileContributor: William P. Marshall
 
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -107,7 +107,7 @@ Including an example of how to use your role (for instance, with variables passe
         Alpine:
           packages:
             - py3-psycopg
-            - "postgresql{{ postgresql_version | default(16) }}"
+            - "postgresql{{ postgresql_version }}"
         Debian:
           repositories:
             - repo_type: deb822
@@ -119,7 +119,7 @@ Including an example of how to use your role (for instance, with variables passe
               signed_by: https://www.postgresql.org/media/keys/ACCC4CF8.asc
           packages:
             - python3-psycopg2
-            - "postgresql-{{ postgresql_version | default(16) }}"
+            - "postgresql-{{ postgresql_version }}"
         RedHat:
           AlmaLinux:
             repositories:
@@ -132,18 +132,18 @@ Including an example of how to use your role (for instance, with variables passe
           RedHat:
             repositories:
               - repo_type: dnf-config
-                name: "rhel-{{ ansible_facts['distribution_major_version'] }}-for-{{ ansible_architecture }}-appstream-rpms"
+                name: "rhel-{{ ansible_facts['distribution_major_version'] }}-for-{{ ansible_facts['architecture'] }}-appstream-rpms"
           Rocky:
             repositories:
               - repo_type: dnf-config
                 name: appstream
           packages:
             - python-psycopg2
-            - "@postgresql:{{ postgresql_version | default(16) }}/server"
+            - "@postgresql:{{ postgresql_version }}/server"
         Suse:
           packages:
             - python3-psycopg2
-            - "postgresql{{ postgresql_version | default(16) }}-server"
+            - "postgresql{{ postgresql_version }}-server"
 ```
 
 Another way to consume this role would be:
