@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -74,10 +74,10 @@ argument_specs:
         default: /
       dirtree_owner:
         description: The owner of created directories.  Passed directly to `ansible.builtin.file`
-        default: ansible_user_id
+        default: ansible_facts['user_id']
       dirtree_group:
         description: The group of created directories.  Passed directly to `ansible.builtin.file`
-        default: ansible_user_gid
+        default: ansible_facts['user_gid']
       dirtree_mode:
         description: The permissions the resulting directories should have. Can be set as octals or in symbolic mode.
       dirtree_tree:

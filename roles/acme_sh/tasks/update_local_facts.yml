@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -10,8 +10,8 @@
   ansible.builtin.file:
     path: "{{ ('/etc', 'ansible', 'facts.d') | ansible.builtin.path_join }}"
     state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid | marshallwp.general.get_grpname }}"
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_gid'] | marshallwp.general.get_grpname }}"
     mode: "u=rw,g=,o="
 
 - name: Update Local Facts
