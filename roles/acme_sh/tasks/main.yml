@@ -126,7 +126,7 @@
       # Sets the domain alias to use in place of the actual domain
       # See: https://github.com/acmesh-official/acme.sh/wiki/DNS-alias-mode#7-challenge-alias-or-domain-alias
       - "{{ (acme_sh_mode == 'dns') | ansible.builtin.ternary('--domain-alias', omit) }}"
-      - "{{ (acme_sh_mode == 'dns') | ansible.builtin.ternary(ansible_hostname~'.'~acme_sh_dns_zone, omit) }}"
+      - "{{ (acme_sh_mode == 'dns') | ansible.builtin.ternary(ansible_facts['hostname']~'.'~acme_sh_dns_zone, omit) }}"
       - "{{ (acme_sh_mode == 'dns' and (acme_sh_dns_sleep | default(false))) | ansible.builtin.ternary('--dnssleep', omit) }}"
       - "{{ (acme_sh_mode == 'dns' and (acme_sh_dns_sleep | default(false))) | ansible.builtin.ternary(acme_sh_dns_sleep | string, omit) }}"
       # Sets options for standalone and tls alpn mode.
