@@ -12,7 +12,7 @@ acme_sh_install_nsupdate: "{{ acme_sh_mode == 'dns' and acme_sh_mode_value is an
 acme_sh_install_cron: "{{ acme_sh_scheduler == 'cron' and (ansible_facts['packages']
                         | select('in', ['cron', 'cronie', 'isc-cron', 'mcron', 'vixie-cron']) | length == 0) }}"
 
-acme_sh_deps_by_family:
+acme_sh_dependencies:
   Alpine:
     packages:
       - openssl
