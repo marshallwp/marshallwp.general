@@ -55,10 +55,6 @@ ansible-galaxy collection install marshallwp.general:==X.Y.Z
 
 See [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
 
-## Release notes
-
-See the [changelog](https://github.com/marshallwp/marshallwp.general/tree/main/CHANGELOG.rst).
-
 ## Roadmap
 
 <!-- Optional. Include the roadmap for this collection, and the proposed release/versioning strategy so users can anticipate the upgrade/update cycle. -->

@@ -34,7 +34,6 @@ issues: http://github.com/marshallwp/marshallwp.general/issues
 # and '.git' are always filtered. Mutually exclusive with 'manifest'
 build_ignore:
   - .gitignore
-  - changelogs/.plugin-cache.yaml
   - tests/output
 # A dict controlling use of manifest directives used in building the collection artifact. The key 'directives' is a
 # list of MANIFEST.in style
