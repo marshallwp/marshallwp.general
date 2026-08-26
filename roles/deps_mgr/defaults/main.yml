@@ -44,7 +44,7 @@ deps_mgr_list:
 #     RedHat:
 #       repositories:
 #         - repo_type: dnf-config
-#           name: "rhel-{{ ansible_facts['distribution_major_version'] }}-for-{{ ansible_architecture }}-appstream-rpms"
+#           name: "rhel-{{ ansible_facts['distribution_major_version'] }}-for-{{ ansible_facts['architecture'] }}-appstream-rpms"
 #     Rocky:
 #       repositories:
 #         - repo_type: dnf-config

@@ -29,7 +29,7 @@
   vars:
     # Only RedHat-based distros support the family parameter.
     alternatives_family: "{{ (ansible_facts['os_family'] == 'RedHat') | ansible.builtin.ternary(
-      java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_architecture, undef())}}"
+      java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_facts['architecture'], undef())}}"
   become: true
   block:
     - name: Ensure Destination Directory Exists
