@@ -26,10 +26,6 @@
 # For Archive-based installations
 - name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Archive' }}
   when: (java_archive_path | ansible.builtin.splitext)[1] in java_archive_exts
-  vars:
-    # Only RedHat-based distros support the family parameter.
-    alternatives_family: "{{ (ansible_facts['os_family'] == 'RedHat') | ansible.builtin.ternary(
-      java_family ~ '-java-' ~ java_version ~ '.' ~ ansible_facts['architecture'], undef())}}"
   become: true
   block:
     - name: Ensure Destination Directory Exists
@@ -51,22 +47,22 @@
       when: java_update_alternatives | default(false)
       community.general.alternatives:
         name: "jre_{{ java_version }}"
-        family: "{{ alternatives_family | default() }}"
-        link: "{{ java_install_directory }}"
+        path: "{{ java_install_directory }}"
+        link: "/usr/lib/jvm/jre_{{ java_version }}"
     - name: Update Alternatives - java_sdk_{{ java_version }}
       when:
         - java_update_alternatives | default(false)
         - java_type == 'jdk'
       community.general.alternatives:
         name: "java_sdk_{{ java_version }}"
-        family: "{{ alternatives_family | default() }}"
-        link: "{{ java_install_directory }}"
+        path: "{{ java_install_directory }}"
+        link: "/usr/lib/jvm/java_sdk_{{ java_version }}"
     - name: Update Alternatives - java (JRE)
       when: java_update_alternatives | default(false)
       community.general.alternatives:
         name: java
-        family: "{{ alternatives_family | default() }}"
-        link: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
+        path: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
+        link: /usr/bin/java
         state: auto
         subcommands:
           - name: jre
@@ -84,8 +80,8 @@
         - java_type == 'jdk'
       community.general.alternatives:
         name: java
-        family: "{{ alternatives_family | default() }}"
-        link: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
+        path: "{{ (java_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
+        link: /usr/bin/java
         state: auto
         subcommands:
           - name: jcmd
