@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -13,7 +13,7 @@ deps_mgr_list:
     Ubuntu:
       repositories:
         - repo_type: apt
-          name: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
+          name: "deb http://archive.ubuntu.com/ubuntu {{ ansible_facts['distribution_release'] }} universe"
           state: present
       packages:
         - hello

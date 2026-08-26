@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 SPDX-FileContributor: William P. Marshall
 
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -18,7 +18,7 @@ Using this role will install the following packages on the target:
 | **socat**                                 | always                                                                           |
 | **openssl**                               | always                                                                           |
 | cron/cronnie/mcron/vixie-cron             | `acme_sh_scheduler == 'cron'` and you do not have `cron`, `cronie`, `isc-cron`, `mcron`, or `vixie-cron` installed |
-| bind-utils/bind-tools/bind9-dnsutils/bind | `acme_sh_mode == 'dns' and acme_sh_mode_value is regexp('dns_nsupdates?')`       |
+| bind-utils/bind-tools/bind9-dnsutils/bind | `acme_sh_mode == 'dns' and acme_sh_mode_value is regex('dns_nsupdates?')`       |
 | wget                                      | neither `wget` nor `curl` is installed                                           |
 
 
@@ -51,10 +51,10 @@ Role Variables
 | acme_sh_env_variables | A dictionary of environment variables to be set during acme.sh operations.  Primarily for dnsapi extensions. | |
 | acme_sh_server | Sets the [`--server`](https://github.com/acmesh-official/acme.sh/wiki/Server) parameter. | `letsencrypt_test` |
 | acme_sh_account_email | **MANDATORY** The email of the account to request a certificate under. | |
-| acme_sh_account_keyfile | **MANDATORY** File containing your account key for authentication with the ACME server | `"{{ acme_sh_home }}/ca_account.key"` |
+| acme_sh_account_key_file | **MANDATORY** File containing your account key for authentication with the ACME server | `"{{ acme_sh_home }}/ca_account.key"` |
 | acme_sh_keylength | Specifies the domain key length: 2048, 3072, 4096, 8192 or ec-256, ec-384, ec-521. | `ec-384` |
 | acme_sh_reloadcmd | Command run after newly renewed certificates are installed | |
-| acme_sh_prehook | Pre hook that happens before attempting to issue a certificate | |
+| acme_sh_pre_hook | Pre hook that happens before attempting to issue a certificate | |
 | acme_sh_post_hook | Post hook that happens after attempting to issue a certificate | |
 | acme_sh_renew_hook | Renew hook that is called when certs are *successfully* renewed | |
 | acme_sh_run_hook_setup | Setup the hooks and reloadcmd. Useful when the command executed by the hook won't work without the certificates existing first. | `true` |

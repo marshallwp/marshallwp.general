@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -212,7 +212,7 @@ java_packages:
           - repo_type: yum
             name: adoptium
             description: Adoptium
-            baseurl: "https://packages.adoptium.net/artifactory/rpm/{{ ansible_distribution | lower }}/$releasever/$basearch"
+            baseurl: "https://packages.adoptium.net/artifactory/rpm/{{ ansible_facts['distribution'] | lower }}/$releasever/$basearch"
             gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
             gpgcheck: true
         packages:
@@ -256,15 +256,15 @@ java_archives:
   Oracle:
     GraalVM:
       url: "https://download.oracle.com/graalvm/{{ java_version }}/latest/graalvm-jdk-{{
-        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.tar.gz"
+        java_version }}_{{ ansible_facts['system'] | lower }}-{{ java_oracle_arch }}_bin.tar.gz"
       checksum: "sha256:https://download.oracle.com/graalvm/{{ java_version }}/latest/graalvm-jdk-{{
-        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.tar.gz.sha256"
+        java_version }}_{{ ansible_facts['system'] | lower }}-{{ java_oracle_arch }}_bin.tar.gz.sha256"
     Java:
       url: "https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
-        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
+        java_version }}_{{ ansible_facts['system'] | lower }}-{{ java_oracle_arch }}_bin.{{
         {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}"
       checksum: "sha256:https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{
-        java_version }}_{{ ansible_system | lower }}-{{ java_oracle_arch }}_bin.{{
+        java_version }}_{{ ansible_facts['system'] | lower }}-{{ java_oracle_arch }}_bin.{{
         {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}.sha256"
 
 
@@ -274,4 +274,4 @@ java_archive_path: "{{
   }}"
 
 # Oracle download files use weird architecture strings.
-java_oracle_arch: "{{ {'x86_64': 'x64'}[ansible_architecture] | default(ansible_architecture) }}"
+java_oracle_arch: "{{ {'x86_64': 'x64'}[ansible_facts['architecture']] | default(ansible_facts['architecture']) }}"

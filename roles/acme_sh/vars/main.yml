@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -7,12 +7,12 @@
 # acme.sh requires either wget or curl.  If neither exists, install wget (it's smaller than curl)
 acme_sh_install_wget: "{{ ansible_facts['packages'] | select('in', ['curl', 'wget']) | length == 0 }}"
 # if configuring acme.sh to use nslookup for dns-01 challenges, make sure it's installed.
-acme_sh_install_nsupdate: "{{ acme_sh_mode == 'dns' and acme_sh_mode_value is ansible.builtin.regexp('dns_nsupdates?') }}"
+acme_sh_install_nsupdate: "{{ acme_sh_mode == 'dns' and acme_sh_mode_value is ansible.builtin.regex('dns_nsupdates?') }}"
 # ensure some form of vixie-compatible cron daemon is installed when using cron as the scheduler.
 acme_sh_install_cron: "{{ acme_sh_scheduler == 'cron' and (ansible_facts['packages']
                         | select('in', ['cron', 'cronie', 'isc-cron', 'mcron', 'vixie-cron']) | length == 0) }}"
 
-acme_sh_deps_by_family:
+acme_sh_dependencies:
   Alpine:
     packages:
       - openssl
