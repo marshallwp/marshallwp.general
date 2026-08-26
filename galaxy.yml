@@ -10,7 +10,7 @@
 
 namespace: "marshallwp"
 name: "general"
-version: 1.5.4
+version: 1.5.5
 readme: README.md
 authors:
   - William P. Marshall
