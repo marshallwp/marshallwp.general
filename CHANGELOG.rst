@@ -9,6 +9,51 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.5.5
+======
+
+Release Summary
+---------------
+
+Fix several variable-naming and templating bugs left over from the migration to ``ansible_facts``, and correct the java role's update-alternatives tasks.
+
+Minor Changes
+-------------
+
+- Continued migrating remaining magic variables (`ansible_hostname`, `ansible_distribution_release`, `ansible_architecture`, `ansible_distribution`, `ansible_system`) to their `ansible_facts` equivalents in the `acme_sh`, `deps_mgr`, and `java` roles and tests.
+
+Bugfixes
+--------
+
+- acme_sh - Fixed a variable name mismatch (`acme_sh_deps_by_family` renamed to `acme_sh_dependencies`) that prevented the role from installing its required dependencies.
+- acme_sh - Corrected a typo (`regexp` to `regex`) in the Jinja test used to detect nsupdate-based DNS challenges, which previously caused a templating error.
+- acme_sh - Corrected the README, which documented the old `acme_sh_account_keyfile` and `acme_sh_prehook` variable names instead of the current `acme_sh_account_key_file` and `acme_sh_pre_hook`.
+- dirtree - The role now honors the documented `dirtree_owner` variable. It previously referenced an undocumented `dirtree_user` variable, so setting `dirtree_owner` had no effect.
+- java - Fixed the update-alternatives tasks, which failed because the `family` parameter was being used incorrectly. They now use the `path`/`link` parameters and point at the correct `/usr/lib/jvm` and `/usr/bin/java` locations.
+
+Documentation Changes
+---------------------
+
+- Updated SPDX copyright years to 2026 and removed a leftover `changelogs/.plugin-cache.yaml` reference from `galaxy.yml`.
+
+v1.5.4
+======
+
+Release Summary
+---------------
+
+Resolve ansible-lint findings by migrating magic variables to ``ansible_facts`` and remove the antsibull-changelog integration.
+
+Breaking Changes
+-----------------
+
+- Removed the antsibull-changelog integration (the `changelogs/` directory and its CI workflow job), as it is no longer compatible with the ansible-dev-container. Release notes are now maintained directly in this file.
+
+Minor Changes
+-------------
+
+- Migrated magic variables (`ansible_user_id`, `ansible_user_gid`, `ansible_architecture`) to their `ansible_facts` equivalents in the `acme_sh`, `deps_mgr`, `dirtree`, and `java` roles to resolve ansible-lint warnings.
+
 v1.5.3
 ======
 
