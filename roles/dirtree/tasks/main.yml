@@ -8,7 +8,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ dirtree_user | default(ansible_facts['user_id'], true) }}"
+    owner: "{{ dirtree_owner | default(ansible_facts['user_id'], true) }}"
     group: "{{ dirtree_group | default(ansible_facts['user_gid'], true) | marshallwp.general.get_grpname }}"
     mode: "{{ dirtree_mode | default() }}"
   loop: "{{ dirtree_tree | marshallwp.general.generate_paths(dirtree_root) }}"
