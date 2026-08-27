@@ -47,4 +47,9 @@
             | map(attribute='state') | ansible.builtin.unique }}"
   loop_control:
     loop_var: state
-    label: "{{ state }} packages"
+    label: >-
+      {%- set names = lookup('ansible.builtin.vars', deps_mgr_package_merge_method ~ '_merge')
+                | selectattr('state', 'equalto', state) | map(attribute='name') | list -%}
+      {%- set shown = names if (ansible_verbosity | default(0)) >= 2 or names | length <= 10 else names[:10] -%}
+      {{ state }} packages: {{ shown | join(' ') }}{{
+        ' (+%d more)' % (names | length - shown | length) if shown | length < names | length else '' }}
