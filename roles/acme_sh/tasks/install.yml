@@ -12,6 +12,8 @@
   tags: ['acmesh::install']
   ansible.builtin.include_role:
     name: marshallwp.general.deps_mgr
+    apply:
+      tags: ['acmesh::install']
   vars:
     deps_mgr_list: "{{ acme_sh_dependencies }}"
 
