@@ -9,6 +9,19 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.5.6
+======
+
+Release Summary
+---------------
+
+Fix a deps_mgr bug where conditional package entries could prevent installation of the other packages in the list.
+
+Bugfixes
+--------
+
+- deps_mgr - ``omit`` is now filtered out of package lists. Previously, a conditional entry like ``ternary('pkg', omit)`` left a placeholder string in the list, and installation of the entire list failed. This prevented acme_sh from installing its dependencies (such as ``bind-utils``) on some hosts.
+
 v1.5.5
 ======
 
