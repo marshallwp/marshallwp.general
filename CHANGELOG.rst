@@ -9,6 +9,25 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.5.7
+======
+
+Release Summary
+---------------
+
+Improve package-management output, fix a tag-propagation bug in acme_sh, and stop development/test files from leaking into the built collection artifact.
+
+Minor Changes
+-------------
+
+- deps_mgr - The packages loop label now shows the names of the packages being managed (truncated to 10 names with a "+N more" suffix, unless run with ``-vv``), instead of just the desired state.
+
+Bugfixes
+--------
+
+- acme_sh - Tags applied to the install task are now propagated to the included ``deps_mgr`` role, so tag-filtered runs (e.g. ``--tags acmesh::install``) correctly include dependency installation.
+- Fixed the collection build artifact including local development and test files (``.ansible/``, ``.claude/``, ``collections/``, ``test.yml``, etc.) via ``galaxy.yml``'s ``build_ignore``. One of these (a stale symlink under ``.ansible/``) could crash ``ansible-galaxy collection build`` entirely.
+
 v1.5.6
 ======
 
