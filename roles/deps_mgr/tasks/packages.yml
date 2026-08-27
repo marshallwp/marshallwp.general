@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2025 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
 # SPDX-FileContributor: William P. Marshall
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -6,21 +6,26 @@
 ---
 - name: Manage Packages by Desired State
   vars:
+    # `omit` is only stripped when it's a whole parameter value, not a list element, so
+    # filter that placeholder out before it reaches ansible.builtin.package.
+    os_packages_raw: "{{ os_deps['packages'] | default([]) | reject('equalto', omit) | list }}"
+    dist_packages_raw: "{{ dist_deps['packages'] | default([]) | reject('equalto', omit) | list }}"
+    maj_ver_packages_raw: "{{ maj_ver_deps['packages'] | default([]) | reject('equalto', omit) | list }}"
     # Normalize simple members into complex members with a state of deps_mgr_package_default_state (default: present)
     os_packages: "{{
-        dict(os_deps['packages'] | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
+        dict(os_packages_raw | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
         | ansible.builtin.dict2items(key_name='name', value_name='state')
-        | ansible.builtin.union(os_deps['packages'] | selectattr('name', 'defined') | list)
+        | ansible.builtin.union(os_packages_raw | selectattr('name', 'defined') | list)
       }}"
     dist_packages: "{{
-        dict(dist_deps['packages'] | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
+        dict(dist_packages_raw | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
         | ansible.builtin.dict2items(key_name='name', value_name='state')
-        | ansible.builtin.union(dist_deps['packages'] | selectattr('name', 'defined') | list)
+        | ansible.builtin.union(dist_packages_raw | selectattr('name', 'defined') | list)
       }}"
     maj_ver_packages: "{{
-      dict(maj_ver_deps['packages'] | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
+      dict(maj_ver_packages_raw | rejectattr('name', 'defined') | ansible.builtin.zip_longest([], fillvalue=deps_mgr_package_default_state))
       | ansible.builtin.dict2items(key_name='name', value_name='state')
-      | ansible.builtin.union(maj_ver_deps['packages'] | selectattr('name', 'defined') | list)
+      | ansible.builtin.union(maj_ver_packages_raw | selectattr('name', 'defined') | list)
       }}"
     # *Merge lists through various methods
     # Only get packages from the lowest-level that lists them.
