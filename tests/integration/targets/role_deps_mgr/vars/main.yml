@@ -10,6 +10,8 @@ deps_mgr_list:
       - hello-traditional
       - name: hello
         state: absent
+      # Regression check: this must never leak through as a package name.
+      - "{{ (1 == 2) | ansible.builtin.ternary('this-package-does-not-exist', omit) }}"
     Ubuntu:
       repositories:
         - repo_type: apt
