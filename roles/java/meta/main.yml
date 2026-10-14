@@ -97,7 +97,7 @@ argument_specs:
       java_variant:
         description:
           - Some vendors provide multiple versions of Java. This variable lets you specify which to install.
-          - OpenJDK is the default. Zing is Azul-specific. GrallVM and Java are Oracle-specific.
+          - OpenJDK is the default. Zing is Azul-specific. GraalVM and Java are Oracle-specific.
         default: OpenJDK
         choices:
           - OpenJDK
@@ -105,11 +105,13 @@ argument_specs:
           - GraalVM
           - Java
       java_install_directory:
-        description: Install directory for non-repository-based installs.
-        default: '/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_facts.architecture }}'
+        description:
+          - Install directory for non-repository-based installs. The archive's top-level directory is stripped, so the JDK lands directly here.
+          - Installs under the 1.5.7 default path (which lacked java_variant) are moved here automatically, and the old path is replaced with a symlink.
+        default: '/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ java_variant }}-{{ ansible_facts.architecture }}'
       java_archive_download_dir:
-        description: Archive download directory for non-repository-based installs.
-        default: /tmp
+        description: Archive download directory for non-repository-based installs. The archive is kept so later runs can skip the download.
+        default: /var/cache/java
       java_update_alternatives:
         description: Enable or disable updating alternatives via update-alternatives for Archive-installed Java
         type: bool

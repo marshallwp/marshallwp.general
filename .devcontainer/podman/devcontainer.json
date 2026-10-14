@@ -19,6 +19,9 @@
     // "--network=host", // Needed to connect to sibling containers on the host
   ],
   "updateRemoteUserUID": true,
+  "features": {
+    "ghcr.io/devcontainers-extra/features/prek:1": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -30,7 +33,7 @@
   },
   "postCreateCommand": {
     "safe repo": "git config --global --add safe.directory \"${containerWorkspaceFolder}\"",
-    "pre-commit": "pre-commit install"
+    "prek": "prek install -f --install-hooks"
   },
   "postStartCommand": {
     "ansible deps": "ansible-galaxy install -r requirements.yml"
