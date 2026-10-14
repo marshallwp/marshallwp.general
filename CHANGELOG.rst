@@ -9,6 +9,33 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.5.8
+======
+
+Release Summary
+---------------
+
+Fix archive-based (Oracle GraalVM / Oracle Java tarball) installs in the java role: readable permissions, a fixed JDK path, idempotent downloads, and correct alternatives. Existing 1.5.7 installs are migrated automatically. The development containers now use prek instead of pre-commit.
+
+Minor Changes
+-------------
+
+- Development containers - Replaced ``pre-commit`` with ``prek``. It is installed through the ``ghcr.io/devcontainers-extra/features/prek`` devcontainer feature instead of the image's package list, and ``prek install -f --install-hooks`` runs after the container is created. This now also applies to the default devcontainer configuration, which previously installed no hooks.
+- Added ``.claude/settings.local.json`` to ``.gitignore``.
+
+- java - ``java_archive_download_dir`` now defaults to ``/var/cache/java`` instead of ``/tmp``, and the downloaded archive is kept so repeat runs skip the download when the checksum still matches.
+- java - ``java_install_directory`` now defaults to ``/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ java_variant }}-{{ ansible_facts.architecture }}``, so Oracle GraalVM and Oracle Java of the same version no longer share a directory.
+- java - Archive installs made by 1.5.7 or earlier under the old default path are migrated automatically. The newest build is moved to the new path, older builds are removed, the old path is replaced with a symlink, and stale alternatives entries are removed. Installs with a customised ``java_install_directory`` are not migrated and should be moved by hand. This migration will be removed in a future release.
+
+Bugfixes
+--------
+
+- java - Extracted files were given mode ``u=rwx,g=rx,o=x``, making the JDK unreadable to non-root users. They now use ``u=rwX,g=rX,o=rX``.
+- java - Archives were extracted into a nested ``graalvm-jdk-*/`` or ``jdk-*/`` directory, so the alternatives pointed at a ``bin/java`` that did not exist. The top-level directory is now stripped.
+- java - The downloaded archive was deleted after every run, so each run downloaded it again and reported changed.
+- java - The ``jcmd`` alternatives subcommand pointed at ``bin/jconsole``.
+- java - The JRE and JDK ``java`` alternatives tasks overwrote each other's subcommands on JDK installs, dropping ``jre``, ``alt-java`` and ``keytool`` and reporting changed on every run. They are now a single task.
+
 v1.5.7
 ======
 

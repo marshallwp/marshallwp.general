@@ -1,0 +1,92 @@
+# SPDX-FileCopyrightText: 2026 Industrial Info Resources, Inc. <https://www.industrialinfo.com>
+# SPDX-FileContributor: William P. Marshall
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+---
+# Migrates archive installs made by 1.5.7 and earlier, which extracted into a nested directory
+# (e.g. <legacy>/graalvm-jdk-25.0.1+8.1/) under a path that did not include java_variant.
+# The newest matching build is moved to java_install_directory, and the legacy path is replaced
+# with a symlink once it is empty. Remove this file in a future minor or major release.
+- name: Check for Legacy Install Directory
+  ansible.builtin.stat:
+    path: "{{ java_legacy_install_directory }}"
+  register: java_legacy_stat
+
+- name: Migrate Legacy Install
+  when:
+    - java_legacy_stat.stat.isdir | default(false)
+    - not java_legacy_stat.stat.islnk | default(false)
+    - (java_legacy_install_directory | ansible.builtin.normpath) != (java_install_directory | ansible.builtin.normpath)
+  block:
+    - name: Find Legacy Builds
+      ansible.builtin.find:
+        paths: "{{ java_legacy_install_directory }}"
+        patterns: "{{ java_archive_top_dir_patterns[java_vendor][java_variant] | default('*') }}"
+        file_type: directory
+        recurse: false
+      register: java_legacy_builds
+
+    - name: Move Newest Legacy Build to {{ java_install_directory }}
+      when: java_legacy_builds.files | length > 0
+      ansible.builtin.command:
+        argv:
+          - mv
+          - "{{ java_legacy_newest_build }}"
+          - "{{ java_install_directory }}"
+        creates: "{{ java_install_directory }}"
+      vars:
+        # tar restores directory mtimes from the archive, so the newest build has the newest mtime.
+        java_legacy_newest_build: "{{ (java_legacy_builds.files | sort(attribute='mtime') | last)['path'] }}"
+
+    - name: Remove Older Legacy Builds
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ java_legacy_builds.files | map(attribute='path') | list }}"
+
+    - name: Find Remaining Legacy Contents
+      ansible.builtin.find:
+        paths: "{{ java_legacy_install_directory }}"
+        file_type: any
+        hidden: true
+        recurse: false
+      register: java_legacy_remaining
+
+    - name: Warn About Remaining Legacy Contents
+      when: java_legacy_remaining.files | length > 0
+      ansible.builtin.debug:
+        msg: >-
+          {{ java_legacy_install_directory }} still contains {{ java_legacy_remaining.files | map(attribute='path') | join(', ') }},
+          so it was not replaced with a symlink to {{ java_install_directory }}. Running this role for the other
+          {{ java_vendor }} variant will migrate those contents, or they can be removed manually.
+
+    - name: Replace Legacy Install Directory with Symlink
+      when: java_legacy_remaining.files | length == 0
+      block:
+        - name: Remove Empty Legacy Install Directory
+          ansible.builtin.file:
+            path: "{{ java_legacy_install_directory }}"
+            state: absent
+        - name: Link Legacy Install Directory to {{ java_install_directory }}
+          ansible.builtin.file:
+            src: "{{ java_install_directory }}"
+            dest: "{{ java_legacy_install_directory }}"
+            state: link
+            force: true
+            owner: root
+            group: root
+
+    - name: Remove Legacy Alternatives
+      when: java_update_alternatives | default(false)
+      community.general.alternatives:
+        name: "{{ item.name }}"
+        path: "{{ item.path }}"
+        state: absent
+      loop:
+        - name: java
+          path: "{{ (java_legacy_install_directory, 'bin', 'java') | ansible.builtin.path_join }}"
+        - name: "jre_{{ java_version }}"
+          path: "{{ java_legacy_install_directory }}"
+        - name: "java_sdk_{{ java_version }}"
+          path: "{{ java_legacy_install_directory }}"

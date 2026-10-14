@@ -26,10 +26,11 @@ java_vendor: Default
 java_variant: OpenJDK
 
 # Install directory for non-repository-based installs.
-java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ ansible_facts['architecture'] }}"
+java_install_directory: "/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ java_variant }}-{{ ansible_facts['architecture'] }}"
 
-# Archive download directory for non-repository-based installs.
-java_archive_download_dir: /tmp
+# Archive download directory for non-repository-based installs. The archive is kept so later runs
+# can skip the download.
+java_archive_download_dir: /var/cache/java
 
 # Enable or disable updating alternatives via update-alternatives for Archive-installed Java
 java_update_alternatives: false

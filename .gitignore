@@ -170,3 +170,4 @@ test.yml
 
 # Ansible temp files
 .ansible/
+.claude/settings.local.json

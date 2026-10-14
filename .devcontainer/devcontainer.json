@@ -16,6 +16,9 @@
     "--hostname=ansible-dev-container"
   ],
   "updateRemoteUserUID": true,
+  "features": {
+    "ghcr.io/devcontainers-extra/features/prek:1": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,6 +26,9 @@
         "redhat.vscode-redhat-account",
         "edwinhuish.better-comments-next"]
     }
+  },
+  "postCreateCommand": {
+    "prek": "prek install -f --install-hooks"
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/ansible_collections/marshallwp/general,type=bind",
   "workspaceFolder": "/ansible_collections/marshallwp/general"
