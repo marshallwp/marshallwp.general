@@ -27,7 +27,7 @@
       renew_hook: "{{ acme_sh_renew_hook | default(omit) }}"
   block:
     - name: Update facts file
-      when: cmds | ansible.builtin.items2dict | rejectattr('value', '==', omit) | length > 0
+      when: cmds | ansible.builtin.dict2items | rejectattr('value', '==', omit) | list | length > 0
       tags: ['acmesh::config']
       ansible.builtin.copy:
         dest: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
@@ -37,7 +37,7 @@
         mode: "u=r,g=,o="
 
     - name: Remove facts file
-      when: cmds | ansible.builtin.items2dict | rejectattr('value', '==', omit) | length == 0
+      when: cmds | ansible.builtin.dict2items | rejectattr('value', '==', omit) | list | length == 0
       tags: ['acmesh::config']
       ansible.builtin.file:
         path: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
