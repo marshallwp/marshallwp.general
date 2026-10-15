@@ -19,7 +19,12 @@
   ],
   "updateRemoteUserUID": true,
   "features": {
-    "ghcr.io/devcontainers-extra/features/prek:1": {}
+    "ghcr.io/devcontainers-extra/features/prek:1": {},
+    "ghcr.io/devcontainers-extra/features/claude-code:2.0.3": {},
+    "ghcr.io/esimkowitz/devcontainer-features/claude-code-persistence:1": {
+      "persistClaudeDir": true,
+      "persistClaudeJson": true
+    }
   },
   "customizations": {
     "vscode": {

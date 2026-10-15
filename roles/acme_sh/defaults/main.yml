@@ -31,8 +31,13 @@ acme_sh_mode: dns
 #   dns_nsupdates is a custom version of dns_nsupdate that supports updating multiple dns servers.
 acme_sh_mode_value: dns_nsupdates
 # * DNS mode options
-# The DNS zone used during certificate renewals.
+# The DNS zone used during certificate renewals. Also the default suffix of acme_sh_domain_alias.
 acme_sh_dns_zone:
+# The name acme.sh writes the dns-01 TXT record to (passed as --domain-alias).
+# _acme-challenge.<acme_sh_domain> must be a CNAME pointing at this name.
+# Defaults to <short hostname>.<acme_sh_dns_zone>. Set it explicitly for hosts in a subdomain,
+# e.g. app.sub.example.com -> app.sub.acme.example.com
+acme_sh_domain_alias: "{{ ansible_facts['hostname'] }}.{{ acme_sh_dns_zone }}"
 # Time in seconds to wait for all the TXT records to propagate in dns api mode.
 # It's not necessary to use this by default, acme.sh polls dns status by DOH automatically.
 acme_sh_dns_sleep:

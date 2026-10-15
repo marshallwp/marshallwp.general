@@ -15,14 +15,16 @@ v1.6.0
 Release Summary
 ---------------
 
-Refresh the java role's vendor repositories and package names against current vendor documentation, fixing several repository definitions that could not install, and add SapMachine, Azul Platform Prime and more Default platforms. The deps_mgr role can now manage zypper repositories from ``.repo`` files and release packages, and refreshes the apt cache after adding deb822 repositories.
+Refresh the java role's vendor repositories and package names against current vendor documentation, fixing several repository definitions that could not install, and add SapMachine, Azul Platform Prime and more Default platforms. The deps_mgr role can now manage zypper repositories from ``.repo`` files and release packages, and refreshes the apt cache after adding deb822 repositories. The acme_sh role adds ``acme_sh_domain_alias`` so hosts in a subdomain can pass DNS validation, and fixes hook setup when writing its local facts.
 
 Minor Changes
 -------------
 
+- acme_sh - Added ``acme_sh_domain_alias``, which sets the ``--domain-alias`` name. It defaults to ``<short hostname>.<acme_sh_dns_zone>``, so existing hosts are unaffected.
 - deps_mgr - zypper repositories whose ``repo`` ends in ``.repo`` are added from the file, which supplies the alias, so ``name`` is no longer passed to ``community.general.zypper_repository``.
 - deps_mgr - zypper repositories whose ``repo`` ends in ``.rpm`` are treated as release packages and installed with ``community.general.zypper``. ``name`` must be the package's name so it can be removed with ``state: absent``.
 - deps_mgr - zypper repositories accept ``signed_by``, the URL or path of a signing key to import before the repository is added.
+- devcontainer - The default, docker and podman development containers now include the Claude Code devcontainer feature.
 - java - Added the ``SAP`` vendor (SapMachine) for Alpine, Debian, RedHat and Suse.
 - java - Added the ``Prime`` variant for Azul Platform Prime. ``Zing`` remains as an alias.
 - java - Suse repositories now import their vendor's signing key instead of relying on ``auto_import_keys``.
@@ -34,6 +36,8 @@ Minor Changes
 Bugfixes
 --------
 
+- acme_sh - ``--domain-alias`` was built from the short hostname, so for a host in a subdomain (e.g. ``app.sub.example.com``) the alias dropped the subdomain label and DNS validation failed with ``NXDOMAIN``. Set ``acme_sh_domain_alias`` for these hosts. The README now explains how the alias is built and the CNAME it needs.
+- acme_sh - The checks that decide whether to write or remove the hook local facts file used ``items2dict`` on a mapping and took the length of an unevaluated ``rejectattr`` generator. They now use ``dict2items | list``, so hook setup works whether hooks are set or all omitted.
 - deps_mgr - Packages from a newly added deb822 repository could not be found, because ``deb822_repository`` doesn't update the apt cache. The cache is now updated whenever a deb822 repository changes.
 - deps_mgr - The README and defaults example read the release codename from ``ansible_facts['ansible_lsb']``, which doesn't exist, and listed ``main`` as a deb822 suite instead of a component.
 - java - Debian-family repositories for Azul Platform Prime, Temurin and Microsoft read the release codename from ``ansible_facts['ansible_lsb']``, which doesn't exist, so the suite was always ``invalid``. They now use ``ansible_facts['distribution_release']``.
