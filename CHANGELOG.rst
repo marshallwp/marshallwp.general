@@ -9,7 +9,7 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
-v1.5.8
+v1.6.0
 ======
 
 Release Summary
