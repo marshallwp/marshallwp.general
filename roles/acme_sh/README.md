@@ -45,7 +45,8 @@ Role Variables
 | acme_sh_domain | The domain you want to get a certificate for. | `ansible_facts['nodename']` |
 | acme_sh_mode | The mode to use when performing ACME challenges. Can be `dns`,`standalone`, or `alpn` | `dns` |
 | acme_sh_mode_value | Some modes (like `dns`) take an input value. Use this to pass it. | `dns_nsupdates` |
-| acme_sh_dns_zone | **MANDATORY** The DNS zone used during certificate renewals. | |
+| acme_sh_dns_zone | **MANDATORY** The DNS zone used during certificate renewals. Also the default suffix of `acme_sh_domain_alias`. | |
+| acme_sh_domain_alias | The name acme.sh writes the dns-01 TXT record to (passed as `--domain-alias`). See [DNS Alias Mode](#dns-alias-mode). | `"{{ ansible_facts['hostname'] }}.{{ acme_sh_dns_zone }}"` |
 | acme_sh_dns_sleep | Time in seconds to wait for all TXT records to propagate in dnsapi mode.  By default acme.sh polls DNS status by DOH. | |
 | acme_sh_listening_port | The port acme_sh should listen on when using `standalone` or `alpn` modes. | |
 | acme_sh_env_variables | A dictionary of environment variables to be set during acme.sh operations.  Primarily for dnsapi extensions. | |
@@ -58,6 +59,30 @@ Role Variables
 | acme_sh_post_hook | Post hook that happens after attempting to issue a certificate | |
 | acme_sh_renew_hook | Renew hook that is called when certs are *successfully* renewed | |
 | acme_sh_run_hook_setup | Setup the hooks and reloadcmd. Useful when the command executed by the hook won't work without the certificates existing first. | `true` |
+
+DNS Alias Mode
+--------------
+
+In `dns` mode the role uses acme.sh's [domain alias mode](https://github.com/acmesh-official/acme.sh/wiki/DNS-alias-mode#7-challenge-alias-or-domain-alias). acme.sh writes the dns-01 TXT record to `acme_sh_domain_alias` instead of `_acme-challenge.<acme_sh_domain>`, so the DNS credentials only need access to the zone that holds the alias. For this to work, the challenge name must be a CNAME pointing at the alias. The target has **no** `_acme-challenge.` prefix:
+
+```
+_acme-challenge.<acme_sh_domain>.  CNAME  <acme_sh_domain_alias>.
+```
+
+By default the alias is `<short hostname>.<acme_sh_dns_zone>`, which works for hosts directly under their parent zone (e.g. `web.example.com` → `web.acme.example.com`). The short hostname drops any subdomain labels, so for a host in a subdomain set `acme_sh_domain_alias` to match its CNAME:
+
+```yaml
+# host_vars/app.yml (app.sub.example.com)
+# _acme-challenge.app.sub.example.com.  CNAME  app.sub.acme.example.com.
+acme_sh_dns_zone: acme.example.com
+acme_sh_domain_alias: app.sub.acme.example.com
+acme_sh_env_variables:
+  NSUPDATE_SERVERS: ns1.example.com,ns2.example.com
+  NSUPDATE_KEY: ~/acme/key.private
+  NSUPDATE_ZONE: "{{ acme_sh_dns_zone }}"
+```
+
+The role only issues a certificate when `acme_sh_tls_fullchain_file` doesn't exist yet, and acme.sh keeps the alias it was first issued with for later renewals. To change the alias for a host that already has a certificate, delete the certificate files and the domain's directory under `acme_sh_home` (e.g. `<acme_sh_home>/<acme_sh_domain>_ecc`), then run the role again.
 
 Dependencies
 ------------

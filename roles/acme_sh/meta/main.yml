@@ -120,8 +120,15 @@ argument_specs:
         description: Some modes (like `dns`) take an input value. Use this to pass it.
         default: dns_nsupdates
       acme_sh_dns_zone:
-        description: The DNS zone used during certificate renewals.
+        description: The DNS zone used during certificate renewals. Also the default suffix of `acme_sh_domain_alias`.
         required: true
+      acme_sh_domain_alias:
+        description: >
+          The name acme.sh writes the dns-01 TXT record to (passed as `--domain-alias`).
+          `_acme-challenge.<acme_sh_domain>` must be a CNAME pointing at this name.
+          Set it explicitly for hosts in a subdomain, since the default only uses the short hostname.
+        default: '{{ ansible_facts["hostname"] }}.{{ acme_sh_dns_zone }}'
+        version_added: '1.6.0'
       acme_sh_dns_sleep:
         description: Time in seconds to wait for all TXT records to propagate in dnsapi mode.  By default acme.sh polls DNS status by DOH.
         type: int
