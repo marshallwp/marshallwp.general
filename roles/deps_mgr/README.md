@@ -26,7 +26,21 @@ Repository management is currently only supported by the following:
 | pkg5 | [`community.general.pkg5_publisher`](https://docs.ansible.com/ansible/latest/collections/community/general/pkg5_publisher_module.html) |
 | sorcery | [`community.general.sorcery`](https://docs.ansible.com/ansible/latest/collections/community/general/sorcery_module.html) |
 | yum | [`ansible.builtin.yum_repository`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_repository_module.html) |
-| zypper | [`community.general.zypper_repository`](https://docs.ansible.com/ansible/latest/collections/community/general/zypper_repository_module.html) |
+| zypper | [`community.general.zypper_repository`](https://docs.ansible.com/ansible/latest/collections/community/general/zypper_repository_module.html), or [`community.general.zypper`](https://docs.ansible.com/ansible/latest/collections/community/general/zypper_module.html) for release packages (see below) |
+
+#### zypper repositories
+The `repo` value selects how a zypper repository is managed:
+
+| `repo` | Behavior |
+| ------ | -------- |
+| ends in `.rpm` | A release package that installs the repository (e.g. Azul's `zulu-repo`). It is installed from `repo` with `community.general.zypper`. `name` must be the package's name, which is used to remove it when `state: absent`. |
+| ends in `.repo` | A `.repo` file. `community.general.zypper_repository` takes the alias from the file, so `name` is not passed to it. It does not keep the file's `gpgkey`, so pass the key as `signed_by`. |
+| anything else | A baseurl, with `name` as the alias. |
+
+The optional `signed_by` is the URL or path of the repository's signing key. It is imported with `ansible.builtin.rpm_key` before the repository is added.
+
+#### deb822 repositories
+`ansible.builtin.deb822_repository` does not update the package cache, so the apt cache is updated whenever a deb822 repository changes.
 
 Requirements
 ------------
@@ -114,8 +128,9 @@ Including an example of how to use your role (for instance, with variables passe
               name: pgdg
               uris: https://apt.postgresql.org/pub/repos/apt
               suites:
-                - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}-pgdg"
-                - 'main'
+                - "{{ ansible_facts['distribution_release'] }}-pgdg"
+              components:
+                - main
               signed_by: https://www.postgresql.org/media/keys/ACCC4CF8.asc
           packages:
             - python3-psycopg2

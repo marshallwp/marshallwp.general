@@ -4,17 +4,45 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
+# `repo` selects how the repository is managed:
+#   *.rpm  - a release package that installs the repository (e.g. Azul's zulu-repo). It is installed
+#            via community.general.zypper, and `name` must be that package's name so it can be removed.
+#   *.repo - a .repo file. zypper_repository takes the alias from the file and rejects `name`. It
+#            does not keep the file's gpgkey, so pass the key as `signed_by`.
+#   other  - a baseurl, with `name` as the alias.
+# `signed_by` (optional) is the URL or path of the signing key, imported before the repository is added.
+- name: Import Zypper Repository Signing Key
+  when:
+    - step['repo_type'] | lower == 'zypper'
+    - step['signed_by'] is defined
+    - step['state'] | default('present') != 'absent'
+  ansible.builtin.rpm_key:
+    key: "{{ step['signed_by'] }}"
+    state: present
+
 - name: Manage Zypper Repository
-  when: step['repo_type'] | lower == 'zypper'
+  when:
+    - step['repo_type'] | lower == 'zypper'
+    - not (step['repo'] | default('')).endswith('.rpm')
   community.general.zypper_repository:
     auto_import_keys: "{{ step['auto_import_keys'] | default(omit) }}"
     autorefresh: "{{ step['autorefresh'] | default(omit) }}"
     description: "{{ step['description'] | default(omit) }}"
     disable_gpg_check: "{{ step['disable_gpg_check'] | default(omit) }}"
     enabled: "{{ step['enabled'] | default(omit) }}"
-    name: "{{ step['name'] }}"
+    name: "{{ (step['repo'] | default('')).endswith('.repo') | ansible.builtin.ternary(omit, step['name']) }}"
     overwrite_multiple: "{{ step['overwrite_multiple'] | default(omit) }}"
     priority: "{{ step['priority'] | default(omit) }}"
     repo: "{{ step['repo'] | default(omit) }}"
     runrefresh: "{{ step['runrefresh'] | default(omit) }}"
     state: "{{ step['state'] | default(omit) }}"
+
+- name: Manage Zypper Repository Release Package
+  when:
+    - step['repo_type'] | lower == 'zypper'
+    - (step['repo'] | default('')).endswith('.rpm')
+  community.general.zypper:
+    # Packages are removed by name, but can only be installed from the rpm itself.
+    name: "{{ (step['state'] | default('present') == 'absent') | ansible.builtin.ternary(step['name'], step['repo']) }}"
+    state: "{{ step['state'] | default('present') }}"
+    disable_gpg_check: "{{ step['disable_gpg_check'] | default(omit) }}"

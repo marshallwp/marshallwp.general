@@ -30,3 +30,13 @@
     trusted: "{{ step['trusted'] | default(omit) }}"
     types: "{{ step['types'] | default(omit) }}"
     uris: "{{ step['uris'] | default(omit) }}"
+  register: deps_mgr_deb822_result
+
+# Unlike apt_repository, deb822_repository does not update the package cache, so packages from a
+# newly added repository would not be found.
+- name: Update APT Cache After Debian 822 Repository Change
+  when:
+    - step['repo_type'] | lower == 'deb822'
+    - deps_mgr_deb822_result is changed
+  ansible.builtin.apt:
+    update_cache: true
