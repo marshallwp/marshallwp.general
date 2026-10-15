@@ -4,6 +4,25 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
+- name: Gather Required Facts if Missing
+  when: ansible_facts['system'] is not defined
+        or ansible_facts['architecture'] is not defined
+        or ansible_facts['os_family'] is not defined
+        or ansible_facts['pkg_mgr'] is not defined
+  ansible.builtin.setup:
+    gather_subset: ['platform', 'distribution', 'pkg_mgr']
+
+# Vendors only publish these downloads for glibc-based Linux.
+- name: Assert Host Supports Archive Installs
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['system'] == 'Linux'
+      - ansible_facts['os_family'] != 'Alpine'
+    fail_msg: >-
+      {{ java_vendor }} {{ java_variant }} is only available as a download for glibc-based Linux,
+      not {{ ansible_facts['distribution'] }}.
+    quiet: true
+
 - name: Ensure Download Directory Exists
   become: true
   ansible.builtin.file:
@@ -26,9 +45,19 @@
     group: root
     mode: u=rw,g=r,o=r
 
-# For Package-based installations/upgrades
+# For Package-based installations/upgrades. apt only installs local files through its deb option.
+- name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Debian Package' }}
+  when:
+    - (java_archive_path | ansible.builtin.splitext)[1] not in java_archive_exts
+    - ansible_facts['pkg_mgr'] == 'apt'
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ java_archive_path }}"
+
 - name: Install {{ java_vendor ~ ' ' ~ java_variant ~ ' Java ' ~ java_version ~ ' from Package' }} # noqa: package-latest
-  when: (java_archive_path | ansible.builtin.splitext)[1] not in java_archive_exts
+  when:
+    - (java_archive_path | ansible.builtin.splitext)[1] not in java_archive_exts
+    - ansible_facts['pkg_mgr'] != 'apt'
   become: true
   ansible.builtin.package:
     name: "{{ java_archive_path }}"

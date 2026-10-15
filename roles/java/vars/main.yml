@@ -7,6 +7,9 @@
 # As it turns out, '-headless' (or the absence thereof) is nearly universal for indicating a java package is headless.
 java_headless: "{{ (java_use_headless) | ansible.builtin.ternary('-headless', '') }}"
 
+# Repository and package names below follow each vendor's documented naming pattern and are templated from facts, so
+# they keep working as vendors publish for new releases. Whether a vendor publishes for a given release is up to them.
+
 # java_packages is split by java_vendor and java_variant, before the remainder is passed as a deps_mgr_list to marshallwp.general.deps_mgr
 java_packages:
   Default:  # With Default, you get whatever Java is included in your distro's default repos.
@@ -20,18 +23,27 @@ java_packages:
       Archlinux:
         packages:
           - "{{ java_type }}{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '') }}"
+      Darwin:  # Homebrew formulae are JDK-only and keg-only.
+        packages:
+          - "openjdk@{{ java_version }}"
       Debian:
         packages:
           - "openjdk-{{ java_version }}-{{ java_type }}{{ java_headless }}"
       FreeBSD:
         packages:
           - "openjdk{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-jre', '') }}"
+      Gentoo:  # Slotted by major version. Headless is the headless-awt USE flag, not a separate package.
+        packages:
+          - "dev-java/openjdk{{ (java_type == 'jre') | ansible.builtin.ternary('-jre', '') }}-bin:{{ java_version }}"
       RedHat:
         packages:
           - "java-{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '-devel') }}"
       Suse:
         packages:
           - "java-{{ java_version }}-openjdk{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '-devel') }}"
+      Void:  # No headless split.
+        packages:
+          - "openjdk{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-jre', '') }}"
   Amazon:
     # https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/generic-linux-install.html
     OpenJDK:  # a.k.a. Corretto
@@ -47,10 +59,11 @@ java_packages:
           - repo_type: deb822
             name: AmazonCorretto
             uris: https://apt.corretto.aws
-            suites: ['stable', 'main']
+            suites: [stable]
+            components: [main]
             signed_by: https://apt.corretto.aws/corretto.key
-        packages:
-          - "java-{{ java_version }}-amazon-corretto-{{ java_type }}"
+        packages:  # Corretto only publishes a JDK package for apt.
+          - "java-{{ java_version }}-amazon-corretto-jdk"
       RedHat:
         repositories:
           - repo_type: yum
@@ -59,18 +72,18 @@ java_packages:
             baseurl: https://yum.corretto.aws/$basearch
             gpgkey: https://yum.corretto.aws/corretto.key
             gpgcheck: true
-        packages:
-          - "java-{{ java_version }}-amazon-corretto-devel"
-        # https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/amazon-linux-install.html
+        packages:  # Corretto only publishes a JDK (-devel) package outside Amazon Linux.
+          - "{{ (ansible_facts['distribution'] == 'Amazon') | ansible.builtin.ternary(omit, 'java-' ~ java_version ~ '-amazon-corretto-devel') }}"
+        # https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/amazon-linux-install.html
         Amazon:
           packages:
-            - "java-{{ java_version }}-amazon-corretto{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, 'devel') }}"
+            - "java-{{ java_version }}-amazon-corretto{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '-devel') }}"
       Suse:
         repositories:
           - repo_type: zypper
             name: AmazonCorretto
             repo: https://yum.corretto.aws/corretto.repo
-            auto_import_keys: true
+            signed_by: https://yum.corretto.aws/corretto.key
         packages:
           - "java-{{ java_version }}-amazon-corretto-devel"
   Azul:
@@ -87,9 +100,10 @@ java_packages:
         repositories:
           - repo_type: deb822
             name: zulu-openjdk
-            uris: 'https://repos.azul.com/zulu/deb'
-            suites: ['stable', 'main']
-            signed_by: 'https://repos.azul.com/azul-repo.key'
+            uris: https://repos.azul.com/zulu/deb
+            suites: [stable]
+            components: [main]
+            signed_by: https://repos.azul.com/azul-repo.key
         packages:
           - "zulu{{ java_version }}-ca-{{ java_type }}{{ java_headless }}"
       # https://docs.azul.com/core/install/rpm-based-linux
@@ -98,51 +112,65 @@ java_packages:
           - repo_type: yum
             name: zulu-openjdk
             description: zulu-openjdk - Azul Systems Inc., Zulu packages
-            baseurl: 'https://repos.azul.com/zulu/rpm'
-            gpgkey: 'https://repos.azul.com/azul-repo.key'
+            baseurl: https://repos.azul.com/zulu/rpm
+            gpgkey: https://repos.azul.com/azul-repo.key
             gpgcheck: true
             protect: true
         packages:
           - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
       # https://docs.azul.com/core/install/rpm-based-linux
+      # Azul publishes no zypper repository, only a release package that installs one.
       Suse:
         repositories:
           - repo_type: zypper
-            name: 'https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-2.noarch.rpm'
-            auto_import_keys: true
+            name: zulu-repo
+            repo: https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-2.noarch.rpm
+            signed_by: https://repos.azul.com/azul-repo.key
         packages:
           - "zulu{{ java_version }}-{{ java_type }}{{ java_headless }}"
-    Zing:
+    # Azul Platform Prime, formerly Zing. Repositories and packages still use the zing name.
+    # https://docs.azul.com/prime/prime-quick-start-apt
+    # https://docs.azul.com/prime/prime-quick-start-yum
+    Zing: &java_azul_prime
       Debian:
         repositories:
           - repo_type: deb822
             name: zing
-            uris: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}"
-            suites:
-              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
-              - main
+            uris: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] | lower }}"
+            suites: ["{{ ansible_facts['distribution_release'] }}"]
+            components: [main]
             signed_by: https://repos.azul.com/azul-repo.key
         packages:
-          - "zing-jdk{{ java_version }}"
+          - "zing-jdk{{ java_azul_prime_version }}"
       RedHat:
         repositories:
           - repo_type: yum
             name: zing
             description: zing-$releasever - Azul Systems Inc., Zing packages for $basearch
-            baseurl: "https://repos.azul.com/zing/{{ ansible_facts['distribution'] }}/$releasever/$basearch"
+            baseurl: "https://repos.azul.com/zing/{{ java_azul_prime_rpm_dist }}/$releasever/$basearch"
             gpgkey: https://repos.azul.com/azul-repo.key
             gpgcheck: true
             protect: true
         packages:
-          - "zing-jdk{{ java_version }}"
+          - "zing-jdk{{ java_azul_prime_version }}"
+        Amazon:
+          repositories:
+            - repo_type: yum
+              name: zing
+              description: zing-$releasever - Azul Systems Inc., Zing packages for $basearch
+              baseurl: https://repos.azul.com/zing/amazonlinux/current/$basearch
+              gpgkey: https://repos.azul.com/azul-repo.key
+              gpgcheck: true
+              protect: true
       Suse:
         repositories:
           - repo_type: zypper
             name: zing
-            repo: https://repos.azul.com/zing/sles/$releasever/$basearch
-            auto_import_keys: true
+            repo: "https://repos.azul.com/zing/sles/{{ ansible_facts['distribution_major_version'] }}/{{ ansible_facts['architecture'] }}"
+            signed_by: https://repos.azul.com/azul-repo.key
         packages:
-          - "zing-jdk{{ java_version }}"
+          - "zing-jdk{{ java_azul_prime_version }}"
+    Prime: *java_azul_prime
   # https://docs.bell-sw.com/liberica-jdk/25.0.1b11/general/install-guide
   Bellsoft:
     OpenJDK:  # a.k.a. Liberica
@@ -159,7 +187,8 @@ java_packages:
           - repo_type: deb822
             name: BELLSOFT
             uris: https://apt.bell-sw.com/
-            suites: ['stable', 'main']
+            suites: [stable]
+            components: [main]
             signed_by: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
         packages:
           - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
@@ -180,7 +209,7 @@ java_packages:
           - repo_type: zypper
             name: BELLSOFT
             repo: "https://yum.bell-sw.com"
-            auto_import_keys: true
+            signed_by: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
         packages:
           - "bellsoft-java{{ java_version }}{{ (java_type == 'jre') | ansible.builtin.ternary('-runtime',
               (java_use_headless) | ansible.builtin.ternary('-lite', '')) }}"
@@ -199,58 +228,113 @@ java_packages:
           - repo_type: deb822
             name: adoptium
             uris: https://packages.adoptium.net/artifactory/deb
-            suites:
-              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
-              - main
+            suites: ["{{ ansible_facts['distribution_release'] }}"]
+            components: [main]
             signed_by: https://packages.adoptium.net/artifactory/api/gpg/key/public
         packages:
-          - apt-transport-https
-          - gnupg
           - "temurin-{{ java_version }}-{{ java_type }}"
       RedHat:
         repositories:
           - repo_type: yum
             name: adoptium
             description: Adoptium
-            baseurl: "https://packages.adoptium.net/artifactory/rpm/{{ ansible_facts['distribution'] | lower }}/$releasever/$basearch"
+            # Adoptium publishes centos, fedora, oraclelinux and rhel trees; other rebuilds (Rocky, Alma, ...) use rhel.
+            baseurl: "https://packages.adoptium.net/artifactory/rpm/{{
+              {'CentOS': 'centos', 'Fedora': 'fedora', 'OracleLinux': 'oraclelinux'}[ansible_facts['distribution']] | default('rhel')
+              }}/$releasever/$basearch"
             gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
             gpgcheck: true
         packages:
-          - "temurin-{{ java_version }}-{{ java_type }}"
+          - "temurin-{{ java_version }}-{{ java_type }}{{ (java_type == 'jre') | ansible.builtin.ternary(java_headless, '') }}"
+        Amazon:  # $releasever is 2023.x.y on Amazon Linux 2023, while Adoptium's path uses the major version.
+          repositories:
+            - repo_type: yum
+              name: adoptium
+              description: Adoptium
+              baseurl: "https://packages.adoptium.net/artifactory/rpm/amazonlinux/{{ ansible_facts['distribution_major_version'] }}/$basearch"
+              gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
+              gpgcheck: true
       Suse:
         repositories:
           - repo_type: zypper
             name: adoptium
-            repo: "https://packages.adoptium.net/artifactory/rpm/opensuse/$releasever/$basearch"
-            auto_import_keys: true
+            # openSUSE trees use the full release (15.5), SLES trees the major version (15).
+            repo: "https://packages.adoptium.net/artifactory/rpm/{{
+              (ansible_facts['distribution'] is ansible.builtin.match('SLES')) | ansible.builtin.ternary(
+                'sles/' ~ ansible_facts['distribution_major_version'], 'opensuse/' ~ ansible_facts['distribution_version']) }}/$basearch"
+            signed_by: https://packages.adoptium.net/artifactory/api/gpg/key/public
         packages:
           - "temurin-{{ java_version }}-{{ java_type }}"
   # https://learn.microsoft.com/en-us/java/openjdk/install
+  # Microsoft only publishes a JDK package.
   Microsoft:
     OpenJDK:
       Debian:
         repositories:
           - repo_type: deb822
             name: microsoft-prod
-            baseurl: "https://packages.microsoft.com/packages/debian/{{ ansible_facts['distribution_major_version'] }}/prod"
-            suites:
-              - "{{ ansible_facts['ansible_lsb']['codename'] | default('invalid') }}"
-              - main
+            # Ubuntu trees use the full release (24.04), Debian trees the major version (12).
+            uris: "https://packages.microsoft.com/{{ ansible_facts['distribution'] | lower }}/{{
+              (ansible_facts['distribution'] == 'Ubuntu') | ansible.builtin.ternary(ansible_facts['distribution_version'],
+              ansible_facts['distribution_major_version']) }}/prod"
+            suites: ["{{ ansible_facts['distribution_release'] }}"]
+            components: [main]
             signed_by: https://packages.microsoft.com/keys/microsoft.asc
         packages:
           - "msopenjdk-{{ java_version }}"
+      # Microsoft's only RPM repository for the RedHat family is its CentOS 7 tree, which isn't maintained for current releases.
       Suse:
         repositories:
           - repo_type: zypper
-            name: microsoft-prod
-            repo: "https://packages.microsoft.com/config/{{ ansible_facts['distribution'] | lower }}/{{
-                    ansible_facts['distribution_major_version'] }}/packages-microsoft-prod.rpm"
-            auto_import_keys: true
+            name: packages-microsoft-com-prod
+            repo: "https://packages.microsoft.com/config/{{
+              (ansible_facts['distribution'] is ansible.builtin.match('SLES')) | ansible.builtin.ternary('sles', 'opensuse') }}/{{
+              ansible_facts['distribution_major_version'] }}/prod.repo"
+            signed_by: https://packages.microsoft.com/keys/microsoft.asc
         packages:
           - "msopenjdk-{{ java_version }}"
+  # https://sapmachine.io/docs/installation
+  # SAP only documents JDK package names for its repositories.
+  SAP:
+    OpenJDK:  # a.k.a. SapMachine
+      Alpine:
+        repositories:
+          - repo_type: alpine
+            name: https://dist.sapmachine.io/alpine
+            signed_by: https://dist.sapmachine.io/alpine/sapmachine-apk.rsa.pub
+        packages:
+          - "sapmachine-{{ java_version }}-jdk"
+      Debian:
+        repositories:
+          - repo_type: deb822
+            name: sapmachine
+            uris: https://dist.sapmachine.io/debian
+            suites: [stable]
+            components: [main]
+            signed_by: https://dist.sapmachine.io/debian/sapmachine.gpg
+        packages:
+          - "sapmachine-{{ java_version }}-jdk"
+      RedHat:
+        repositories:
+          - repo_type: yum
+            name: SapMachine
+            description: SapMachine
+            baseurl: https://dist.sapmachine.io/rpm/$basearch
+            gpgkey: https://dist.sapmachine.io/rpm/sapmachine.key
+            gpgcheck: true
+        packages:
+          - "sapmachine-{{ java_version }}-jdk"
+      Suse:
+        repositories:
+          - repo_type: zypper
+            name: SapMachine
+            repo: https://dist.sapmachine.io/rpm/sapmachine-suse.repo
+            signed_by: https://dist.sapmachine.io/rpm/sapmachine.key
+        packages:
+          - "sapmachine-{{ java_version }}-jdk"
 
 
-# For installations that can not be managed by dependency_mgr
+# For installations that can not be managed by dependency_mgr. Archives are JDKs and require a glibc-based Linux.
 java_archives:
   # https://www.oracle.com/java/technologies/jdk-script-friendly-urls/
   Oracle:
@@ -268,7 +352,7 @@ java_archives:
         {'RedHat': 'rpm', 'Debian': 'deb'}[ansible_facts['os_family']] | default('tar.gz') }}.sha256"
 
 
-# Glob matching the single top-level directory inside each archive in java_archives.
+# Glob matching the single top-level directory inside each archive in java_archives. Only used to migrate legacy installs.
 java_archive_top_dir_patterns:
   Oracle:
     GraalVM: 'graalvm-jdk-*'
@@ -285,3 +369,11 @@ java_archive_path: "{{
 
 # Oracle download files use weird architecture strings.
 java_oracle_arch: "{{ {'x86_64': 'x64'}[ansible_facts['architecture']] | default(ansible_facts['architecture']) }}"
+
+# Azul Platform Prime package version string: <major>.0.0, except JDK 8 (1.8.0 on x86_64, 8.0.0 elsewhere).
+java_azul_prime_version: "{{ (java_version | int == 8) | ansible.builtin.ternary(
+  (ansible_facts['architecture'] == 'x86_64') | ansible.builtin.ternary('1.8.0', '8.0.0'), java_version ~ '.0.0') }}"
+
+# Azul Platform Prime RPM repository path: oracle for Oracle Linux, stream for CentOS Stream, rhel for the rest of the family.
+java_azul_prime_rpm_dist: "{{ {'OracleLinux': 'oracle'}[ansible_facts['distribution']] | default((ansible_facts['distribution'] == 'CentOS'
+  and ansible_facts['distribution_release'] == 'Stream') | ansible.builtin.ternary('stream', 'rhel')) }}"

@@ -15,7 +15,7 @@ v1.5.8
 Release Summary
 ---------------
 
-Fix archive-based (Oracle GraalVM / Oracle Java tarball) installs in the java role: readable permissions, a fixed JDK path, idempotent downloads, and correct alternatives. Existing 1.5.7 installs are migrated automatically. The development containers now use prek instead of pre-commit.
+Fix archive-based (Oracle GraalVM / Oracle Java tarball) installs in the java role: readable permissions, a fixed JDK path, idempotent downloads, and correct alternatives. Existing 1.5.7 installs are migrated automatically. Refresh the java role's vendor repositories and package names against current vendor documentation, fixing several repository definitions that could not install, and add SapMachine, Azul Platform Prime and more Default platforms. The deps_mgr role can now manage zypper repositories from ``.repo`` files and release packages. The development containers now use prek instead of pre-commit.
 
 Minor Changes
 -------------
@@ -25,6 +25,16 @@ Minor Changes
 
 - java - ``java_archive_download_dir`` now defaults to ``/var/cache/java`` instead of ``/tmp``, and the downloaded archive is kept so repeat runs skip the download when the checksum still matches.
 - java - ``java_install_directory`` now defaults to ``/usr/lib/jvm/{{ java_type }}-{{ java_version }}-{{ java_vendor }}-{{ java_variant }}-{{ ansible_facts.architecture }}``, so Oracle GraalVM and Oracle Java of the same version no longer share a directory.
+- deps_mgr - zypper repositories whose ``repo`` ends in ``.repo`` are added from the file, which supplies the alias, so ``name`` is no longer passed to ``community.general.zypper_repository``.
+- deps_mgr - zypper repositories whose ``repo`` ends in ``.rpm`` are treated as release packages and installed with ``community.general.zypper``. ``name`` must be the package's name so it can be removed with ``state: absent``.
+- deps_mgr - zypper repositories accept ``signed_by``, the URL or path of a signing key to import before the repository is added.
+- java - Added the ``SAP`` vendor (SapMachine) for Alpine, Debian, RedHat and Suse.
+- java - Added the ``Prime`` variant for Azul Platform Prime. ``Zing`` remains as an alias.
+- java - Suse repositories now import their vendor's signing key instead of relying on ``auto_import_keys``.
+- java - Added Temurin's Amazon Linux repository.
+- java - ``Default`` now covers Darwin (Homebrew), Gentoo and Void.
+- java - Temurin installs the ``-headless`` JRE on the RedHat family when ``java_use_headless`` is true.
+- java - Archive installs now fail early on non-Linux and Alpine hosts, which vendors don't publish downloads for.
 - java - Archive installs made by 1.5.7 or earlier under the old default path are migrated automatically. The newest build is moved to the new path, older builds are removed, the old path is replaced with a symlink, and stale alternatives entries are removed. Installs with a customised ``java_install_directory`` are not migrated and should be moved by hand. This migration will be removed in a future release.
 
 Bugfixes
@@ -35,6 +45,18 @@ Bugfixes
 - java - The downloaded archive was deleted after every run, so each run downloaded it again and reported changed.
 - java - The ``jcmd`` alternatives subcommand pointed at ``bin/jconsole``.
 - java - The JRE and JDK ``java`` alternatives tasks overwrote each other's subcommands on JDK installs, dropping ``jre``, ``alt-java`` and ``keytool`` and reporting changed on every run. They are now a single task.
+- deps_mgr - Packages from a newly added deb822 repository could not be found, because ``deb822_repository`` doesn't update the apt cache. The cache is now updated whenever a deb822 repository changes.
+- deps_mgr - The README and defaults example read the release codename from ``ansible_facts['ansible_lsb']``, which doesn't exist, and listed ``main`` as a deb822 suite instead of a component.
+- java - Debian-family repositories for Azul Platform Prime, Temurin and Microsoft read the release codename from ``ansible_facts['ansible_lsb']``, which doesn't exist, so the suite was always ``invalid``. They now use ``ansible_facts['distribution_release']``.
+- java - Every deb822 repository listed ``main`` as a suite instead of a component.
+- java - The Microsoft Debian repository set ``baseurl``, which deb822 repositories don't use, so it had no URI. It now follows Microsoft's Debian and Ubuntu paths.
+- java - The Azul, Microsoft and Amazon Corretto Suse repositories could not be added. Azul now installs its ``zulu-repo`` release package, and Microsoft and Corretto use their ``.repo`` files with their signing keys.
+- java - Amazon Corretto on Amazon Linux installed both the ``-devel`` package and the requested one, and asked for ``java-NN-amazon-corretto-devel`` without its dash (``...correttodevel``).
+- java - Amazon Corretto on Debian asked for a ``-jre`` package, which Corretto doesn't publish. It now installs the ``-jdk`` package.
+- java - Azul Platform Prime packages are named ``zing-jdkNN.0.0``, not ``zing-jdkNN``. Its repository paths now use Azul's ``rhel``, ``oracle``, ``stream``, ``amazonlinux``, ``debian``, ``ubuntu`` and ``sles/<major>/<arch>`` names.
+- java - Temurin's RedHat-family repository path used the lowercased distribution name, giving ``redhat``, ``rocky`` or ``almalinux``, which Adoptium doesn't publish. It now uses ``centos``, ``fedora`` or ``oraclelinux`` where they match, and ``rhel`` otherwise. Its Suse path always used ``opensuse``, even on SLES, and used ``$releasever`` (``15.6``) where Adoptium's SLES trees use the major version (``15``).
+- java - Temurin's Debian install no longer installs the obsolete ``apt-transport-https`` and ``gnupg`` packages.
+- java - Oracle Java ``.deb`` downloads were passed to ``ansible.builtin.package``, which can't install a local file through apt. They're now installed with ``ansible.builtin.apt``.
 
 v1.5.7
 ======
