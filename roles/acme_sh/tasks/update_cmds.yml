@@ -10,10 +10,10 @@
   when:
     - acme_sh_enabled is ansible.builtin.truthy
     - acme_sh_run_hook_setup is ansible.builtin.truthy
-    - acme_sh_reloadcmd | default([]) != ansible_local['acme.sh']['reloadcmd'] | default([]) or
-      acme_sh_pre_hook | default([]) != ansible_local['acme.sh']['pre_hook'] | default([]) or
-      acme_sh_post_hook | default([]) != ansible_local['acme.sh']['post_hook'] | default([]) or
-      acme_sh_renew_hook | default([]) != ansible_local['acme.sh']['renew_hook'] | default([])
+    - acme_sh_reloadcmd | default([]) != ansible_local[acme_sh_local_fact_name]['reloadcmd'] | default([]) or
+      acme_sh_pre_hook | default([]) != ansible_local[acme_sh_local_fact_name]['pre_hook'] | default([]) or
+      acme_sh_post_hook | default([]) != ansible_local[acme_sh_local_fact_name]['post_hook'] | default([]) or
+      acme_sh_renew_hook | default([]) != ansible_local[acme_sh_local_fact_name]['renew_hook'] | default([])
   tags: ['acmesh::config']
   changed_when: true
   ansible.builtin.command:

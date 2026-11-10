@@ -9,6 +9,21 @@ Marshallwp General Collection Release Notes
 
 .. contents:: Topics
 
+v1.7.0
+======
+
+Release Summary
+---------------
+
+The acme_sh role can issue one certificate for several names and manage several certificates on the same host.
+
+Minor Changes
+-------------
+
+- acme_sh - Added ``acme_sh_alt_domains``, a list of additional names for the same certificate. Each is passed to acme.sh as another ``--domain``. It defaults to an empty list, so existing hosts are unaffected.
+- acme_sh - Added ``acme_sh_reissue_on_domain_change``. When true, the role runs ``--issue`` on every play instead of only when ``acme_sh_tls_fullchain_file`` is missing, so a changed list of names is re-issued. acme.sh exits with status 2 when nothing needs doing, which is not treated as a failure. It defaults to false, which keeps the previous behaviour.
+- acme_sh - Added ``acme_sh_local_fact_name``, the base name of the local fact file that records a certificate's hooks. It defaults to ``acme.sh``, so existing hosts keep their fact file. Give each certificate managed on the same host its own name.
+
 v1.6.0
 ======
 
