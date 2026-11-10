@@ -109,6 +109,28 @@ argument_specs:
       acme_sh_domain:
         description: The domain you want to get a certificate for.
         default: ansible_facts['nodename']
+      acme_sh_alt_domains:
+        description: >
+          Additional names (subject alternative names) for the same certificate, each passed to acme.sh as another `--domain`.
+          `acme_sh_domain` stays the certificate's name. In `dns` mode every name needs a `_acme-challenge.<name>` CNAME
+          pointing at `acme_sh_domain_alias`.
+        type: list
+        elements: str
+        default: []
+        version_added: '1.7.0'
+      acme_sh_reissue_on_domain_change:
+        description: >
+          Run `--issue` on every play instead of only when `acme_sh_tls_fullchain_file` is missing, so a changed list of names
+          is re-issued and an unchanged one is a no-op (acme.sh exits with status 2 without contacting the CA).
+        type: bool
+        default: false
+        version_added: '1.7.0'
+      acme_sh_local_fact_name:
+        description: >
+          Base name of the local fact file (`/etc/ansible/facts.d/<name>.fact`) holding this certificate's hooks.
+          Use a different name for each certificate managed on the same host.
+        default: acme.sh
+        version_added: '1.7.0'
       acme_sh_mode:
         description: The mode to use when performing ACME challenges.
         default: dns

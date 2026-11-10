@@ -23,6 +23,17 @@ acme_sh_tls_fullchain_file: "{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/
 
 # The full name of the server you're creating this cert for.
 acme_sh_domain: "{{ ansible_facts['nodename'] }}"
+# Additional names (subject alternative names) for the same certificate, each passed to acme.sh as another --domain.
+# acme_sh_domain stays the certificate's name (its directory under acme_sh_home and the name --install-cert uses).
+# In dns mode every name needs its own _acme-challenge.<name> CNAME pointing at acme_sh_domain_alias.
+acme_sh_alt_domains: []
+# Run --issue on every play instead of only when acme_sh_tls_fullchain_file is missing. acme.sh then re-issues the
+# certificate when the list of names changed ("Domains have changed") and does nothing, without contacting the CA,
+# when it did not (exit status 2).
+acme_sh_reissue_on_domain_change: false
+# Base name of the local fact file (/etc/ansible/facts.d/<name>.fact) holding this certificate's hooks. Give each
+# certificate managed on the same host its own name, or they overwrite each other's hooks.
+acme_sh_local_fact_name: acme.sh
 # Supported Modes: https://github.com/acmesh-official/acme.sh?tab=readme-ov-file#supported-modes
 # Modes: standalone, tls-alpn, and dns are supported.
 # Spaces are replaced by dashes and the word "mode" is excluded

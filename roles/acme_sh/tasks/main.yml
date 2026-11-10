@@ -109,8 +109,15 @@
   tags: ['acmesh::config']
   ansible.builtin.command:
     chdir: "{{ acme_sh_home }}"
-    argv: "{{ command_args | reject('equalto', omit) | list }}"
-    creates: "{{ acme_sh_tls_fullchain_file | default(acme_sh_tls_cert_file) }}"
+    argv: "{{ command_args | ansible.builtin.flatten | reject('equalto', omit) | list }}"
+    # Normally issue once, when the certificate file is missing. With acme_sh_reissue_on_domain_change the command runs
+    # every time: acme.sh re-issues if the names changed and exits with status 2 (nothing to do) if they did not.
+    creates: "{{ (acme_sh_reissue_on_domain_change | bool) | ansible.builtin.ternary(omit, acme_sh_tls_fullchain_file | default(acme_sh_tls_cert_file)) }}"
+  register: acme_sh_issue_result
+  changed_when: >-
+    (acme_sh_issue_result.rc == 0) if (acme_sh_reissue_on_domain_change | bool) else acme_sh_issue_result.changed
+  failed_when: >-
+    acme_sh_issue_result.rc != 0 and not (acme_sh_reissue_on_domain_change | bool and acme_sh_issue_result.rc == 2)
   vars:
     command_args:
       - "{{ (acme_sh_home | ansible.builtin.normpath, 'acme.sh') | ansible.builtin.path_join }}"
@@ -121,6 +128,8 @@
       - "{{ acme_sh_server | mandatory }}"
       - '--domain'
       - "{{ acme_sh_domain | default(ansible_facts['nodename'], true) }}"
+      # One more --domain per alternative name (flattened into the argument list above)
+      - "{{ ['--domain'] | ansible.builtin.product(acme_sh_alt_domains | default([])) | map('list') | list }}"
       - "{{ (acme_sh_keylength | default(false)) | ansible.builtin.ternary('--keylength', omit) }}"
       - "{{ (acme_sh_keylength | default(false)) | ansible.builtin.ternary(acme_sh_keylength, omit) }}"
       # Sets the domain alias to use in place of the actual domain

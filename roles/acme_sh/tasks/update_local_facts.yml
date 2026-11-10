@@ -30,7 +30,7 @@
       when: cmds | ansible.builtin.dict2items | rejectattr('value', '==', omit) | list | length > 0
       tags: ['acmesh::config']
       ansible.builtin.copy:
-        dest: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
+        dest: "{{ ('/etc', 'ansible', 'facts.d', acme_sh_local_fact_name ~ '.fact') | ansible.builtin.path_join }}"
         content: "{{ cmds | ansible.builtin.to_nice_json }}"
         owner: "{{ acme_sh_user }}"
         group: "{{ acme_sh_group }}"
@@ -40,5 +40,5 @@
       when: cmds | ansible.builtin.dict2items | rejectattr('value', '==', omit) | list | length == 0
       tags: ['acmesh::config']
       ansible.builtin.file:
-        path: "{{ ('/etc', 'ansible', 'facts.d', 'acme.sh.fact') | ansible.builtin.path_join }}"
+        path: "{{ ('/etc', 'ansible', 'facts.d', acme_sh_local_fact_name ~ '.fact') | ansible.builtin.path_join }}"
         state: absent

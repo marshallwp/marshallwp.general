@@ -43,6 +43,9 @@ Role Variables
 | acme_sh_tls_key_file | Destination filepath of the TLS Private Key | `"{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/private.key"` |
 | acme_sh_tls_fullchain_file | Destination filepath of the TLS Fullchain Public Certificate | `"{{ acme_sh_home }}/{{ ansible_facts['nodename'] }}/public-fullchain.crt"` |
 | acme_sh_domain | The domain you want to get a certificate for. | `ansible_facts['nodename']` |
+| acme_sh_alt_domains | Additional names (subject alternative names) for the same certificate, each passed to acme.sh as another `--domain`. See [Several Names, Several Certificates](#several-names-several-certificates). | `[]` |
+| acme_sh_reissue_on_domain_change | Run `--issue` on every play, so a changed list of names is re-issued and an unchanged one is a no-op. | `false` |
+| acme_sh_local_fact_name | Base name of the local fact file (`/etc/ansible/facts.d/<name>.fact`) that records this certificate's hooks. Use a different name for each certificate on the same host. | `acme.sh` |
 | acme_sh_mode | The mode to use when performing ACME challenges. Can be `dns`,`standalone`, or `alpn` | `dns` |
 | acme_sh_mode_value | Some modes (like `dns`) take an input value. Use this to pass it. | `dns_nsupdates` |
 | acme_sh_dns_zone | **MANDATORY** The DNS zone used during certificate renewals. Also the default suffix of `acme_sh_domain_alias`. | |
@@ -83,6 +86,39 @@ acme_sh_env_variables:
 ```
 
 The role only issues a certificate when `acme_sh_tls_fullchain_file` doesn't exist yet, and acme.sh keeps the alias it was first issued with for later renewals. To change the alias for a host that already has a certificate, delete the certificate files and the domain's directory under `acme_sh_home` (e.g. `<acme_sh_home>/<acme_sh_domain>_ecc`), then run the role again.
+
+Several Names, Several Certificates
+-----------------------------------
+
+`acme_sh_domain` is the certificate's name; list further names for the same certificate in `acme_sh_alt_domains`. They are exact names, and wildcards are not needed:
+
+```yaml
+acme_sh_domain: stalwart.mail.example.com
+acme_sh_alt_domains:
+  - mta-sts.mail.example.com
+  - autoconfig.mail.example.com
+```
+
+In `dns` mode acme.sh reuses the single `acme_sh_domain_alias` for every name, so each name needs its own challenge CNAME pointing at it (`_acme-challenge.mta-sts.mail.example.com. CNAME <acme_sh_domain_alias>.` and so on). If a name does not resolve, the order still passes, because only the challenge name is checked.
+
+The role issues a certificate once, when `acme_sh_tls_fullchain_file` is missing, so changing the names of an existing certificate does nothing by default. Set `acme_sh_reissue_on_domain_change: true` and the role runs `--issue` on every play instead: acme.sh then re-issues when the names changed ("Domains have changed") and exits with status 2, without contacting the CA, when they did not. That status is not treated as a failure.
+
+Several certificates can live on one host. acme.sh keeps each in its own directory under `acme_sh_home` and its cron job renews all of them, each with its own stored `reloadcmd`. Give every certificate its own `acme_sh_tls_*_file` paths and its own `acme_sh_local_fact_name`, so their hooks are tracked separately:
+
+```yaml
+- ansible.builtin.include_role:
+    name: marshallwp.general.acme_sh
+  vars:
+    acme_sh_domain: stalwart.mail.example.com
+    acme_sh_local_fact_name: acme.sh_stalwart
+    # ...
+- ansible.builtin.include_role:
+    name: marshallwp.general.acme_sh
+  vars:
+    acme_sh_domain: webmail.mail.example.com
+    acme_sh_local_fact_name: acme.sh_webmail
+    # ...
+```
 
 Dependencies
 ------------
